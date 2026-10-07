@@ -62,7 +62,7 @@ export default function ServiceDesk(){
     <section className="workspace" aria-label="Laboratório Mesa TI">
       <div className="workspace-toolbar">
         <div className="mode-switch"><button className={!showLive?"mode-selected":""} onClick={()=>setShowLive(false)}><Radio size={14}/>Simulado</button><button className={showLive?"mode-selected":""} onClick={()=>{stopAudio();setSound(false);setShowLive(!showLive);}} aria-expanded={showLive}><LockKeyhole size={13}/>OpenAI ao vivo <ChevronDown size={13}/></button></div>
-        <div className="toolbar-actions"><button onClick={()=>{stopAudio();setSound(!sound);}} aria-pressed={sound} title="Reprodução com voz local do dispositivo, quando disponível">{sound?<Volume2 size={17}/>:<VolumeX size={17}/>}<span>{sound?'Som ligado':'Som desligado'}</span></button><button onClick={reset}><RotateCcw size={16}/><span>Recomeçar</span></button></div>
+        {!showLive&&<div className="toolbar-actions"><button onClick={()=>{stopAudio();setSound(!sound);}} aria-pressed={sound} title="Reprodução com voz local do dispositivo, quando disponível">{sound?<Volume2 size={17}/>:<VolumeX size={17}/>}<span>{sound?'Som ligado':'Som desligado'}</span></button><button onClick={reset}><RotateCcw size={16}/><span>Recomeçar</span></button></div>}
       </div>
       {showLive&&<LiveDesk/>}
       {!showLive&&<div className="workspace-grid">
