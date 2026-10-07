@@ -19,7 +19,7 @@ export function buildDecisionRequest(text:string,transcript:TranscriptLine[]) {
         {label:'Bloqueado',description:'Trabalho impedido e sem alternativa.'}
       ]}
   ];
-  return {model:'gpt-6-luna',input:JSON.stringify({application:'Mesa TI: somente rascunhos fictícios, confirmação humana obrigatória',conversation:transcript,current_report:text}),questions};
+  return {model:'gpt-6-luna',input:JSON.stringify({application:'Alô, TI: somente rascunhos fictícios, confirmação humana obrigatória',conversation:transcript,current_report:text}),questions};
 }
 const object=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const between=(v:unknown,max:number):v is number=>typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=max;

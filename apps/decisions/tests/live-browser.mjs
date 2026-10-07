@@ -35,22 +35,52 @@ await page.route('**/api/live',async route=>{
   try{await route.fulfill({json:{sessionId:data.sessionId,revision:data.revision,result:{source:'openai',team:'applications',probability:.96,confidence:.91,score:1.25,explanation:'Sugestão de resposta simulada do transporte.'}}});}catch{/* Aborted corrections must not apply late results. */}
  }
 });
+
+async function skipToConversation(mode,nextControl){
+ const label=mode==='live'?'Transcrição ao vivo':'Conversa e transcrição';
+ const skip=page.getByRole('link',{name:'Pular para a conversa',exact:true});
+ // Reach the shortcut using the keyboard; do not focus its target from the test.
+ for(let i=0;i<20&&!await skip.evaluate(element=>element===document.activeElement);i++)await page.keyboard.press('Shift+Tab');
+ assert.equal(await skip.evaluate(element=>element===document.activeElement),true,'keyboard must reach the skip link');
+ await page.keyboard.press('Enter');
+ const target=page.locator('#conversation');
+ assert.equal(await target.count(),1,mode+' mode must expose exactly one skip-link destination');
+ assert.equal(await target.getAttribute('aria-label'),label);
+ assert.equal(await target.evaluate(element=>element===document.activeElement),true,'Enter on the skip link must focus the '+mode+' conversation');
+ const focusStyle=await target.evaluate(element=>({width:getComputedStyle(element).outlineWidth,offset:getComputedStyle(element).outlineOffset}));
+ assert.deepEqual(focusStyle,{width:'2px',offset:'-3px'},'the conversation focus indicator must be visible inside the panel');
+ await page.screenshot({path:'test-results/'+mode+'-skip-focus.png',fullPage:true});
+ await page.keyboard.press('Tab');
+ assert.equal(await nextControl.evaluate(element=>element===document.activeElement),true,'Tab after skipping must continue inside the '+mode+' conversation');
+ const ids=await page.locator('[id]').evaluateAll(elements=>elements.map(element=>element.id));
+ assert.equal(new Set(ids).size,ids.length,'mode switches must not leave duplicate IDs');
+}
+
 try{
  await page.goto('http://127.0.0.1:3000',{waitUntil:'networkidle'});
+ await skipToConversation('simulated',page.getByRole('button',{name:'Explorar cenário',exact:true}));
  await page.getByRole('button',{name:'OpenAI ao vivo'}).click();
  await page.getByText('Ao vivo desativado no servidor.',{exact:false}).waitFor();
+ await skipToConversation('live',page.getByLabel('Relato atual ao vivo'));
  assert.equal(await page.getByRole('button',{name:'Som desligado',exact:true}).count(),0,'mock speech controls must be absent in live mode');
  assert.equal(await page.getByRole('button',{name:'Recomeçar',exact:true}).count(),0,'mock reset must not be offered for live mode');
  assert.equal(await page.getByRole('button',{name:'Iniciar conversa real'}).isEnabled(),false);
  assert.equal(calls.length,0);assert.equal(await page.evaluate(()=>window.__live.microphones),0);
  enabled=true;
  await page.getByRole('button',{name:'Simulado',exact:true}).click();
+ await skipToConversation('simulated',page.getByRole('button',{name:'Explorar cenário',exact:true}));
+ await page.keyboard.press('Enter');
+ await page.getByLabel('Relato atual').waitFor();
+ await skipToConversation('simulated',page.getByLabel('Relato atual'));
  await page.getByRole('button',{name:'OpenAI ao vivo'}).click();
+ await skipToConversation('live',page.getByLabel('Relato atual ao vivo'));
  await page.getByLabel('Código de acesso da demo local').fill('test-only-browser-access-code-not-a-secret');
  await page.getByLabel('Entendi o envio de áudio e texto').check();
  await page.getByRole('button',{name:'Iniciar conversa real'}).click();
  await page.getByText('Microfone ativo',{exact:true}).waitFor();
  assert.equal(calls.filter(c=>c.action==='start').length,1);
+ await skipToConversation('live',page.getByLabel('Relato atual ao vivo'));
+ assert.equal(calls.filter(c=>c.action==='start').length,1,'keyboard navigation must not start another session');
  await page.evaluate(()=>window.__emit({type:'session.input_transcript.delta',delta:'O portal mostra erro 500 para todo o time.'}));
  await page.evaluate(()=>window.__emit({type:'session.output_transcript.delta',delta:'Vou analisar o relato.'}));
  await page.evaluate(()=>window.__emit({type:'session.delegation.created',delegation:{id:'delegation_1'}}));
@@ -108,8 +138,10 @@ try{
  await page.setViewportSize({width:390,height:844});
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  await page.screenshot({path:'test-results/live-fixture-mobile.png',fullPage:true});
- const shot=(await readFile('test-results/live-fixture-mobile.png')).toString('base64');
- for(let i=0;i<shot.length;i+=6000)console.log('PUBLIC_SCREENSHOT live-fixture-mobile.png '+(i/6000)+' '+shot.slice(i,i+6000));
+ for(const file of ['live-fixture-mobile.png','live-skip-focus.png','simulated-skip-focus.png']){
+  const shot=(await readFile('test-results/'+file)).toString('base64');
+  for(let i=0;i<shot.length;i+=6000)console.log('PUBLIC_SCREENSHOT '+file+' '+(i/6000)+' '+shot.slice(i,i+6000));
+ }
  assert.deepEqual(errors,[]);
- console.log('LIVE_BROWSER_FIXTURE_PASS: disabled gate, consent, microphone cleanup, WebRTC setup, transcript, delegation ID, duplicate suppression, correction, stale result, human confirmation, close, mobile. No OpenAI/audio calls.');
+ console.log('LIVE_BROWSER_FIXTURE_PASS: simulated and live keyboard skip-link focus and continuation, unique mode targets, disabled gate, consent, microphone cleanup, WebRTC setup, transcript, delegation ID, duplicate suppression, correction, stale result, human confirmation, close, mobile. No OpenAI/audio calls.');
 }finally{await browser.close();}

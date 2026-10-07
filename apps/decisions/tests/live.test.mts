@@ -38,6 +38,7 @@ test('live cannot accept a fixture and mock cannot accept a live response',()=>{
 test('Decisions request has named predicate, choice and ordered score questions',()=>{
  const request=buildDecisionRequest('Relato atual', [{role:'user',text:'Corrigi o relato'}]);
  assert.equal(request.model,'gpt-6-luna');
+ assert.equal(JSON.parse(request.input).application,'Alô, TI: somente rascunhos fictícios, confirmação humana obrigatória');
  assert.deepEqual(request.questions.map(q=>q.type),['predicate','choice','score']);
  assert.ok(request.input.includes('Relato atual'));
  assert.equal(request.questions[1].choices?.at(-1)?.value,'human');
@@ -93,6 +94,7 @@ test('server creates only client-delegation WebRTC sessions and never returns th
  assert.equal(seenUrl,'https://api.openai.com/v1/live/sessions');
  assert.deepEqual(seenBody.session.delegation,{type:'client'});
  assert.equal(seenBody.session.model,'gpt-live-1');
+ assert.ok(seenBody.session.instructions.startsWith('Você é Alô, TI, demo fictícia de service desk.'),'the spoken persona uses the current visible brand');
  assert.equal(seenBody.transport.type,'webrtc');
  assert.equal(json.sessionId,'sess_test');
  assert.equal(JSON.stringify(json).includes(env.OPENAI_API_KEY),false);

@@ -1,4 +1,4 @@
-# Mesa TI: arquitetura de voz e decisões
+# Alô, TI: arquitetura de voz e decisões
 
 [Início](../README.md) · [Aplicação](../apps/decisions/README.md) · [Validação](validacao.md)
 
