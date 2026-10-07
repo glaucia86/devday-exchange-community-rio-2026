@@ -56,8 +56,36 @@ try{
   await page.getByRole('button',{name:'Por trás da decisão'}).click();
   await page.screenshot({path:'test-results/mobile-review.png',fullPage:true});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true,'mobile should not overflow horizontally');
+  const voicePage=await browser.newPage();
+  voicePage.on('pageerror',error=>errors.push(error.message));
+  await voicePage.addInitScript(()=>{
+    const listeners=new Set();let voices=[];
+    window.__spoken=[];window.__cancelCount=0;
+    Object.defineProperty(window,'SpeechSynthesisUtterance',{configurable:true,value:class {constructor(text){this.text=text;}}});
+    Object.defineProperty(window,'speechSynthesis',{configurable:true,value:{
+      getVoices:()=>voices,
+      addEventListener:(_event,listener)=>listeners.add(listener),
+      removeEventListener:(_event,listener)=>listeners.delete(listener),
+      cancel:()=>{window.__cancelCount++;},
+      speak:utterance=>{window.__spoken.push(utterance.text);utterance.onstart?.();utterance.onend?.();}
+    }});
+    window.__enableVoice=()=>{voices=[{localService:true,lang:'pt-BR',name:'Voz local de teste'}];for(const listener of listeners)listener();};
+  });
+  await voicePage.goto('http://127.0.0.1:3000',{waitUntil:'networkidle'});
+  await voicePage.getByRole('button',{name:'Som desligado'}).click();
+  await voicePage.getByRole('button',{name:'Explorar cenário'}).click();
+  await voicePage.getByRole('button',{name:'Analisar relato',exact:true}).click();
+  await visible(voicePage.getByRole('heading',{name:'Acessos e identidade',exact:true}));
+  assert.equal(await voicePage.evaluate(()=>window.__spoken.length),0,'no available voice cannot consume a reply');
+  await voicePage.evaluate(()=>window.__enableVoice());
+  await voicePage.waitForFunction(()=>window.__spoken.length===1);
+  await voicePage.getByLabel('Relato atual').fill('Uma correção livre');
+  await voicePage.getByRole('button',{name:'Analisar relato',exact:true}).click();
+  await voicePage.waitForTimeout(100);
+  assert.equal(await voicePage.evaluate(()=>window.__spoken.length),1,'editing the incident must not replay its old spoken answer');
+  await voicePage.close();
   assert.deepEqual(errors,[],'browser must not emit uncaught errors');
-  console.log('BROWSER_CHECKS_PASS: scenario, human gate, correction, title edit, ticket, ambiguity, reset, free text, error/retry, mobile overflow, console.');
+  console.log('BROWSER_CHECKS_PASS: scenario, human gate, correction, title edit, ticket, ambiguity, reset, free text, error/retry, mobile overflow, late local voice, stale speech suppression, console.');
   // Public fictional UI only. No user data or credentials are included.
   for(const file of ['desktop-start.png','desktop-ticket.png','mobile-review.png']){
     const data=(await readFile('test-results/'+file)).toString('base64');

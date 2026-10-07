@@ -42,10 +42,10 @@ Esses comandos não exigem instalação de pacotes nem acesso à OpenAI.
 
 - Cenários, quatro guias e guia da apresentadora disponíveis
 - Encaminhador didático e domínio de Mesa TI com testes automatizados
-- Interface Mesa TI escrita em Next.js, TypeScript, Tailwind CSS 4 e Lucide; build, dependências fixadas e inspeção visual ainda pendentes
+- Interface Mesa TI em Next.js, TypeScript, Tailwind CSS 4 e Lucide; build e TypeScript aprovados, dependências fixadas e capturas desktop/celular inspecionadas
 - Mock claramente identificado, sem microfone ou chamadas de API
 - Leitura de respostas por voz local do dispositivo, quando disponível; não é voz OpenAI
-- Integração GPT-Live + Decisions documentada, ainda não conectada ou validada
+- Integração GPT-Live + Decisions documentada, ainda não implementada/conectada ou validada de ponta a ponta
 - Fluxos reais de Dots, Codex CLI e Codex Cloud dependem do acesso do participante e de ensaio específico
 
 Não trate o mock ou os testes de domínio como prova de funcionamento da integração de voz.

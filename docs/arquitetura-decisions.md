@@ -16,7 +16,7 @@ A versão de desenvolvimento contém um mock determinístico. A experiência rea
 - **Voz local opcional:** leitura pelo navegador somente com uma voz local em português disponível
 - **Integração futura:** GPT-Live na conversa; Decisions no servidor; estado da aplicação decide o que pode ser exibido ou confirmado
 
-A interface usa fundo claro, texto grafite e destaque verde-petróleo, com transcrição legível, controles por teclado e movimento reduzido. O documento não substitui uma inspeção real no navegador.
+A interface usa fundo claro, texto grafite e destaque verde-petróleo, com transcrição legível, controles por teclado e movimento reduzido. Capturas desktop e celular do fluxo mock foram inspecionadas. Isso não substitui um ensaio de projeção, uma auditoria completa de acessibilidade ou validação de áudio real.
 
 ## Contrato didático
 

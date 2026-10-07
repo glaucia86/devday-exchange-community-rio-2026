@@ -23,7 +23,7 @@ jobs:
       - name: Preparar Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
-          node-version: '24'
+          node-version: '24.21.0'
       - name: Testar o domínio e a proteção de fala
         run: node --test apps/decisions/tests/*.test.mts
       - name: Testar o ponto de partida
@@ -48,38 +48,9 @@ jobs:
       - name: Preparar Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
-          node-version: '24'
-      - name: Resolver dependências públicas
-        run: |
-          npm install --ignore-scripts --no-audit --no-fund
-          npm install --save-dev --save-exact playwright --ignore-scripts --no-audit --no-fund
-      - name: Fixar as versões resolvidas
-        run: |
-          node --input-type=module <<'NODE'
-          import {readFileSync,writeFileSync} from 'node:fs';
-          const pkg=JSON.parse(readFileSync('package.json','utf8'));
-          const lock=JSON.parse(readFileSync('package-lock.json','utf8'));
-          for(const group of ['dependencies','devDependencies'])for(const name of Object.keys(pkg[group]??{}))pkg[group][name]=lock.packages['node_modules/'+name].version;
-          writeFileSync('package.json',JSON.stringify(pkg,null,2)+'\n');
-          NODE
-          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-      - name: Guardar arquivos de reprodutibilidade
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
-        with:
-          name: mesa-ti-dependencies
-          retention-days: 7
-          path: |
-            apps/decisions/package.json
-            apps/decisions/package-lock.json
-      - name: Registrar somente manifestos públicos para revisão
-        run: |
-          node --input-type=module <<'NODE'
-          import {readFileSync} from 'node:fs';
-          for(const file of ['package.json','package-lock.json']){
-            const data=readFileSync(file).toString('base64');
-            for(let i=0;i<data.length;i+=6000)console.log('PUBLIC_MANIFEST '+file+' '+(i/6000)+' '+data.slice(i,i+6000));
-          }
-          NODE
+          node-version: '24.21.0'
+      - name: Instalar dependências do lockfile
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Conferir tipos
         run: npm run typecheck
       - name: Executar testes
