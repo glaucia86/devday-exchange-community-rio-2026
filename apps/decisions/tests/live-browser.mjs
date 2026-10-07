@@ -57,6 +57,7 @@ try{
  await page.waitForTimeout(100);assert.equal(calls.length,count,'duplicate delegation is not billed again');
  await page.getByLabel('Revisei este relato ao vivo e a equipe.').check();
  await page.evaluate(()=>window.__emit({type:'session.input_transcript.delta',delta:' Correção: só uma pessoa foi afetada.'}));
+ await page.getByRole('heading',{name:'Aguardando relato',exact:true}).waitFor();
  assert.equal(await page.getByLabel('Revisei este relato ao vivo e a equipe.').isChecked(),false);
  assert.equal(await page.getByRole('button',{name:'Confirmar ticket simulado ao vivo'}).isEnabled(),false);
  decisionDelay=250;
@@ -64,6 +65,9 @@ try{
  await page.getByLabel('Relato atual ao vivo').fill('Correção mais recente: o portal voltou.');
  await page.waitForTimeout(350);
  assert.equal(await page.getByRole('heading',{name:'Aplicações internas',exact:true}).count(),0,'stale decision is discarded');
+ await page.evaluate(()=>window.__emit({type:'session.input_transcript.delta',delta:' Mais um detalhe falado.'}));
+ await page.waitForFunction(()=>document.querySelector('#live-incident').value.includes('Mais um detalhe falado.'));
+ assert.ok((await page.getByLabel('Relato atual ao vivo').inputValue()).includes('Correção mais recente: o portal voltou.'),'new speech preserves a manual correction');
  decisionDelay=30;
  await page.getByLabel('Relato atual ao vivo').fill('Erro 500 no portal interno para todo o time.');
  await page.getByRole('button',{name:'Analisar com Decisions'}).click();
@@ -71,6 +75,9 @@ try{
  await page.getByLabel('Revisei este relato ao vivo e a equipe.').check();
  await page.getByRole('button',{name:'Confirmar ticket simulado ao vivo'}).click();
  await page.getByRole('heading',{name:'DEMO-0001',exact:true}).waitFor();
+ await page.evaluate(()=>window.__emit({type:'session.input_transcript.delta',delta:' Obrigada.'}));
+ await page.waitForTimeout(100);
+ assert.equal(await page.getByRole('heading',{name:'DEMO-0001',exact:true}).count(),1,'continued speech cannot erase a confirmed ticket');
  await page.getByRole('button',{name:'Encerrar conversa'}).click();
  await page.getByText('Microfone desligado',{exact:true}).waitFor();
  assert.ok(await page.evaluate(()=>window.__live.stopped)>0);

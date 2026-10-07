@@ -137,3 +137,14 @@ test('raw upstream errors never expose credentials or upstream response contents
  const response=await handle(req({action:'start',sdp:'v=0'}));assert.equal(response.status,502);
  assert.equal((await response.text()).includes('sensitive upstream diagnostic'),false);
 });
+
+test('a confirmed live ticket cannot be erased by later speech or corrections',()=>{
+ let s=deskReducer(createDesk(1,'live'),{type:'EDIT',value:'Erro 500 geral'});
+ s=deskReducer(s,{type:'TITLE',value:'Portal'});
+ s=deskReducer(s,{type:'ANALYZE'});
+ s=deskReducer(s,{type:'RESOLVED',session:s.session,revision:s.revision,result:decision()});
+ s=deskReducer(s,{type:'REVIEW',checked:true});s=deskReducer(s,{type:'CREATE'});
+ assert.equal(s.status,'created');
+ assert.deepEqual(deskReducer(s,{type:'EDIT',value:'Obrigada'}),s);
+ assert.deepEqual(deskReducer(s,{type:'CORRECT'}),s);
+});
