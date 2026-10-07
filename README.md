@@ -1,71 +1,270 @@
-# DevDay Exchange Community · Rio de Janeiro 2026
+<a id="topo"></a>
+<div align="center">
 
-**Dos anúncios à prática. Da primeira ideia a um resultado que você consegue revisar.**
+<a href="https://luma.com/wzk8q92k"><img src="assets/devday-exchange-community-banner.jpg" width="1120" alt="Banner do DevDay Exchange Community"></a>
 
-Material original em português para desenvolvedores, estudantes e builders explorarem os aprendizados do OpenAI DevDay 2026 e continuarem praticando depois do encontro.
+<h1>DevDay Exchange Community · Rio de Janeiro 2026</h1>
 
-**24 de outubro de 2026 · IBMEC Barra · Rio de Janeiro**
+<p><strong>Dos anúncios à prática. Da primeira ideia a uma entrega que você consegue revisar.</strong></p>
+<p><strong>Dots · Codex CLI · Codex Cloud · Decisions API</strong></p>
+<p>24 de outubro de 2026 · IBMEC Barra · Rio de Janeiro<br>Material em português com Glaucia Lemos</p>
 
-[Inscreva-se no Luma](https://luma.com/wzk8q92k) · [Guia da apresentadora](docs/guia-apresentadora.md) · [Programação](docs/programacao.md) · [Referências](docs/referencias.md) · [Estado da validação](docs/validacao.md)
+<p>
+<a href="https://nextjs.org/docs"><img alt="Next.js 16.4.0" src="https://img.shields.io/badge/Next.js-16.4.0-000000?style=for-the-badge&logo=nextdotjs&logoColor=white"></a>
+<a href="https://react.dev/"><img alt="React 19.3.0" src="https://img.shields.io/badge/React-19.3.0-20232A?style=for-the-badge&logo=react&logoColor=61DAFB"></a>
+<a href="https://www.typescriptlang.org/"><img alt="TypeScript 5.9.3" src="https://img.shields.io/badge/TypeScript-5.9.3-3178C6?style=for-the-badge&logo=typescript&logoColor=white"></a>
+</p>
+<p>
+<a href="https://nodejs.org/en/download"><img alt="Node.js 22.18 ou posterior" src="https://img.shields.io/badge/Node.js-22.18%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"></a>
+<a href="https://tailwindcss.com/docs"><img alt="Tailwind CSS 4.3.3" src="https://img.shields.io/badge/Tailwind_CSS-4.3.3-0F172A?style=for-the-badge&logo=tailwindcss&logoColor=38BDF8"></a>
+<a href="https://lucide.dev/"><img alt="Lucide 0.468.0" src="https://img.shields.io/badge/Lucide-0.468.0-F56565?style=for-the-badge&logo=lucide&logoColor=white"></a>
+<a href="https://playwright.dev/"><img alt="Playwright 1.63.0" src="https://img.shields.io/badge/Playwright-1.63.0-2EAD33?style=for-the-badge"></a>
+</p>
 
-## Escolha seu LAB
+<p>
+<a href="https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-labs.yml"><img alt="Validação dos LABS" src="https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-labs.yml/badge.svg?branch=dev%2Fmesa-ti-four-labs"></a>
+<a href="LICENSE"><img alt="Licença MIT" src="https://img.shields.io/badge/Licen%C3%A7a-MIT-0F766E?style=flat"></a>
+</p>
+<p><a href="https://luma.com/wzk8q92k">Inscreva-se</a> · <a href="#labs">Escolha seu LAB</a> · <a href="#executar">Execute a demo</a> · <a href="docs/guia-apresentadora.md">Guia da apresentadora</a> · <a href="#sobre-mim">Sobre mim</a></p>
+</div>
 
-São quatro temas independentes. A ordem abaixo é de navegação, não uma nova ordem de palco.
+---
 
-| LAB | O que você vai praticar | Material disponível |
+## 📑 Sumário
+
+- [Conheça o encontro](#encontro)
+- [O que você vai encontrar](#material)
+- [Escolha seu LAB](#labs)
+- [Prepare seu ambiente](#preparacao)
+- [Execute a demo Mesa TI](#executar)
+- [Verifique seu ambiente](#validar)
+- [Estado do projeto](#estado)
+- [Guia da apresentadora](#apresentadora)
+- [Checklist para o encontro](#checklist)
+- [Explore o repositório](#estrutura)
+- [Segurança e licença](#seguranca)
+- [Sobre mim](#sobre-mim)
+
+<a id="encontro"></a>
+## 🗓️ Conheça o encontro
+
+O **DevDay Exchange Community Rio 2026** reúne desenvolvedores, estudantes e builders para conversar sobre os aprendizados do OpenAI DevDay 2026 e experimentar suas possibilidades com exemplos práticos.
+
+| Informação | Detalhes |
+| --- | --- |
+| **Data** | Sábado, 24 de outubro de 2026 |
+| **Horário publicado** | 09h00 às 14h30, horário de Brasília |
+| **Local** | IBMEC Barra |
+| **Endereço** | Av. Armando Lombardi, 940, Barra da Tijuca, Rio de Janeiro |
+| **Organização** | [Glaucia Lemos](https://github.com/glaucia86), Codex Ambassador |
+| **Inscrição e atualizações** | [Página do evento no Luma](https://luma.com/wzk8q92k) |
+
+A abertura terá um recap do OpenAI DevDay, seguido dos temas técnicos e da troca com a comunidade. Consulte a [programação](docs/programacao.md) e a página do evento para os detalhes de participação.
+
+<a id="material"></a>
+## 🧭 O que você vai encontrar
+
+Este repositório reúne **material original em português** para acompanhar o encontro e continuar praticando depois dele.
+
+| Se você quer… | Comece por… |
+| --- | --- |
+| Experimentar um dos temas | Os [quatro LABS](#labs), com requisitos, passos e resultados esperados |
+| Praticar uma mudança de código | O [encaminhador de chamados](exercises/ticket-router/README.md), com starter e solução |
+| Explorar uma interface interativa | A [Mesa TI](apps/decisions/README.md), demo fictícia do LAB Decisions |
+| Preparar a apresentação | O [guia da apresentadora](docs/guia-apresentadora.md), com falas-chave e plano B |
+| Entender o que foi verificado | O [registro de validação](docs/validacao.md) |
+| Aprofundar os assuntos | As [referências](docs/referencias.md) |
+
+Conhecer o básico de JavaScript/TypeScript, terminal e Git ajuda na parte de código. Cada LAB apresenta sua própria preparação.
+
+> [!IMPORTANT]
+> A Mesa TI funciona atualmente em **modo mock**, com cenários fictícios. A integração real de voz com GPT-Live + Decisions está documentada, mas ainda não foi implementada ou validada de ponta a ponta. Os testes do mock não comprovam essa integração.
+
+<a id="labs"></a>
+## 🧪 Escolha seu LAB
+
+São **quatro temas independentes**, com objetivos e instruções próprios. Esta ordem facilita a navegação; não define uma nova ordem de palco.
+
+| LAB | O que você vai praticar | Abrir o material |
 | --- | --- | --- |
 | **Dots** | Dar contexto, limitar ações e revisar uma entrega | [Cenário e passo a passo](labs/01-dots/README.md) |
-| **Codex CLI** | Acompanhar uma mudança no terminal e verificar testes | [LAB do CLI](labs/codex-cli/README.md) |
-| **Codex Cloud** | Delegar uma tarefa remota e revisar sua entrega | [LAB do Cloud](labs/codex-cloud/README.md) |
+| **Codex CLI** | Acompanhar uma mudança no terminal, inspecionar o diff e verificar testes | [LAB do CLI](labs/codex-cli/README.md) |
+| **Codex Cloud** | Delegar uma tarefa remota e revisar o resultado | [LAB do Cloud](labs/codex-cloud/README.md) |
 | **Decisions API** | Inspecionar uma decisão tipada, corrigir o relato e confirmar o encaminhamento | [LAB Decisions](labs/02-decisions-typescript/README.md) |
 
-CLI e Cloud compartilham um [exercício fictício](exercises/ticket-router/README.md), com instruções e objetivos separados. A experiência de voz para voz pertence a Decisions, não constitui um quinto tema.
+CLI e Cloud usam o mesmo [exercício fictício de encaminhamento](exercises/ticket-router/README.md), com experiências de execução e revisão separadas. A experiência de voz para voz faz parte de **Decisions API**. A [arquitetura proposta](docs/arquitetura-decisions.md) descreve o fluxo e suas etapas pendentes.
 
-## Comece aqui
+<a id="preparacao"></a>
+## 🧰 1. Prepare seu ambiente
 
-1. **Participante:** abra um LAB e confira requisitos, passos, resultados esperados e reset.
-2. **Apresentadora:** use o [roteiro próprio](docs/guia-apresentadora.md), com preparação, falas-chave e plano B.
-3. **Quer executar algo sem conta ou chave?** Rode os testes do encaminhador e do domínio de Mesa TI, abaixo.
-4. **Quer explorar a interface?** Confira primeiro o [README da aplicação](apps/decisions/README.md) e o [estado da validação](docs/validacao.md).
+| Ferramenta | Requisito | Para que serve |
+| --- | --- | --- |
+| [Node.js](https://nodejs.org/en/download) | **22.18 ou posterior** | Executar os testes e a aplicação |
+| npm | Incluído no Node.js | Instalar dependências pelo lockfile |
+| [Git](https://git-scm.com/install/) | Disponível no terminal | Clonar o repositório e acompanhar mudanças |
+| Editor e navegador | Seus preferidos, atualizados | Explorar arquivos e usar a demo |
+| Acesso ao produto do LAB | Confira o guia escolhido | Experimentar Dots, CLI ou Cloud |
 
-Com Node.js 22.18 ou posterior, na raiz do repositório:
+A CI foi validada com **Node.js 24.21.0**. As versões da aplicação estão em [package.json](apps/decisions/package.json) e [package-lock.json](apps/decisions/package-lock.json).
 
-```bash
+```sh
+node --version
+npm --version
+git --version
+```
+
+Os testes offline e o mock não exigem conta OpenAI nem chave de API. Instalar dependências requer acesso ao registro npm. O acesso aos produtos dos LABS deve ser preparado separadamente.
+
+<details>
+<summary><strong>🪟 Usando Windows com PowerShell?</strong></summary>
+
+Se o PowerShell informar que `npm.ps1` não pode ser carregado, abra o Prompt de Comando ou use `npm.cmd` no lugar de `npm`. O mesmo vale para `npx.cmd`. Essa alternativa não exige mudar a política de execução do sistema.
+
+</details>
+
+<a id="executar"></a>
+## 🚀 2. Execute a demo Mesa TI
+
+A **Mesa TI** é um service desk fictício. Você escolhe um cenário, analisa o relato, simula uma correção e revisa os campos antes de criar um ticket simulado.
+
+O fluxo atual usa fixtures e estado em memória. Nenhuma API é chamada e o microfone não é capturado.
+
+### Clone o material
+
+O material está na branch **`dev/mesa-ti-four-labs`**:
+
+```sh
+git clone --branch dev/mesa-ti-four-labs https://github.com/glaucia86/devday-exchange-community-rio-2026.git
+cd devday-exchange-community-rio-2026
+```
+
+### Instale e inicie a interface
+
+```sh
+cd apps/decisions
+npm ci --ignore-scripts
+npm run dev
+```
+
+Execute um comando por vez e deixe o terminal aberto. Acesse **http://127.0.0.1:3000** no navegador.
+
+### Confira seu primeiro acesso
+
+1. Escolha um cenário e analise o relato.
+2. Observe os campos sugeridos e simule uma correção.
+3. Analise novamente e revise o encaminhamento.
+4. Marque a revisão humana antes de criar o ticket simulado.
+5. Use **Recomeçar** para limpar o estado e experimentar outro cenário.
+
+Quando disponível, a interface pode ler respostas com a **voz local do dispositivo**. Não é áudio OpenAI nem transcrição real. A saída de áudio ainda precisa de ensaio nos dispositivos-alvo. Veja o [README da aplicação](apps/decisions/README.md).
+
+<a id="validar"></a>
+## ✅ 3. Verifique seu ambiente
+
+Na **raiz do repositório**, com Node.js 22.18 ou posterior:
+
+```sh
 node --test exercises/ticket-router/starter/router.test.mjs
 node --test exercises/ticket-router/solution/router.test.mjs
 node --test apps/decisions/tests/*.test.mts
+node scripts/check-doc-links.mjs
 ```
 
-Esses comandos não exigem instalação de pacotes nem acesso à OpenAI.
+O conjunto unitário contém **26 testes**: 3 do starter, 8 da solução e 15 do domínio da Mesa TI e da proteção de fala.
 
-## O que está pronto e o que ainda precisa de ensaio
+Dentro de **`apps/decisions`**, após instalar as dependências:
 
-- Cenários, quatro guias e guia da apresentadora disponíveis
-- Encaminhador didático e domínio de Mesa TI com testes automatizados
-- Interface Mesa TI em Next.js, TypeScript, Tailwind CSS 4 e Lucide; build e TypeScript aprovados, dependências fixadas e capturas desktop/celular inspecionadas
-- Mock claramente identificado, sem microfone ou chamadas de API
-- Leitura de respostas por voz local do dispositivo, quando disponível; não é voz OpenAI
-- Integração GPT-Live + Decisions documentada, ainda não implementada/conectada ou validada de ponta a ponta
-- Fluxos reais de Dots, Codex CLI e Codex Cloud dependem do acesso do participante e de ensaio específico
+```sh
+npm run typecheck
+npm test
+npm run build
+```
 
-Não trate o mock ou os testes de domínio como prova de funcionamento da integração de voz.
+Para Chromium, siga o [guia da aplicação](apps/decisions/README.md#teste-de-navegador). A instalação do navegador de teste é adicional ao uso normal da demo.
 
-## O encontro
+[GitHub Actions](https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-labs.yml) · [Evidências e limitações](docs/validacao.md)
 
-- **Data:** sábado, 24 de outubro de 2026
-- **Horário publicado:** 09h00 às 14h30, horário de Brasília
-- **Local:** IBMEC Barra, Av. Armando Lombardi, 940, Barra da Tijuca
-- **Organização:** [Glaucia Lemos](https://github.com/glaucia86), Codex Ambassador
-- **Inscrição e atualizações:** [página do evento no Luma](https://luma.com/wzk8q92k)
+<a id="estado"></a>
+## 📍 Estado do projeto
 
-Evento gratuito, mediante inscrição e aprovação. O Luma é a fonte oficial dos detalhes de participação e da agenda. A abertura terá um recap do OpenAI DevDay; não foram atribuídos novos horários às sessões técnicas.
+A [execução de referência](https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/runs/37653230973), no commit `d705226`, passou em **7 de outubro de 2026**. Consulte Actions para o resultado do commit atual.
 
-## Segurança e uso do material
+| Área | Situação |
+| --- | --- |
+| Quatro LABS e guia da apresentadora | Disponíveis |
+| Encaminhador e domínio da Mesa TI | 26 testes unitários aprovados |
+| TypeScript e build Next.js | Aprovados na execução de referência |
+| Interface mock em Chromium | Revisão, correção, reset e tratamento de erro verificados |
+| Capturas desktop e celular | Inspecionadas |
+| Voz local do dispositivo | Regressão simulada; áudio real precisa de ensaio |
+| GPT-Live + Decisions | Implementação e validação ponta a ponta pendentes |
+| Dots, Codex CLI e Codex Cloud | Guias disponíveis; ensaio dos fluxos reais pendente |
 
-Use somente dados fictícios ou públicos. Não publique credenciais, informações de participantes, arquivos operacionais ou dados de trabalho. Chaves de projeto ficam no servidor e nunca no código enviado ao navegador. Não é necessário conectar fontes privadas para concluir os exercícios offline.
+<a id="apresentadora"></a>
+## 🎤 Guia da apresentadora
 
-O material segue formatos de LABS e roteiros de demonstração, com explicações e cenários próprios para o encontro. As [referências](docs/referencias.md) ajudam a aprofundar cada tema.
+O [roteiro](docs/guia-apresentadora.md) reúne preparação, objetivos, falas-chave, ações, resultados esperados, revisão humana, reset e plano B para cada tema.
 
-Este é um encontro organizado pela comunidade. O repositório não é documentação oficial nem um produto oficial da OpenAI.
+Use a [programação](docs/programacao.md) para os detalhes do encontro e as [referências](docs/referencias.md) para aprofundamento técnico.
 
-Documentação e código originais sob [licença MIT](LICENSE). Marcas e materiais de terceiros têm condições próprias: [avisos](THIRD_PARTY_NOTICES.md).
+<a id="checklist"></a>
+## 🎒 Checklist para o encontro
+
+- [ ] Confirmei minha inscrição.
+- [ ] Escolhi os LABS e li seus requisitos.
+- [ ] Node.js, npm e Git respondem no terminal.
+- [ ] Clonei a branch indicada e executei os testes offline.
+- [ ] Se vou usar a Mesa TI, instalei as dependências e abri a interface.
+- [ ] Conferi meu acesso ao produto necessário.
+- [ ] Separei notebook e carregador.
+- [ ] Usarei somente dados fictícios ou públicos.
+
+<a id="estrutura"></a>
+## 📚 Explore o repositório
+
+| Caminho | Conteúdo |
+| --- | --- |
+| [labs/01-dots/](labs/01-dots/) | Contexto, cenário e prática com Dots |
+| [labs/codex-cli/](labs/codex-cli/) | Exercício acompanhado pelo terminal |
+| [labs/codex-cloud/](labs/codex-cloud/) | Delegação remota e revisão |
+| [labs/02-decisions-typescript/](labs/02-decisions-typescript/) | Decisões tipadas e revisão humana |
+| [exercises/ticket-router/](exercises/ticket-router/) | Starter, solução e testes |
+| [apps/decisions/](apps/decisions/) | Mesa TI, domínio e testes |
+| [docs/guia-apresentadora.md](docs/guia-apresentadora.md) | Roteiro e plano B |
+| [docs/validacao.md](docs/validacao.md) | Evidências e próximos ensaios |
+| [docs/referencias.md](docs/referencias.md) | Fontes para continuar estudando |
+| [assets/](assets/) | Banner do evento |
+
+<a id="seguranca"></a>
+## 🔐 Segurança e licença
+
+Use dados fictícios ou públicos. Não publique credenciais, informações de participantes ou dados de trabalho. Uma futura integração deve manter chaves de projeto no servidor, fora do código enviado ao navegador.
+
+Este encontro é organizado pela comunidade. O repositório não é documentação oficial nem um produto oficial da OpenAI.
+
+Documentação e código originais sob a [licença MIT](LICENSE). Marcas e materiais de terceiros seguem suas próprias condições nos [avisos de terceiros](THIRD_PARTY_NOTICES.md).
+
+---
+
+<a id="sobre-mim"></a>
+## 👩🏽‍💻 Sobre mim
+
+<div align="center">
+<a href="https://github.com/glaucia86"><img src="https://avatars.githubusercontent.com/u/1631477?v=4" width="170" height="170" alt="Glaucia Lemos"></a>
+
+<h3>Glaucia Lemos</h3>
+<p><strong>Principal Software Engineer · Educadora · Criadora de conteúdo · Codex Ambassador</strong></p>
+<p>Sou engenheira de software e compartilho conhecimento sobre JavaScript, TypeScript,<br>Node.js, Cloud e Inteligência Artificial. Conecto teoria e prática em conteúdos,<br>comunidades de tecnologia e projetos open source.</p>
+
+<p>
+<a href="https://www.youtube.com/user/l32759"><img alt="YouTube" src="https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white"></a>
+<a href="https://www.linkedin.com/in/glaucialemos/"><img alt="LinkedIn" src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge"></a>
+<a href="https://x.com/glaucia_lemos86"><img alt="X" src="https://img.shields.io/badge/X-000000?style=for-the-badge&logo=x&logoColor=white"></a>
+</p>
+<p>
+<a href="https://github.com/glaucia86"><img alt="GitHub" src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"></a>
+<a href="https://www.twitch.tv/glaucia_lemos86"><img alt="Twitch" src="https://img.shields.io/badge/Twitch-9146FF?style=for-the-badge&logo=twitch&logoColor=white"></a>
+<a href="https://dev.to/glaucia86"><img alt="DEV Community" src="https://img.shields.io/badge/DEV_Community-0A0A0A?style=for-the-badge&logo=devdotto&logoColor=white"></a>
+</p>
+<p><a href="#topo">↑ Voltar ao topo</a></p>
+</div>
