@@ -17,7 +17,7 @@ export class LiveBrowser {
  get id(){return this.sessionId;}
  get active(){return this.ready&&!this.stopped;}
  async request(body:unknown,signal?:AbortSignal){
-  const response=await fetch('/api/live',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+this.options.token},body:JSON.stringify(body),signal});
+  const response=await fetch('/api/live',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+this.options.token},body:JSON.stringify(body),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(20000)]):AbortSignal.timeout(20000)});
   const data=await response.json();
   if(!response.ok)throw Error(typeof data.error==='string'?data.error:'A solicitação falhou.');
   return data;
@@ -74,21 +74,31 @@ export class LiveBrowser {
  stop():Promise<boolean>{
   if(this.closing)return this.closing;
   this.stopped=true;this.ready=false;
-  this.stream?.getTracks().forEach(track=>{track.enabled=false;});
+  // Release local capture immediately, including when initialization is pending.
+  this.silenceLocal();
   if(this.deadline)clearTimeout(this.deadline);
-  this.closing=(async()=>{
-   // Do not abandon a paid HTTP initialization whose result is still in flight.
-   try{await this.startup;}catch{/* Continue cleanup for any known session. */}
+  const cleanup=(async()=>{
+   try{await this.startup;}catch{/* Clean up any known remote session after startup failure. */}
    if(this.channel?.readyState==='open'&&!this.closedEvent)this.channel.send(JSON.stringify({type:'session.close'}));
    let confirmed=this.closedEvent;
    if(this.sessionId&&!confirmed){
-    try{const result=await this.request({action:'close',sessionId:this.sessionId});confirmed=result.confirmed===true;}catch{/* Retain unconfirmed status. */}
+    try{const result=await this.request({action:'close',sessionId:this.sessionId});confirmed=result.confirmed===true;}catch{/* session.closed may have arrived concurrently. */}
    }else if(!this.sessionId)confirmed=!this.initializationAttempted;
+   return confirmed||this.closedEvent;
+  })();
+  this.closing=(async()=>{
+   let timeout:ReturnType<typeof setTimeout>|undefined;
+   const result=!this.initializationAttempted?true:await Promise.race([cleanup,new Promise<boolean>(resolve=>{timeout=setTimeout(()=>resolve(false),8000);})]);
+   if(timeout)clearTimeout(timeout);
+   const confirmed=result||this.closedEvent;
    this.release();this.options.onEnded();
    this.options.onNotice(confirmed?'Conversa encerrada. Microfone liberado.':'Microfone liberado. Finalização da sessão não confirmada; verifique o consumo na plataforma.');
+   // Keep late initialization cleanup alive after releasing the UI and microphone.
+   if(!confirmed)void cleanup.then(ok=>{if(ok)this.options.onNotice('Finalização confirmada após a espera. Microfone liberado.');});
    return confirmed;
   })();
   return this.closing;
  }
- private release(){this.channel?.close();this.peer?.close();this.stream?.getTracks().forEach(track=>track.stop());this.options.audio.pause();this.options.audio.srcObject=null;}
+ private silenceLocal(){this.stream?.getTracks().forEach(track=>track.stop());this.stream=null;this.options.audio.pause();this.options.audio.srcObject=null;}
+ private release(){this.channel?.close();this.peer?.close();this.silenceLocal();}
 }

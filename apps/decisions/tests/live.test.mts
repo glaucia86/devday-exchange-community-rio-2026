@@ -129,7 +129,7 @@ test('server close waits for sideband confirmation before reporting success',asy
  const handle=createLiveHandler(env,async()=>Response.json({session:{id:'sess_close'},transport:{type:'webrtc',sdp:'v=0'}}),async()=>({close:async()=>{closes++;return false;},finalized:new Promise<boolean>(()=>{})}));
  await handle(req({action:'start',sdp:'v=0'}));
  const response=await handle(req({action:'close',sessionId:'sess_close'}));
- assert.equal(response.status,502);assert.equal((await response.json()).confirmed,false);assert.equal(closes,1);
+ assert.equal(response.status,502);assert.equal((await response.json()).confirmed,false);assert.equal(closes,2,'one bounded sideband reattachment before reporting uncertainty');
  assert.equal((await handle(req({action:'start',sdp:'v=0'}))).status,429);
 });
 test('raw upstream errors never expose credentials or upstream response contents',async()=>{

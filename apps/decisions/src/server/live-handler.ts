@@ -3,7 +3,7 @@ import { buildDecisionRequest, parseDecision, type TranscriptLine } from '../dom
 import type { GuardFactory, SessionGuard } from './live-guard.ts';
 type Env=Record<string,string|undefined>;
 type Fetcher=(url:string|URL|Request,init?:RequestInit)=>Promise<Response>;
-type Active={revision:number;busy:boolean;expires:number;guard:SessionGuard|null;timer?:ReturnType<typeof setTimeout>;closed:boolean};
+type Active={revision:number;busy:boolean;expires:number;guard:SessionGuard|null;usable:boolean;terminating?:Promise<boolean>;timer?:ReturnType<typeof setTimeout>;closed:boolean};
 const JSON_HEADERS={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
 const reply=(body:unknown,status=200)=>Response.json(body,{status,headers:JSON_HEADERS});
 const error=(status:number,message:string)=>reply({error:message},status);
@@ -23,12 +23,32 @@ async function readBody(request:Request):Promise<unknown>{
 const instructions='Você é a Mesa TI, demo fictícia de service desk. Fale português brasileiro de modo breve. Converse por voz e pergunte serviço, falha, quem foi afetado e alternativa. Delegue ao aplicativo quando houver relato ou correção para avaliar. Só o aplicativo pode consultar Decisions e sugerir equipe. Não invente análises ou tickets. Informe que o usuário precisa revisar e confirmar na tela. Ações disponíveis: analisar relato e esclarecer contexto. Não crie ticket por voz, não execute comandos, não acesse computadores ou serviços externos. Correções invalidam sugestões anteriores. Use somente dados fictícios; não solicite credenciais ou dados pessoais.';
 
 export function createLiveHandler(env:Env,fetcher:Fetcher,openGuard:GuardFactory){
- const sessions=new Map<string,Active>();let starting=false,blocked=false;
+ const sessions=new Map<string,Active>();const confirmedClosed=new Map<string,number>();let starting=false,blocked=false;
  let windowStart=Date.now(),starts=0,decisions=0;
  async function upstream(path:string,body:unknown,signal?:AbortSignal){
    const response=await fetcher('https://api.openai.com/v1/'+path,{method:'POST',headers:{Authorization:'Bearer '+env.OPENAI_API_KEY,'Content-Type':'application/json'},body:JSON.stringify(body),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(15000)]):AbortSignal.timeout(15000)});
    if(!response.ok)throw Error('upstream');
    return response.json() as Promise<unknown>;
+ }
+ function confirmClosed(id:string,active:Active){
+  active.closed=true;active.usable=false;if(active.timer)clearTimeout(active.timer);
+  sessions.delete(id);confirmedClosed.set(id,Date.now());blocked=false;
+ }
+ async function terminate(id:string,active:Active,reconnect=false):Promise<boolean>{
+  if(active.closed)return true;
+  if(active.terminating)return active.terminating;
+  active.usable=false;blocked=true;
+  active.terminating=(async()=>{
+   let confirmed=false;
+   if(!reconnect&&active.guard){try{confirmed=await active.guard.close();}catch{/* Try one fresh sideband below. */}}
+   if(!confirmed){
+    try{const rescue=await openGuard(id,env.OPENAI_API_KEY!);active.guard=rescue;confirmed=await rescue.close();}catch{/* Reattachment never creates a paid session. */}
+   }
+   confirmed=confirmed||active.closed;
+   if(confirmed)confirmClosed(id,active);
+   return confirmed;
+  })();
+  try{return await active.terminating;}finally{active.terminating=undefined;}
  }
  return async(request:Request):Promise<Response>=>{
   if(!liveConfigured(env))return error(503,'Modo ao vivo desativado. Configuração segura e autorização de custo ainda são necessárias.');
@@ -42,6 +62,7 @@ export function createLiveHandler(env:Env,fetcher:Fetcher,openGuard:GuardFactory
   try{body=await readBody(request);}catch(e){return error(e instanceof Error&&e.message==='large'?413:400,'Corpo inválido ou grande demais.');}
   if(!object(body))return error(400,'Corpo inválido.');
   if(Date.now()-windowStart>600000){windowStart=Date.now();starts=0;decisions=0;}
+  for(const [id,at] of confirmedClosed)if(Date.now()-at>600000)confirmedClosed.delete(id);
   if(body.action==='start'){
    if(typeof body.sdp!=='string'||body.sdp.length>60000||!body.sdp.startsWith('v=0'))return error(400,'SDP inválido.');
    if(starting||blocked||sessions.size>0||starts>=3)return error(429,'Limite local: uma sessão por vez e até três inícios em dez minutos. Finalização incerta bloqueia novos inícios.');
@@ -51,31 +72,30 @@ export function createLiveHandler(env:Env,fetcher:Fetcher,openGuard:GuardFactory
     const value=await upstream('live/sessions',{session:{model:'gpt-live-1',store:false,delegation:{type:'client'},instructions},transport:{type:'webrtc',sdp:body.sdp}});
     if(!object(value)||!object(value.session)||typeof value.session.id!=='string'||!/^[a-zA-Z0-9_-]{1,200}$/.test(value.session.id)||!object(value.transport)||value.transport.type!=='webrtc'||typeof value.transport.sdp!=='string'||value.transport.sdp.length>60000)throw Error('contract');
     id=value.session.id;
-    const active:Active={revision:-1,busy:false,expires:Date.now()+120000,guard:null,closed:false};sessions.set(id,active);
-    active.guard=await openGuard(id,env.OPENAI_API_KEY!);
+    const active:Active={revision:-1,busy:false,expires:Date.now()+120000,guard:null,closed:false,usable:true};sessions.set(id,active);
     const sessionId=id;
-    active.timer=setTimeout(()=>{void active.guard!.close().then(ok=>{active.closed=ok;if(ok)sessions.delete(sessionId);else blocked=true;});},120000);
+    active.timer=setTimeout(()=>{void terminate(sessionId,active);},120000);
     active.timer.unref();
-    void active.guard.finalized.then(ok=>{active.closed=ok;if(active.timer)clearTimeout(active.timer);if(ok)sessions.delete(sessionId);else blocked=true;});
-    if(request.signal.aborted){await active.guard.close();return error(409,'Conexão cancelada.');}
+    active.guard=await openGuard(id,env.OPENAI_API_KEY!);
+    void active.guard.finalized.then(ok=>{if(ok)confirmClosed(sessionId,active);else {active.usable=false;blocked=true;void terminate(sessionId,active,true);}});
+    if(request.signal.aborted){await terminate(sessionId,active);return error(409,'Conexão cancelada.');}
     return reply({sessionId:id,sdp:value.transport.sdp,maxSeconds:120});
    }catch{
-    if(id){blocked=true;return error(502,'A sessão foi criada, mas a proteção de encerramento falhou. Finalização não confirmada; verifique a sessão na plataforma antes de reiniciar o servidor.');}
+    if(id){const active=sessions.get(id);if(active){active.usable=false;await terminate(id,active,true);}blocked=!confirmedClosed.has(id);return error(502,'A sessão foi criada, mas a proteção de encerramento falhou. Finalização não confirmada; verifique a sessão na plataforma antes de reiniciar o servidor.');}
     // A timeout can occur after upstream creation. Do not auto-retry paid initialization.
     blocked=true;return error(502,'A criação não foi confirmada. Não repetimos chamadas pagas automaticamente; confira a plataforma antes de reiniciar o servidor.');
    }finally{starting=false;}
   }
   if(body.action!=='decide'&&body.action!=='close')return error(400,'Ação inválida.');
   if(typeof body.sessionId!=='string')return error(400,'Sessão inválida.');
+  if(body.action==='close'&&confirmedClosed.has(body.sessionId))return reply({confirmed:true});
   const active=sessions.get(body.sessionId);
   if(!active)return error(409,'Sessão desconhecida ou já finalizada.');
   if(body.action==='close'){
-    const confirmed=!!active.guard&&await active.guard.close();
-    if(confirmed){if(active.timer)clearTimeout(active.timer);sessions.delete(body.sessionId);}
-    else blocked=true;
+    const confirmed=await terminate(body.sessionId,active);
     return reply({confirmed},confirmed?200:502);
   }
-  if(active.expires<=Date.now()||active.closed)return error(409,'Sessão expirada.');
+  if(active.expires<=Date.now()||active.closed||!active.usable)return error(409,'Sessão expirada.');
   if(!Number.isSafeInteger(body.revision)||Number(body.revision)<0||Number(body.revision)<active.revision)return error(409,'Revisão desatualizada.');
   if(typeof body.text!=='string'||!body.text.trim()||body.text.length>8000||!Array.isArray(body.transcript)||body.transcript.length>30||
     body.transcript.some(line=>!object(line)||!['user','assistant'].includes(String(line.role))||typeof line.text!=='string'||line.text.length>8000))return error(400,'Relato ou transcrição inválidos.');
@@ -83,7 +103,7 @@ export function createLiveHandler(env:Env,fetcher:Fetcher,openGuard:GuardFactory
   active.revision=Number(body.revision);active.busy=true;decisions++;
   try{
     const result=parseDecision(await upstream('decisions',buildDecisionRequest(body.text,body.transcript as TranscriptLine[]),request.signal));
-    if(request.signal.aborted||active.closed||active.expires<=Date.now())return error(409,'Análise cancelada ou expirada.');
+    if(request.signal.aborted||active.closed||!active.usable||active.expires<=Date.now())return error(409,'Análise cancelada ou expirada.');
     return reply({sessionId:body.sessionId,revision:body.revision,result});
   }catch{return error(502,'Decisions não retornou uma resposta válida. Nenhuma sugestão foi aplicada.');}
   finally{active.busy=false;}
