@@ -6,15 +6,17 @@ const errors=[];const calls=[];
 page.on('pageerror',error=>errors.push(error.message));
 await page.addInitScript(()=>{
  window.__live={microphones:0,stopped:0,sent:[],channel:null,holdPermission:false};
- const track={enabled:true,stop(){window.__live.stopped++;}};
- Object.defineProperty(navigator.mediaDevices,'getUserMedia',{configurable:true,value:async()=>{window.__live.microphones++;if(window.__live.holdPermission)return new Promise(resolve=>{window.__releasePermission=()=>resolve({getTracks:()=>[track]});});return {getTracks:()=>[track]};}});
+ const makeStream=()=>{const track={enabled:true,stop(){window.__live.stopped++;}};return {getTracks:()=>[track]};};
+ Object.defineProperty(HTMLMediaElement.prototype,'play',{configurable:true,value:async function(){window.__live.playing=true;}});
+ Object.defineProperty(HTMLMediaElement.prototype,'pause',{configurable:true,value:function(){window.__live.playing=false;}});
+ Object.defineProperty(navigator.mediaDevices,'getUserMedia',{configurable:true,value:async()=>{window.__live.microphones++;if(window.__live.holdPermission)return new Promise(resolve=>{window.__releasePermission=()=>resolve(makeStream());});return makeStream();}});
  class Peer {
   iceGatheringState='complete';connectionState='connected';localDescription=null;
   createDataChannel(){const channel={readyState:'open',onmessage:null,onclose:null,send(data){window.__live.sent.push(JSON.parse(data));},close(){this.readyState='closed';this.onclose?.();}};window.__live.channel=channel;return channel;}
   addTrack(){}
   async createOffer(){return {type:'offer',sdp:'v=0\r\ntest-offer'};}
   async setLocalDescription(value){this.localDescription=value;}
-  async setRemoteDescription(){setTimeout(()=>window.__emit({type:'session.started'}),20);}
+  async setRemoteDescription(){const stream=new MediaStream();window.__live.output=stream;this.ontrack?.({streams:[stream]});setTimeout(()=>window.__emit({type:'session.started'}),20);}
   close(){this.connectionState='closed';}
  }
  Object.defineProperty(window,'RTCPeerConnection',{configurable:true,value:Peer});
@@ -89,12 +91,14 @@ try{
  await page.waitForFunction(()=>typeof window.__releasePermission==='function');
  await page.getByRole('button',{name:'Encerrar conversa'}).click();
  await page.getByText('Microfone desligado',{exact:true}).waitFor({timeout:3000});
- await page.evaluate(()=>{window.__releasePermission();window.__live.holdPermission=false;});
- await page.waitForTimeout(100);
  assert.equal(calls.filter(c=>c.action==='start').length,startsBeforePending,'permission canceled before capture never initializes a paid session');
+ await page.evaluate(()=>{window.__live.holdPermission=false;});
  closeRace=true;
  await page.getByRole('button',{name:'Iniciar conversa real'}).click();
  await page.getByText('Microfone ativo',{exact:true}).waitFor();
+ await page.evaluate(()=>window.__releasePermission());
+ await page.waitForTimeout(100);
+ assert.equal(await page.evaluate(()=>document.querySelector('audio').srcObject===window.__live.output&&window.__live.playing),true,'late permission cleanup cannot silence a replacement session');
  await page.getByRole('button',{name:'Encerrar conversa'}).click();
  await page.getByText('Conversa encerrada. Microfone liberado.',{exact:true}).waitFor();
  assert.equal(await page.getByText('Finalização da sessão não confirmada',{exact:false}).count(),0);
