@@ -50,7 +50,9 @@ jobs:
         with:
           node-version: '24'
       - name: Resolver dependências públicas
-        run: npm install --ignore-scripts --no-audit --no-fund
+        run: |
+          npm install --ignore-scripts --no-audit --no-fund
+          npm install --save-dev --save-exact playwright --ignore-scripts --no-audit --no-fund
       - name: Fixar as versões resolvidas
         run: |
           node --input-type=module <<'NODE'
@@ -62,7 +64,7 @@ jobs:
           NODE
           npm install --package-lock-only --ignore-scripts --no-audit --no-fund
       - name: Guardar arquivos de reprodutibilidade
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: mesa-ti-dependencies
           retention-days: 7
@@ -84,3 +86,19 @@ jobs:
         run: npm test
       - name: Gerar build de produção
         run: npm run build
+      - name: Preparar Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Verificar interação e capturar telas
+        run: |
+          npm start > /tmp/mesa-ti-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:3000 > /dev/null && break; sleep 1; done
+          node tests/browser.mjs
+      - name: Guardar telas da aplicação fictícia
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: mesa-ti-ui-review
+          retention-days: 7
+          path: apps/decisions/test-results
