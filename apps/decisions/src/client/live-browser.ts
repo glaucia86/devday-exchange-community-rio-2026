@@ -5,6 +5,7 @@ export class LiveBrowser {
  private peer:RTCPeerConnection|null=null;
  private channel:RTCDataChannel|null=null;
  private stream:MediaStream|null=null;
+ private outputStream:MediaStream|null=null;
  private sessionId:string|null=null;
  private stopped=false;
  private ready=false;
@@ -28,7 +29,7 @@ export class LiveBrowser {
   this.stream=await navigator.mediaDevices.getUserMedia({audio:true});
   if(this.stopped){this.release();return;}
   this.peer=new RTCPeerConnection();
-  this.peer.ontrack=event=>{this.options.audio.srcObject=event.streams[0]??new MediaStream([event.track]);void this.options.audio.play().catch(()=>this.options.onNotice('Use o controle de áudio para permitir a reprodução.'));};
+  this.peer.ontrack=event=>{if(this.stopped)return;this.outputStream=event.streams[0]??new MediaStream([event.track]);this.options.audio.srcObject=this.outputStream;void this.options.audio.play().catch(()=>{if(!this.stopped)this.options.onNotice('Use o controle de áudio para permitir a reprodução.');});};
   this.peer.onconnectionstatechange=()=>{if(this.peer&&['failed','disconnected'].includes(this.peer.connectionState)&&!this.stopped){this.options.onNotice('Conexão interrompida. Encerrando a sessão.');void this.stop();}};
   for(const track of this.stream.getTracks())this.peer.addTrack(track,this.stream);
   this.channel=this.peer.createDataChannel('oai-events');
@@ -99,6 +100,6 @@ export class LiveBrowser {
   })();
   return this.closing;
  }
- private silenceLocal(){this.stream?.getTracks().forEach(track=>track.stop());this.stream=null;this.options.audio.pause();this.options.audio.srcObject=null;}
+ private silenceLocal(){this.stream?.getTracks().forEach(track=>track.stop());this.stream=null;if(this.outputStream&&this.options.audio.srcObject===this.outputStream){this.options.audio.pause();this.options.audio.srcObject=null;}this.outputStream=null;}
  private release(){this.channel?.close();this.peer?.close();this.silenceLocal();}
 }

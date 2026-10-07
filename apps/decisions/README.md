@@ -4,12 +4,12 @@ Service desk fictício em Next.js, TypeScript, Tailwind CSS 4 e Lucide. O modo p
 
 ## Estado real
 
-- 15 testes de domínio e seleção de fala aprovados
+- Testes de domínio, contratos e proteção de fala; consulte os resultados da CI no SHA atual
 - Instalação, TypeScript e build aprovados no GitHub Actions
 - Fluxo mock testado em Chromium: revisão humana, correção, reset, texto livre, erro e nova tentativa
 - Capturas desktop e celular inspecionadas; sem corte, sobreposição ou overflow horizontal observado
 - Voz: leitura opcional com voz local em português do dispositivo; não é áudio OpenAI ou transcrição real
-- GPT-Live + Decisions: arquitetura documentada, ainda não implementada/conectada ou validada de ponta a ponta
+- GPT-Live + Decisions: adaptadores implementados; testes usam fixtures. API e áudio reais ainda não foram ensaiados
 - Nenhuma chave, sessão ou chamada paga foi utilizada
 
 O [registro de validação](../../docs/validacao.md) distingue cada estágio.
@@ -61,8 +61,14 @@ Escolha um cenário → analise o relato → simule uma correção → analise n
 
 A espera de 900 ms é parte do mock, não uma medida de latência de API. Probabilidades são fixtures. Texto livre recebe um aviso; nunca uma sugestão pronta disfarçada de análise.
 
-## OpenAI ao vivo: etapa ainda pendente
+## OpenAI ao vivo: integração experimental
 
-A arquitetura usa [GPT-Live com Decisions](https://developers.openai.com/api/docs/guides/decisions-voice). Implementá-la exige separar captura de áudio, transcrição, delegação e retorno falado, mantendo revisão de estado no servidor. Antes de configurar/executar: confirmar acesso, autorização da chave e de gasto, e depois ensaiar áudio e correções. Esta versão não contém rotas de API nem campo de chave.
+A aba OpenAI ao vivo conecta microfone e áudio por WebRTC, acumula transcrições, recebe delegações, consulta Decisions no servidor e devolve sugestões ao GPT-Live. Correções invalidam a revisão anterior. Somente o clique humano cria o ticket simulado.
+
+O live fica desativado por padrão. Abrir a aba não pede microfone nem inicia inferência. A ativação exige configuração segura, acesso aos modelos e autorização de custo. A rota aceita apenas loopback HTTP, mesma origem e um código de acesso da demo distinto da chave OpenAI.
+
+O [guia local Windows](../../docs/integracao-live.md) explica o mock, o arquivo .env.local ignorado pelo Git, a inserção manual de uma chave existente e os limites. Nenhum segredo foi configurado ou usado nesta implementação.
+
+Testes interceptam transporte, eventos e respostas. Eles não comprovam reconhecimento de fala, acesso da conta, latência, decisões de modelo, áudio audível ou consumo real.
 
 [LAB](../../labs/02-decisions-typescript/README.md) · [Guia da apresentadora](../../docs/guia-apresentadora.md#decisions-api)

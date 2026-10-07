@@ -78,7 +78,7 @@ Este repositório reúne **material original em português** para acompanhar o e
 Conhecer o básico de JavaScript/TypeScript, terminal e Git ajuda na parte de código. Cada LAB apresenta sua própria preparação.
 
 > [!IMPORTANT]
-> A Mesa TI funciona atualmente em **modo mock**, com cenários fictícios. A integração real de voz com GPT-Live + Decisions está documentada, mas ainda não foi implementada ou validada de ponta a ponta. Os testes do mock não comprovam essa integração.
+> A Mesa TI funciona atualmente em **modo mock**, com cenários fictícios. Os adaptadores GPT-Live + Decisions estão implementados em uma aba separada, desativada por padrão. Ainda não houve ensaio com API e áudio reais; testes com fixtures não comprovam a experiência ponta a ponta.
 
 <a id="labs"></a>
 ## 🧪 Escolha seu LAB
@@ -127,7 +127,7 @@ Se o PowerShell informar que `npm.ps1` não pode ser carregado, abra o Prompt de
 
 A **Mesa TI** é um service desk fictício. Você escolhe um cenário, analisa o relato, simula uma correção e revisa os campos antes de criar um ticket simulado.
 
-O fluxo atual usa fixtures e estado em memória. Nenhuma API é chamada e o microfone não é capturado.
+O fluxo padrão usa fixtures e estado em memória, sem API ou microfone. A integração ao vivo exige configuração segura e autorização de custo. Consulte o [guia Windows e os limites](docs/integracao-live.md).
 
 ### Clone o material
 
@@ -170,7 +170,7 @@ node --test apps/decisions/tests/*.test.mts
 node scripts/check-doc-links.mjs
 ```
 
-O conjunto unitário contém **26 testes**: 3 do starter, 8 da solução e 15 do domínio da Mesa TI e da proteção de fala.
+O conjunto unitário contém **46 testes**: 3 do starter, 8 da solução e 35 de domínio, contratos e proteções da Mesa TI. Consulte a CI do commit atual para o resultado.
 
 Dentro de **`apps/decisions`**, após instalar as dependências:
 
@@ -192,12 +192,12 @@ A [execução de referência](https://github.com/glaucia86/devday-exchange-commu
 | Área | Situação |
 | --- | --- |
 | Quatro LABS e guia da apresentadora | Disponíveis |
-| Encaminhador e domínio da Mesa TI | 26 testes unitários aprovados |
+| Encaminhador e Mesa TI | 46 testes definidos; resultado por commit no Actions |
 | TypeScript e build Next.js | Aprovados na execução de referência |
 | Interface mock em Chromium | Revisão, correção, reset e tratamento de erro verificados |
 | Capturas desktop e celular | Inspecionadas |
 | Voz local do dispositivo | Regressão simulada; áudio real precisa de ensaio |
-| GPT-Live + Decisions | Implementação e validação ponta a ponta pendentes |
+| GPT-Live + Decisions | Adaptadores implementados; API e áudio reais ainda sem ensaio |
 | Dots, Codex CLI e Codex Cloud | Guias disponíveis; ensaio dos fluxos reais pendente |
 
 <a id="apresentadora"></a>
@@ -238,7 +238,7 @@ Use a [programação](docs/programacao.md) para os detalhes do encontro e as [re
 <a id="seguranca"></a>
 ## 🔐 Segurança e licença
 
-Use dados fictícios ou públicos. Não publique credenciais, informações de participantes ou dados de trabalho. Uma futura integração deve manter chaves de projeto no servidor, fora do código enviado ao navegador.
+Use dados fictícios ou públicos. Não publique credenciais, informações de participantes ou dados de trabalho. A integração mantém a chave de projeto no servidor, fora do código enviado ao navegador, e fica desativada por padrão.
 
 Este encontro é organizado pela comunidade. O repositório não é documentação oficial nem um produto oficial da OpenAI.
 

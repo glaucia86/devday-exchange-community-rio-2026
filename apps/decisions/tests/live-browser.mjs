@@ -1,5 +1,6 @@
 import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 const browser=await chromium.launch();
 const page=await browser.newPage({viewport:{width:1440,height:1120}});
 const errors=[];const calls=[];
@@ -105,6 +106,8 @@ try{
  await page.setViewportSize({width:390,height:844});
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  await page.screenshot({path:'test-results/live-fixture-mobile.png',fullPage:true});
+ const shot=(await readFile('test-results/live-fixture-mobile.png')).toString('base64');
+ for(let i=0;i<shot.length;i+=6000)console.log('PUBLIC_SCREENSHOT live-fixture-mobile.png '+(i/6000)+' '+shot.slice(i,i+6000));
  assert.deepEqual(errors,[]);
  console.log('LIVE_BROWSER_FIXTURE_PASS: disabled gate, consent, microphone cleanup, WebRTC setup, transcript, delegation ID, duplicate suppression, correction, stale result, human confirmation, close, mobile. No OpenAI/audio calls.');
 }finally{await browser.close();}
