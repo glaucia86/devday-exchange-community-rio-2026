@@ -10,8 +10,12 @@ async function visible(locator){await locator.waitFor({state:'visible'});}
 async function enabled(locator,value){assert.equal(await locator.isEnabled(),value);}
 try{
   await page.goto('http://127.0.0.1:3000',{waitUntil:'networkidle'});
+  assert.equal(await page.title(),'Alô, TI · DevDay Exchange Rio');
+  assert.equal(await page.getByRole('link',{name:'Alô, TI, início',exact:true}).innerText(),'Alô, TI');
+  assert.equal(await page.getByRole('region',{name:'Laboratório Alô, TI',exact:true}).count(),1);
   await page.screenshot({path:'test-results/desktop-start.png',fullPage:true});
   await page.getByRole('button',{name:'Explorar cenário'}).click();
+  assert.ok(await page.getByText('ALÔ, TI',{exact:true}).count()>0,'simulated transcript uses the current brand');
   await enabled(page.getByRole('button',{name:'Confirmar e criar ticket simulado'}),false);
   await page.getByRole('button',{name:'Analisar relato',exact:true}).click();
   await visible(page.getByRole('heading',{name:'Acessos e identidade',exact:true}));
