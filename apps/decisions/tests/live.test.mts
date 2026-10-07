@@ -148,3 +148,23 @@ test('a confirmed live ticket cannot be erased by later speech or corrections',(
  assert.deepEqual(deskReducer(s,{type:'EDIT',value:'Obrigada'}),s);
  assert.deepEqual(deskReducer(s,{type:'CORRECT'}),s);
 });
+
+test('lost sideband revokes inference and triggers bounded reattachment for closure',async()=>{
+ let lose!:(ok:boolean)=>void;let attaches=0;let calls=0;
+ const finalized=new Promise<boolean>(resolve=>{lose=resolve;});
+ const handle=createLiveHandler(env,async()=>{calls++;return Response.json({session:{id:'sess_lost'},transport:{type:'webrtc',sdp:'v=0'}});},async()=>{
+  attaches++;return {close:async()=>false,finalized:attaches===1?finalized:new Promise<boolean>(()=>{})};
+ });
+ await handle(req({action:'start',sdp:'v=0'}));lose(false);
+ await new Promise<void>(resolve=>setImmediate(resolve));
+ assert.equal(attaches,2,'a failed sideband is reattached only to close the same session');
+ const response=await handle(req({action:'decide',sessionId:'sess_lost',revision:1,text:'Relato',transcript:[]}));
+ assert.equal(response.status,409);assert.equal(calls,1,'no Decisions request after loss of server guard');
+});
+test('confirmed session closure is idempotent when browser and sideband race',async()=>{
+ let closeCount=0;
+ const handle=createLiveHandler(env,async()=>Response.json({session:{id:'sess_race'},transport:{type:'webrtc',sdp:'v=0'}}),async()=>({close:async()=>{closeCount++;return true;},finalized:new Promise<boolean>(()=>{})}));
+ await handle(req({action:'start',sdp:'v=0'}));
+ for(let i=0;i<2;i++){const response=await handle(req({action:'close',sessionId:'sess_race'}));assert.equal(response.status,200);assert.equal((await response.json()).confirmed,true);}
+ assert.equal(closeCount,1);
+});

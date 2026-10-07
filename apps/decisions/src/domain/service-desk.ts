@@ -64,8 +64,9 @@ export function deskReducer(state:DeskState,event:DeskEvent):DeskState {
         messages:[{id:1,revision:1,role:'assistant',text:'Olá! Conte o que aconteceu e quem foi afetado. Vamos preparar um ticket juntos.'},{id:2,revision:1,role:'user',text:scenario.text}],
         notice:'Fala completa do cenário. Nenhuma chamada à OpenAI foi feita.'};
     }
-    case 'EDIT': return {...state,revision:state.revision+1,draftText:event.value,status:'needs-analysis',analysis:null,reviewed:false,ticket:null,notice:'Relato alterado. A análise anterior perdeu a validade.'};
+    case 'EDIT': return state.ticket?state:{...state,revision:state.revision+1,draftText:event.value,status:'needs-analysis',analysis:null,reviewed:false,ticket:null,notice:'Relato alterado. A análise anterior perdeu a validade.'};
     case 'CORRECT': {
+      if(state.ticket)return state;
       const correction=SCENARIOS[state.scenario].correction;
       return {...state,revision:state.revision+1,corrected:true,draftText:correction,status:'needs-analysis',analysis:null,reviewed:false,ticket:null,
         messages:append({...state,revision:state.revision+1},'user',correction),notice:'Correção recebida. Vamos analisar esta nova versão.'};

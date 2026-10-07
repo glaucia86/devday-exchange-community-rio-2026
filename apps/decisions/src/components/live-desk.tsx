@@ -59,11 +59,13 @@ export default function LiveDesk(){
   if(event.type==='session.input_transcript.delta'||event.type==='session.output_transcript.delta'){
    const role=event.type==='session.input_transcript.delta'?'user':'assistant';
    const next=transcript.current.map(line=>({...line}));
+   const newSegment=next.at(-1)?.role!==role;
    if(next.at(-1)?.role===role)next[next.length-1].text+=event.delta;else next.push({role,text:event.delta});
    if(next.reduce((sum,line)=>sum+line.text.length,0)>8000){setNotice('Limite de transcrição atingido. Encerrando.');void stop();return;}
    transcript.current=next;setLines(next);
-   if(role==='user'){
-    invalidate(next.filter(line=>line.role==='user').map(line=>line.text).join('\n'));
+   if(role==='user'&&!current.current.ticket){
+    const separator=newSegment&&current.current.draftText?'\n':'';
+    invalidate((current.current.draftText+separator+event.delta).slice(0,8000));
     if(!current.current.title)apply({type:'TITLE',value:'Relato de suporte por voz'});
    }
    return;
