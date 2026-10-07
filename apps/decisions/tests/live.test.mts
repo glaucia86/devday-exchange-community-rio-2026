@@ -69,14 +69,15 @@ test('invalid and unrelated Live events cannot become instructions',()=>{
 const origin='http://127.0.0.1:3000';
 const token='test-only-demo-access-token-not-a-real-secret';
 const env={MESA_LIVE_ENABLED:'true',MESA_LIVE_ACCESS_TOKEN:token,OPENAI_API_KEY:'test-only-fake-key'};
+const guard=async()=>({close:async()=>true,finalized:new Promise<boolean>(()=>{})});
 const req=(body:unknown,headers:Record<string,string>={})=>new Request(origin+'/api/live',{method:'POST',headers:{origin,host:'127.0.0.1:3000','content-type':'application/json',authorization:'Bearer '+token,...headers},body:JSON.stringify(body)});
 test('disabled live does not call OpenAI even when a request contains valid-looking data',async()=>{
- let calls=0;const handle=createLiveHandler({},async()=>{calls++;throw Error('network forbidden');});
+ let calls=0;const handle=createLiveHandler({},async()=>{calls++;throw Error('network forbidden');},guard);
  assert.equal((await handle(req({action:'start',sdp:'v=0\r\n'}))).status,503);
  assert.equal(calls,0);
 });
 test('auth, cross-origin, public host and oversized input are rejected before inference',async()=>{
- let calls=0;const handle=createLiveHandler(env,async()=>{calls++;throw Error('network forbidden');});
+ let calls=0;const handle=createLiveHandler(env,async()=>{calls++;throw Error('network forbidden');},guard);
  assert.equal((await handle(req({action:'start',sdp:'v=0\r\n'},{authorization:'Bearer wrong'}))).status,401);
  assert.equal((await handle(req({action:'start',sdp:'v=0\r\n'},{origin:'https://evil.example'}))).status,403);
  const external=new Request('https://public.example/api/live',{method:'POST',headers:{origin:'https://public.example',host:'public.example',authorization:'Bearer '+token,'content-type':'application/json'},body:JSON.stringify({action:'start',sdp:'v=0'})});
@@ -86,7 +87,7 @@ test('auth, cross-origin, public host and oversized input are rejected before in
 });
 test('server creates only client-delegation WebRTC sessions and never returns the project key',async()=>{
  let seenUrl='',seenBody:any;
- const handle=createLiveHandler(env,async(url,init)=>{seenUrl=String(url);seenBody=JSON.parse(String(init?.body));return Response.json({session:{id:'sess_test'},transport:{type:'webrtc',sdp:'v=0\r\nanswer'}});});
+ const handle=createLiveHandler(env,async(url,init)=>{seenUrl=String(url);seenBody=JSON.parse(String(init?.body));return Response.json({session:{id:'sess_test'},transport:{type:'webrtc',sdp:'v=0\r\nanswer'}});},guard);
  const res=await handle(req({action:'start',sdp:'v=0\r\noffer'}));
  assert.equal(res.status,200);const json=await res.json();
  assert.equal(seenUrl,'https://api.openai.com/v1/live/sessions');
@@ -97,14 +98,42 @@ test('server creates only client-delegation WebRTC sessions and never returns th
  assert.equal(JSON.stringify(json).includes(env.OPENAI_API_KEY),false);
 });
 test('unknown sessions and invalid actions never reach upstream',async()=>{
- let calls=0;const handle=createLiveHandler(env,async()=>{calls++;throw Error('network forbidden');});
+ let calls=0;const handle=createLiveHandler(env,async()=>{calls++;throw Error('network forbidden');},guard);
  assert.equal((await handle(req({action:'decide',sessionId:'not-owned',revision:1,text:'hello',transcript:[]}))).status,409);
  assert.equal((await handle(req({action:'run-command'}))).status,400);
  assert.equal(calls,0);
 });
 test('session and request caps bound local demo inference',async()=>{
- let calls=0;const handle=createLiveHandler(env,async()=>{calls++;return Response.json({session:{id:'sess_'+calls},transport:{type:'webrtc',sdp:'v=0\r\nanswer'}});});
+ let calls=0;const handle=createLiveHandler(env,async()=>{calls++;return Response.json({session:{id:'sess_'+calls},transport:{type:'webrtc',sdp:'v=0\r\nanswer'}});},guard);
  assert.equal((await handle(req({action:'start',sdp:'v=0\r\n'}))).status,200);
  assert.equal((await handle(req({action:'start',sdp:'v=0\r\n'}))).status,429);
  assert.equal(calls,1);
+});
+
+test('server Decisions keeps revision, source and allowed model; later revisions reject older work',async()=>{
+ const calls:{url:string;body:any}[]=[];
+ const handle=createLiveHandler(env,async(url,init)=>{
+  const body=JSON.parse(String(init?.body));calls.push({url:String(url),body});
+  return Response.json(String(url).endsWith('/live/sessions')?{session:{id:'sess_decide'},transport:{type:'webrtc',sdp:'v=0'}}:{answers});
+ },guard);
+ await handle(req({action:'start',sdp:'v=0'}));
+ const body={action:'decide',sessionId:'sess_decide',revision:5,text:'Relato fictício de erro 500',transcript:[]};
+ const response=await handle(req(body));assert.equal(response.status,200);
+ const data=await response.json();assert.equal(data.revision,5);assert.equal(data.result.source,'openai');
+ assert.equal(calls[1].url,'https://api.openai.com/v1/decisions');assert.equal(calls[1].body.model,'gpt-6-luna');
+ assert.equal((await handle(req({...body,revision:4}))).status,409);
+ assert.equal(calls.length,2);
+});
+test('server close waits for sideband confirmation before reporting success',async()=>{
+ let closes=0;
+ const handle=createLiveHandler(env,async()=>Response.json({session:{id:'sess_close'},transport:{type:'webrtc',sdp:'v=0'}}),async()=>({close:async()=>{closes++;return false;},finalized:new Promise<boolean>(()=>{})}));
+ await handle(req({action:'start',sdp:'v=0'}));
+ const response=await handle(req({action:'close',sessionId:'sess_close'}));
+ assert.equal(response.status,502);assert.equal((await response.json()).confirmed,false);assert.equal(closes,1);
+ assert.equal((await handle(req({action:'start',sdp:'v=0'}))).status,429);
+});
+test('raw upstream errors never expose credentials or upstream response contents',async()=>{
+ const handle=createLiveHandler(env,async()=>new Response('sensitive upstream diagnostic',{status:401}),guard);
+ const response=await handle(req({action:'start',sdp:'v=0'}));assert.equal(response.status,502);
+ assert.equal((await response.text()).includes('sensitive upstream diagnostic'),false);
 });

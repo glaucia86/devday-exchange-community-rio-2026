@@ -22,11 +22,11 @@ export const SCENARIOS = {
     correction: 'O portal interno mostra erro 500 para todo o time e ninguém consegue trabalhar. Não há alternativa.',
   },
 } satisfies Record<ScenarioId, { label:string;category:string;title:string;text:string;correction:string }>;
-export type Decision = { team:Team; probability:number; confidence:number; score:number; explanation:string; source:'mock' };
+export type Decision = { team:Team; probability:number; confidence:number; score:number; explanation:string; source:'mock'|'openai' };
 export type Message = { id:number;role:'user'|'assistant';text:string;revision:number };
 export type Ticket = { id:string;title:string;description:string;team:Team;revision:number;simulated:true };
 export type DeskState = {
-  mode:'mock'; session:number;revision:number;scenario:ScenarioId;corrected:boolean;
+  mode:'mock'|'live'; session:number;revision:number;scenario:ScenarioId;corrected:boolean;
   status:'ready'|'needs-analysis'|'analyzing'|'review'|'clarify'|'created'|'error';
   draftText:string;title:string;team:Team;messages:Message[];analysis:Decision|null;
   reviewed:boolean;ticket:Ticket|null;notice:string;
@@ -36,8 +36,8 @@ export type DeskEvent =
  | {type:'TITLE';value:string} | {type:'TEAM';value:Team} | {type:'REVIEW';checked:boolean}
  | {type:'ANALYZE'} | {type:'RESOLVED';session:number;revision:number;result:Decision}
  | {type:'FAILED';session:number;revision:number} | {type:'CREATE'} | {type:'RESET'};
-export function createDesk(session=1):DeskState {
-  return {mode:'mock',session,revision:0,scenario:'access',corrected:false,status:'ready',draftText:'',title:'',team:'human',messages:[],analysis:null,reviewed:false,ticket:null,notice:''};
+export function createDesk(session=1,mode:DeskState['mode']='mock'):DeskState {
+  return {mode,session,revision:0,scenario:'access',corrected:false,status:'ready',draftText:'',title:'',team:'human',messages:[],analysis:null,reviewed:false,ticket:null,notice:''};
 }
 export function mockDecision(scenario:ScenarioId,corrected:boolean):Decision {
   if ((scenario==='access'||scenario==='ambiguous')&&corrected) return {
@@ -57,7 +57,7 @@ export function canCreate(state:DeskState):boolean {
 }
 export function deskReducer(state:DeskState,event:DeskEvent):DeskState {
   switch(event.type) {
-    case 'RESET': return createDesk(state.session+1);
+    case 'RESET': return createDesk(state.session+1,state.mode);
     case 'REPLAY': {
       const scenario=SCENARIOS[event.scenario];
       return {...createDesk(state.session+1),scenario:event.scenario,revision:1,status:'needs-analysis',draftText:scenario.text,title:scenario.title,
@@ -76,13 +76,13 @@ export function deskReducer(state:DeskState,event:DeskEvent):DeskState {
     case 'ANALYZE': {
       if(!state.draftText.trim()||state.ticket||state.status==='analyzing') return state;
       const fixture=SCENARIOS[state.scenario];
-      if(state.draftText!==fixture.text&&state.draftText!==fixture.correction) return {...state,status:'clarify',analysis:null,reviewed:false,notice:'O mock reproduz apenas os cenários prontos. Texto livre não foi analisado. Escolha um cenário ou use a integração ao vivo quando disponível.'};
-      return {...state,status:'analyzing',analysis:null,reviewed:false,corrected:state.draftText===fixture.correction,notice:'Reproduzindo uma resposta tipada de exemplo.'};
+      if(state.mode==='mock'&&state.draftText!==fixture.text&&state.draftText!==fixture.correction) return {...state,status:'clarify',analysis:null,reviewed:false,notice:'O mock reproduz apenas os cenários prontos. Texto livre não foi analisado. Escolha um cenário ou use a integração ao vivo quando disponível.'};
+      return {...state,status:'analyzing',analysis:null,reviewed:false,corrected:state.draftText===fixture.correction,notice:state.mode==='mock'?'Reproduzindo uma resposta tipada de exemplo.':'Consultando Decisions no servidor.'};
     }
     case 'RESOLVED': {
       if(event.session!==state.session||event.revision!==state.revision||state.status!=='analyzing') return state;
       const r=event.result;
-      if(!r||r.source!=='mock'||!Object.hasOwn(TEAMS,r.team)||![r.probability,r.confidence,r.score].every(Number.isFinite)||r.probability<0||r.probability>1||r.confidence<0||r.confidence>1||r.score<0||r.score>2||typeof r.explanation!=='string') return {...state,status:'error',notice:'A resposta não corresponde ao contrato esperado.',analysis:null,reviewed:false};
+      if(!r||r.source!==(state.mode==='mock'?'mock':'openai')||!Object.hasOwn(TEAMS,r.team)||![r.probability,r.confidence,r.score].every(Number.isFinite)||r.probability<0||r.probability>1||r.confidence<0||r.confidence>1||r.score<0||r.score>2||typeof r.explanation!=='string') return {...state,status:'error',notice:'A resposta não corresponde ao contrato esperado.',analysis:null,reviewed:false};
       return {...state,status:r.team==='human'?'clarify':'review',analysis:r,team:r.team,reviewed:false,messages:append(state,'assistant',r.explanation),notice:r.team==='human'?'Precisamos de mais contexto. Nenhum ticket foi criado.':'Revise o relato e a equipe. O ticket ainda é um rascunho.'};
     }
     case 'FAILED': return event.session!==state.session||event.revision!==state.revision||state.status!=='analyzing'?state:{...state,status:'error',analysis:null,reviewed:false,notice:'A análise falhou. Seu relato continua aqui; tente novamente.'};

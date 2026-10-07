@@ -92,3 +92,5 @@ try{
     for(let i=0;i<data.length;i+=6000)console.log('PUBLIC_SCREENSHOT '+file+' '+(i/6000)+' '+data.slice(i,i+6000));
   }
 }finally{await browser.close();}
+
+await import('./live-browser.mjs');

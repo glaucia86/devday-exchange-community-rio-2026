@@ -3,6 +3,7 @@ import { useEffect, useReducer, useRef, useState } from 'react';
 import { ArrowDown, ArrowRight, ArrowUpRight, AudioLines, Check, CheckCheck, ChevronDown, CircleHelp, Code2, FileText, Headphones, Info, LoaderCircle, LockKeyhole, MessageSquareText, Play, Radio, RotateCcw, ShieldCheck, Sparkles, Ticket, Volume2, VolumeX, X } from 'lucide-react';
 import { canCreate, createDesk, deskReducer, mockDecision, SCENARIOS, TEAMS, type ScenarioId, type Team } from '../domain/service-desk';
 
+import LiveDesk from './live-desk';
 import { getSpokenReply } from '../domain/spoken-reply';
 
 const STATUS = {ready:'Pronto para começar','needs-analysis':'Relato recebido',analyzing:'Analisando o relato',review:'Pronto para revisar',clarify:'Precisamos esclarecer',created:'Ticket criado',error:'Tente novamente'};
@@ -60,11 +61,11 @@ export default function ServiceDesk(){
     <div className="workspace-label"><span><span className="status-dot"/>SERVICE DESK FICTÍCIO</span><span>FEITO PARA EXPLORAR, CORRIGIR E APRENDER</span></div>
     <section className="workspace" aria-label="Laboratório Mesa TI">
       <div className="workspace-toolbar">
-        <div className="mode-switch"><span className="mode-selected"><Radio size={14}/>Simulado</span><button onClick={()=>setShowLive(!showLive)} aria-expanded={showLive}><LockKeyhole size={13}/>OpenAI ao vivo <ChevronDown size={13}/></button></div>
+        <div className="mode-switch"><button className={!showLive?"mode-selected":""} onClick={()=>setShowLive(false)}><Radio size={14}/>Simulado</button><button className={showLive?"mode-selected":""} onClick={()=>{stopAudio();setSound(false);setShowLive(!showLive);}} aria-expanded={showLive}><LockKeyhole size={13}/>OpenAI ao vivo <ChevronDown size={13}/></button></div>
         <div className="toolbar-actions"><button onClick={()=>{stopAudio();setSound(!sound);}} aria-pressed={sound} title="Reprodução com voz local do dispositivo, quando disponível">{sound?<Volume2 size={17}/>:<VolumeX size={17}/>}<span>{sound?'Som ligado':'Som desligado'}</span></button><button onClick={reset}><RotateCcw size={16}/><span>Recomeçar</span></button></div>
       </div>
-      {showLive&&<div className="live-note"><Info size={20}/><div><strong>Conversa OpenAI de voz para voz: próxima etapa</strong><p>Esta versão local reproduz cenários. A integração GPT-Live + Decisions ainda não está conectada ou validada. Ela exigirá autorização, acesso à API e configuração segura no servidor. Nenhuma chave deve ir para o navegador.</p><a href="https://developers.openai.com/api/docs/guides/decisions-voice" target="_blank" rel="noreferrer">Como funciona a integração oficial <ArrowUpRight size={13}/></a></div><button onClick={()=>setShowLive(false)} aria-label="Fechar informação"><X size={17}/></button></div>}
-      <div className="workspace-grid">
+      {showLive&&<LiveDesk/>}
+      {!showLive&&<div className="workspace-grid">
         <section className="conversation" id="conversation" aria-label="Conversa e transcrição">
           <div className="panel-heading"><div><span className="step-label">01 / O RELATO</span><h2>Vamos conversar</h2></div><span className={'conversation-state '+(speaking?'speaking':'')}>{speaking?<AudioLines size={14}/>:<span className="small-dot"/>}{speaking?'Reproduzindo voz local':STATUS[state.status]}</span></div>
           {!active?<div className="welcome">
@@ -90,8 +91,9 @@ export default function ServiceDesk(){
           </div>
         </aside>
       </div>
+      }
       <div className="workspace-footer"><span><ShieldCheck size={14}/>Dados fictícios. Decisões visíveis. Controle humano.</span><button onClick={()=>setShowDetails(!showDetails)} aria-expanded={showDetails}><Code2 size={15}/>Por trás da decisão<ChevronDown size={13}/></button></div>
-      {showDetails&&<section className="technical"><div><h3>O contrato, sem mistério</h3><p>Uma probabilidade, uma escolha e uma pontuação. Estes números são exemplos fixos, não medidas obtidas de um modelo.</p><ul><li><code>predicate</code> Há contexto suficiente?</li><li><code>choice</code> Qual equipe deve revisar?</li><li><code>score</code> Qual impacto foi descrito, de 0 a 2?</li></ul><p>O score pode ser fracionário. Ele não é uma prioridade operacional.</p><label className="review-check"><input type="checkbox" checked={simulateFailure} onChange={e=>setSimulateFailure(e.target.checked)}/>Simular falha na próxima análise</label></div><pre aria-label="Resposta de exemplo">{JSON.stringify(state.analysis?{source:'fixture',session:state.session,revision:state.revision,answers:[{type:'predicate',name:'contexto',probability:state.analysis.probability},{type:'choice',name:'equipe',choice:state.analysis.team,confidence:state.analysis.confidence},{type:'score',name:'impacto',score:state.analysis.score,confidence:state.analysis.confidence}]}:{source:'fixture',status:'Aguardando relato'},null,2)}</pre></section>}
+      {showDetails&&!showLive&&<section className="technical"><div><h3>O contrato, sem mistério</h3><p>Uma probabilidade, uma escolha e uma pontuação. Estes números são exemplos fixos, não medidas obtidas de um modelo.</p><ul><li><code>predicate</code> Há contexto suficiente?</li><li><code>choice</code> Qual equipe deve revisar?</li><li><code>score</code> Qual impacto foi descrito, de 0 a 2?</li></ul><p>O score pode ser fracionário. Ele não é uma prioridade operacional.</p><label className="review-check"><input type="checkbox" checked={simulateFailure} onChange={e=>setSimulateFailure(e.target.checked)}/>Simular falha na próxima análise</label></div><pre aria-label="Resposta de exemplo">{JSON.stringify(state.analysis?{source:'fixture',session:state.session,revision:state.revision,answers:[{type:'predicate',name:'contexto',probability:state.analysis.probability},{type:'choice',name:'equipe',choice:state.analysis.team,confidence:state.analysis.confidence},{type:'score',name:'impacto',score:state.analysis.score,confidence:state.analysis.confidence}]}:{source:'fixture',status:'Aguardando relato'},null,2)}</pre></section>}
     </section>
     {(voiceNotice||(sound&&!voiceReady))&&<p className="audio-note" role="status"><Info size={14}/>{voiceNotice||'Ative uma voz local em português no dispositivo para ouvir o cenário. O modo simulado não usa áudio OpenAI.'}</p>}
     <footer className="site-footer"><p>Um experimento para aprender fazendo.<br/><span>DevDay Exchange Community · Rio de Janeiro, 2026</span></p><p>Material da comunidade.<br/><span>Este não é um produto oficial da OpenAI.</span></p></footer>
