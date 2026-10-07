@@ -1,0 +1,68 @@
+# Mesa TI · demo de Decisions
+
+Service desk fictício em Next.js, TypeScript, Tailwind CSS 4 e Lucide. O modo padrão reproduz fixtures e não chama qualquer API.
+
+## Estado real
+
+- 15 testes de domínio e seleção de fala aprovados
+- Instalação, TypeScript e build aprovados no GitHub Actions
+- Fluxo mock testado em Chromium: revisão humana, correção, reset, texto livre, erro e nova tentativa
+- Capturas desktop e celular inspecionadas; sem corte, sobreposição ou overflow horizontal observado
+- Voz: leitura opcional com voz local em português do dispositivo; não é áudio OpenAI ou transcrição real
+- GPT-Live + Decisions: arquitetura documentada, ainda não implementada/conectada ou validada de ponta a ponta
+- Nenhuma chave, sessão ou chamada paga foi utilizada
+
+O [registro de validação](../../docs/validacao.md) distingue cada estágio.
+
+## Requisitos e versões
+
+Node.js 22.18+; CI validada com 24.21.0. As dependências diretas e transitivas estão fixadas no package.json e package-lock.json. Versões principais: Next.js 16.4.0, React 19.3.0, Tailwind CSS 4.3.3, TypeScript 5.9.3 e Lucide 0.468.0.
+
+## Testar o domínio sem instalar pacotes
+
+```bash
+cd apps/decisions
+node --test tests/*.test.mts
+```
+
+## Instalar e executar a interface
+
+Na pasta apps/decisions:
+
+```bash
+npm ci --ignore-scripts
+npm run typecheck
+npm test
+npm run build
+npm run dev
+```
+
+Abra http://localhost:3000. A aplicação escuta somente em 127.0.0.1. Dependências são baixadas na instalação; depois, o mock funciona sem uma conta OpenAI. A primeira preparação exige acesso ao registro npm.
+
+Para executar a build produzida, use npm start no lugar de npm run dev. Não exponha o servidor como serviço público sem um desenho de segurança apropriado.
+
+## Teste de navegador
+
+Com as dependências instaladas:
+
+```bash
+npx playwright install chromium
+npm run build
+npm start
+```
+
+Em outro terminal, na mesma pasta, execute `node tests/browser.mjs`. Em Linux, as bibliotecas do Chromium podem exigir a etapa oficial `npx playwright install --with-deps chromium`. Revise essa instalação antes de executá-la na sua máquina.
+
+As capturas ficam em test-results. O teste usa uma simulação da API de voz do navegador para verificar carregamento tardio e invalidação de fala; isso não comprova saída real de áudio.
+
+## Fluxo do LAB
+
+Escolha um cenário → analise o relato → simule uma correção → analise novamente → revise os campos → marque a revisão → crie o ticket simulado. Recomeçar limpa o estado em memória e interrompe a voz local.
+
+A espera de 900 ms é parte do mock, não uma medida de latência de API. Probabilidades são fixtures. Texto livre recebe um aviso; nunca uma sugestão pronta disfarçada de análise.
+
+## OpenAI ao vivo: etapa ainda pendente
+
+A arquitetura usa [GPT-Live com Decisions](https://developers.openai.com/api/docs/guides/decisions-voice). Implementá-la exige separar captura de áudio, transcrição, delegação e retorno falado, mantendo revisão de estado no servidor. Antes de configurar/executar: confirmar acesso, autorização da chave e de gasto, e depois ensaiar áudio e correções. Esta versão não contém rotas de API nem campo de chave.
+
+[LAB](../../labs/02-decisions-typescript/README.md) · [Guia da apresentadora](../../docs/guia-apresentadora.md#decisions-api)

@@ -1,0 +1,75 @@
+name: Verificar LABS
+on:
+  push:
+    branches:
+      - main
+      - 'dev/**'
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: labs-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  offline-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Obter o código
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - name: Preparar Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24.21.0'
+      - name: Testar o domínio e a proteção de fala
+        run: node --test apps/decisions/tests/*.test.mts
+      - name: Testar o ponto de partida
+        run: node --test exercises/ticket-router/starter/router.test.mjs
+      - name: Testar a solução de referência
+        run: node --test exercises/ticket-router/solution/router.test.mjs
+      - name: Conferir links locais da documentação
+        run: node scripts/check-doc-links.mjs
+  ui-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+    defaults:
+      run:
+        working-directory: apps/decisions
+    steps:
+      - name: Obter o código
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - name: Preparar Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24.21.0'
+      - name: Instalar dependências do lockfile
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Conferir tipos
+        run: npm run typecheck
+      - name: Executar testes
+        run: npm test
+      - name: Gerar build de produção
+        run: npm run build
+      - name: Preparar Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Verificar interação e capturar telas
+        run: |
+          npm start > /tmp/mesa-ti-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:3000 > /dev/null && break; sleep 1; done
+          node tests/browser.mjs
+      - name: Guardar telas da aplicação fictícia
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: mesa-ti-ui-review
+          retention-days: 7
+          path: apps/decisions/test-results
