@@ -39,6 +39,8 @@ try{
  await page.goto('http://127.0.0.1:3000',{waitUntil:'networkidle'});
  await page.getByRole('button',{name:'OpenAI ao vivo'}).click();
  await page.getByText('Ao vivo desativado no servidor.',{exact:false}).waitFor();
+ assert.equal(await page.getByRole('button',{name:'Som desligado',exact:true}).count(),0,'mock speech controls must be absent in live mode');
+ assert.equal(await page.getByRole('button',{name:'Recomeçar',exact:true}).count(),0,'mock reset must not be offered for live mode');
  assert.equal(await page.getByRole('button',{name:'Iniciar conversa real'}).isEnabled(),false);
  assert.equal(calls.length,0);assert.equal(await page.evaluate(()=>window.__live.microphones),0);
  enabled=true;

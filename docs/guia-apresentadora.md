@@ -13,8 +13,8 @@ Roteiro de execução para Glaucia, separado dos LABS dos participantes. Os bloc
 - Usar só a empresa fictícia e os relatos fornecidos; fechar notificações e abas de trabalho
 - Preparar uma cópia intacta do starter para cada tentativa; manter uma solução pronta separada
 - Ensaiar fonte/zoom no projetor e navegação por teclado
-- Conferir microfone e saída de áudio somente se o modo ao vivo tiver sido implementado, autorizado e validado
-- Para a versão atual, deixar explícito: mock, voz local opcional, integração OpenAI ainda pendente
+- Conferir microfone e saída de áudio somente depois de autorizar e ensaiar o modo ao vivo no dispositivo
+- Para a versão atual, deixar explícito: mock por padrão, voz local opcional, adaptador OpenAI implementado mas ainda sem ensaio real
 - Testar a interface após a instalação/build; se essa etapa ainda estiver pendente, usar o plano B de leitura/testes
 - Não apresentar uma captura, fixture ou replay como execução real
 
@@ -113,7 +113,7 @@ Use a mesma pergunta em todos os blocos: **“Que evidência me permite aceitar 
    - **Esperado:** esclarecimento/erro explícito, preservando o relato.
 
 **Voz atual:** se houver voz local PT no navegador, ativar o som para ler a resposta. Dizer que não é voz OpenAI.  
-**Voz OpenAI futura:** somente demonstrar GPT-Live após integração e ensaio; transcrição e Decisions ficam em rotas distintas. Não inserir chaves no navegador.  
+**Voz OpenAI experimental:** os adaptadores já estão no código, desativados por padrão. Demonstrar GPT-Live somente após configuração autorizada e ensaio real no dispositivo; o servidor local gerencia sessões e Decisions, enquanto o navegador recebe transcrições pelo canal WebRTC. Não inserir a chave OpenAI no navegador. Consulte o [guia local](integracao-live.md).  
 **Reset:** Recomeçar; interrompe a leitura e limpa o estado em memória.  
 **Plano B:** executar os testes de domínio e ler as fixtures no código, indicando que a interface não foi validada/executada nesse ensaio.
 
