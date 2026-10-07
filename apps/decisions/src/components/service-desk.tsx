@@ -33,14 +33,15 @@ export default function ServiceDesk(){
   useEffect(()=>{
     if(!sound||!('speechSynthesis' in window))return;
     const reply=getSpokenReply(state,spoken.current); if(!reply)return;
-    spoken.current=reply.key;window.speechSynthesis.cancel();
+    window.speechSynthesis.cancel();
     const voice=window.speechSynthesis.getVoices().find(v=>v.localService&&v.lang.startsWith('pt'));
     if(!voice){setVoiceNotice('Nenhuma voz local em português está disponível. A transcrição continua funcionando.');return;}
+    spoken.current=reply.key;setVoiceNotice('');
     const speech=new SpeechSynthesisUtterance(reply.text);speech.lang='pt-BR';speech.voice=voice;speech.rate=1;
     speech.onstart=()=>setSpeaking(true);speech.onend=()=>setSpeaking(false);speech.onerror=()=>{setSpeaking(false);setVoiceNotice('A reprodução de voz não ficou disponível. Continue pela transcrição.');};
     window.speechSynthesis.speak(speech);
     return()=>{window.speechSynthesis.cancel();setSpeaking(false);};
-  },[state.messages,state.revision,state.session,state.status,sound]);
+  },[state.messages,state.revision,state.session,state.status,sound,voiceReady]);
   function stopAudio(){if('speechSynthesis' in window)window.speechSynthesis.cancel();setSpeaking(false);}
   function replay(id:ScenarioId){stopAudio();spoken.current='';dispatch({type:'REPLAY',scenario:id});}
   function reset(){stopAudio();spoken.current='';dispatch({type:'RESET'});setVoiceNotice('');}
