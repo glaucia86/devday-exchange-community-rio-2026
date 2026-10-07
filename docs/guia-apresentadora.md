@@ -8,7 +8,7 @@ Roteiro de execução para Glaucia, separado dos LABS dos participantes. Os bloc
 
 - Conferir programação e local no Luma
 - Preparar uma pasta limpa com este material e Node.js 22.18+
-- Rodar os testes do starter, solução e Mesa TI; guardar o resultado com data e versão
+- Rodar os testes do starter, solução e Alô, TI; guardar o resultado com data e versão
 - Conferir o acesso a Dots, Codex CLI e Codex Cloud na conta usada na apresentação
 - Usar só a empresa fictícia e os relatos fornecidos; fechar notificações e abas de trabalho
 - Preparar uma cópia intacta do starter para cada tentativa; manter uma solução pronta separada
@@ -96,7 +96,7 @@ Use a mesma pergunta em todos os blocos: **“Que evidência me permite aceitar 
 
 **Sugestão: 10–12 minutos.** [Guia do participante](../labs/02-decisions-typescript/README.md)
 
-1. **Mostrar:** Mesa TI e o selo Simulado.
+1. **Mostrar:** Alô, TI e o selo Simulado.
    - **Falar:** “Vamos observar a conversa, a sugestão e a confirmação. Hoje este modo usa respostas de exemplo.”
 2. **Agir:** abrir “Acesso ao portal” e clicar “Analisar relato”.
    - **Esperado:** transcrição visível, sugestão de Acessos e identidade, ticket ainda em rascunho.

@@ -1,4 +1,4 @@
-# Mesa TI · demo de Decisions
+# Alô, TI · demo de Decisions
 
 Service desk fictício em Next.js, TypeScript, Tailwind CSS 4 e Lucide. O modo padrão reproduz fixtures e não chama qualquer API.
 

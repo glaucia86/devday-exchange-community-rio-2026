@@ -22,7 +22,7 @@
 </p>
 
 <p>
-<a href="https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-labs.yml"><img alt="Validação dos LABS" src="https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-labs.yml/badge.svg?branch=dev%2Fmesa-ti-four-labs"></a>
+<a href="https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-labs.yml"><img alt="Validação dos LABS" src="https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-labs.yml/badge.svg?branch=main"></a>
 <a href="LICENSE"><img alt="Licença MIT" src="https://img.shields.io/badge/Licen%C3%A7a-MIT-0F766E?style=flat"></a>
 </p>
 <p><a href="https://luma.com/wzk8q92k">Inscreva-se</a> · <a href="#labs">Escolha seu LAB</a> · <a href="#executar">Execute a demo</a> · <a href="docs/guia-apresentadora.md">Guia da apresentadora</a> · <a href="#sobre-mim">Sobre mim</a></p>
@@ -36,7 +36,7 @@
 - [O que você vai encontrar](#material)
 - [Escolha seu LAB](#labs)
 - [Prepare seu ambiente](#preparacao)
-- [Execute a demo Mesa TI](#executar)
+- [Execute a demo Alô, TI](#executar)
 - [Verifique seu ambiente](#validar)
 - [Estado do projeto](#estado)
 - [Guia da apresentadora](#apresentadora)
@@ -70,7 +70,7 @@ Este repositório reúne **material original em português** para acompanhar o e
 | --- | --- |
 | Experimentar um dos temas | Os [quatro LABS](#labs), com requisitos, passos e resultados esperados |
 | Praticar uma mudança de código | O [encaminhador de chamados](exercises/ticket-router/README.md), com starter e solução |
-| Explorar uma interface interativa | A [Mesa TI](apps/decisions/README.md), demo fictícia do LAB Decisions |
+| Explorar uma interface interativa | A demo [Alô, TI](apps/decisions/README.md), demo fictícia do LAB Decisions |
 | Preparar a apresentação | O [guia da apresentadora](docs/guia-apresentadora.md), com falas-chave e plano B |
 | Entender o que foi verificado | O [registro de validação](docs/validacao.md) |
 | Aprofundar os assuntos | As [referências](docs/referencias.md) |
@@ -78,7 +78,7 @@ Este repositório reúne **material original em português** para acompanhar o e
 Conhecer o básico de JavaScript/TypeScript, terminal e Git ajuda na parte de código. Cada LAB apresenta sua própria preparação.
 
 > [!IMPORTANT]
-> A Mesa TI funciona atualmente em **modo mock**, com cenários fictícios. Os adaptadores GPT-Live + Decisions estão implementados em uma aba separada, desativada por padrão. Ainda não houve ensaio com API e áudio reais; testes com fixtures não comprovam a experiência ponta a ponta.
+> A demo Alô, TI funciona atualmente em **modo mock**, com cenários fictícios. Os adaptadores GPT-Live + Decisions estão implementados em uma aba separada, desativada por padrão. Ainda não houve ensaio com API e áudio reais; testes com fixtures não comprovam a experiência ponta a ponta.
 
 <a id="labs"></a>
 ## 🧪 Escolha seu LAB
@@ -123,18 +123,18 @@ Se o PowerShell informar que `npm.ps1` não pode ser carregado, abra o Prompt de
 </details>
 
 <a id="executar"></a>
-## 🚀 2. Execute a demo Mesa TI
+## 🚀 2. Execute a demo Alô, TI
 
-A **Mesa TI** é um service desk fictício. Você escolhe um cenário, analisa o relato, simula uma correção e revisa os campos antes de criar um ticket simulado.
+A demo **Alô, TI** é um service desk fictício. Você escolhe um cenário, analisa o relato, simula uma correção e revisa os campos antes de criar um ticket simulado.
 
 O fluxo padrão usa fixtures e estado em memória, sem API ou microfone. A integração ao vivo exige configuração segura e autorização de custo. Consulte o [guia Windows e os limites](docs/integracao-live.md).
 
 ### Clone o material
 
-O material está na branch **`dev/mesa-ti-four-labs`**:
+O material está na branch **`main`**:
 
 ```sh
-git clone --branch dev/mesa-ti-four-labs https://github.com/glaucia86/devday-exchange-community-rio-2026.git
+git clone --branch main https://github.com/glaucia86/devday-exchange-community-rio-2026.git
 cd devday-exchange-community-rio-2026
 ```
 
@@ -170,7 +170,7 @@ node --test apps/decisions/tests/*.test.mts
 node scripts/check-doc-links.mjs
 ```
 
-O conjunto unitário contém **46 testes**: 3 do starter, 8 da solução e 35 de domínio, contratos e proteções da Mesa TI. Consulte a CI do commit atual para o resultado.
+O conjunto unitário contém **46 testes**: 3 do starter, 8 da solução e 35 de domínio, contratos e proteções da Alô, TI. Consulte a CI do commit atual para o resultado.
 
 Dentro de **`apps/decisions`**, após instalar as dependências:
 
@@ -192,7 +192,7 @@ A [execução de referência](https://github.com/glaucia86/devday-exchange-commu
 | Área | Situação |
 | --- | --- |
 | Quatro LABS e guia da apresentadora | Disponíveis |
-| Encaminhador e Mesa TI | 46 testes definidos; resultado por commit no Actions |
+| Encaminhador e Alô, TI | 46 testes definidos; resultado por commit no Actions |
 | TypeScript e build Next.js | Aprovados na execução de referência |
 | Interface mock em Chromium | Revisão, correção, reset e tratamento de erro verificados |
 | Capturas desktop e celular | Inspecionadas |
@@ -214,7 +214,7 @@ Use a [programação](docs/programacao.md) para os detalhes do encontro e as [re
 - [ ] Escolhi os LABS e li seus requisitos.
 - [ ] Node.js, npm e Git respondem no terminal.
 - [ ] Clonei a branch indicada e executei os testes offline.
-- [ ] Se vou usar a Mesa TI, instalei as dependências e abri a interface.
+- [ ] Se vou usar a demo Alô, TI, instalei as dependências e abri a interface.
 - [ ] Conferi meu acesso ao produto necessário.
 - [ ] Separei notebook e carregador.
 - [ ] Usarei somente dados fictícios ou públicos.
@@ -229,7 +229,7 @@ Use a [programação](docs/programacao.md) para os detalhes do encontro e as [re
 | [labs/codex-cloud/](labs/codex-cloud/) | Delegação remota e revisão |
 | [labs/02-decisions-typescript/](labs/02-decisions-typescript/) | Decisões tipadas e revisão humana |
 | [exercises/ticket-router/](exercises/ticket-router/) | Starter, solução e testes |
-| [apps/decisions/](apps/decisions/) | Mesa TI, domínio e testes |
+| [apps/decisions/](apps/decisions/) | Alô, TI, domínio e testes |
 | [docs/guia-apresentadora.md](docs/guia-apresentadora.md) | Roteiro e plano B |
 | [docs/validacao.md](docs/validacao.md) | Evidências e próximos ensaios |
 | [docs/referencias.md](docs/referencias.md) | Fontes para continuar estudando |

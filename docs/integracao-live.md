@@ -15,7 +15,7 @@ Use Node.js 22.18 ou posterior; a CI usa 24.21.0. No PowerShell, os comandos npm
 Se ainda não clonou:
 
 ```powershell
-git clone --branch dev/mesa-ti-four-labs https://github.com/glaucia86/devday-exchange-community-rio-2026.git
+git clone --branch main https://github.com/glaucia86/devday-exchange-community-rio-2026.git
 cd devday-exchange-community-rio-2026
 ```
 
@@ -23,7 +23,7 @@ Se já clonou, confira suas alterações antes de atualizar. Não descarte traba
 
 ```powershell
 git status --short
-git switch dev/mesa-ti-four-labs
+git switch main
 git pull --ff-only
 ```
 

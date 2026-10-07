@@ -46,6 +46,9 @@ async function skipToLiveConversation(){
  assert.equal(await target.count(),1,'live mode must expose exactly one skip-link destination');
  assert.equal(await target.getAttribute('aria-label'),'Transcrição ao vivo');
  assert.equal(await target.evaluate(element=>element===document.activeElement),true,'Enter on the skip link must focus the live conversation');
+ const focusStyle=await target.evaluate(element=>({width:getComputedStyle(element).outlineWidth,offset:getComputedStyle(element).outlineOffset}));
+ assert.deepEqual(focusStyle,{width:'2px',offset:'-3px'},'the conversation focus indicator must be visible inside the panel');
+ await page.screenshot({path:'test-results/live-skip-focus.png',fullPage:true});
  await page.keyboard.press('Tab');
  assert.equal(await page.getByLabel('Relato atual ao vivo').evaluate(element=>element===document.activeElement),true,'Tab after skipping must continue inside the live conversation');
  const ids=await page.locator('[id]').evaluateAll(elements=>elements.map(element=>element.id));
@@ -131,8 +134,10 @@ try{
  await page.setViewportSize({width:390,height:844});
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  await page.screenshot({path:'test-results/live-fixture-mobile.png',fullPage:true});
- const shot=(await readFile('test-results/live-fixture-mobile.png')).toString('base64');
- for(let i=0;i<shot.length;i+=6000)console.log('PUBLIC_SCREENSHOT live-fixture-mobile.png '+(i/6000)+' '+shot.slice(i,i+6000));
+ for(const file of ['live-fixture-mobile.png','live-skip-focus.png']){
+  const shot=(await readFile('test-results/'+file)).toString('base64');
+  for(let i=0;i<shot.length;i+=6000)console.log('PUBLIC_SCREENSHOT '+file+' '+(i/6000)+' '+shot.slice(i,i+6000));
+ }
  assert.deepEqual(errors,[]);
  console.log('LIVE_BROWSER_FIXTURE_PASS: keyboard skip-link focus and continuation, unique mode targets, disabled gate, consent, microphone cleanup, WebRTC setup, transcript, delegation ID, duplicate suppression, correction, stale result, human confirmation, close, mobile. No OpenAI/audio calls.');
 }finally{await browser.close();}

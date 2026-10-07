@@ -50,7 +50,7 @@ export default function ServiceDesk(){
   return <main>
     <a className="skip" href="#conversation">Pular para a conversa</a>
     <header className="topbar">
-      <a className="brand" href="/" aria-label="Mesa TI, início"><span className="brand-mark"><AudioLines size={23}/></span><span>Mesa<span className="brand-light">TI</span></span></a>
+      <a className="brand" href="/" aria-label="Alô, TI, início"><span className="brand-mark"><AudioLines size={23}/></span><span>Alô,<span className="brand-light"> TI</span></span></a>
       <div className="event-name"><span className="tiny-square"/>DEV<span className="event-slash">/</span>DAY EXCHANGE <span className="city">RIO 2026</span></div>
       <a className="docs-link" href="https://developers.openai.com/api/docs/guides/decisions" target="_blank" rel="noreferrer">Documentação <ArrowUpRight size={15}/></a>
     </header>
@@ -59,7 +59,7 @@ export default function ServiceDesk(){
       <div className="intro-note"><span className="note-icon"><ShieldCheck size={22}/></span><p>A inteligência sugere.<br/><strong>Você decide.</strong></p><span className="note-rule"/></div>
     </section>
     <div className="workspace-label"><span><span className="status-dot"/>SERVICE DESK FICTÍCIO</span><span>FEITO PARA EXPLORAR, CORRIGIR E APRENDER</span></div>
-    <section className="workspace" aria-label="Laboratório Mesa TI">
+    <section className="workspace" aria-label="Laboratório Alô, TI">
       <div className="workspace-toolbar">
         <div className="mode-switch"><button className={!showLive?"mode-selected":""} onClick={()=>setShowLive(false)}><Radio size={14}/>Simulado</button><button className={showLive?"mode-selected":""} onClick={()=>{stopAudio();setSound(false);setShowLive(!showLive);}} aria-expanded={showLive}><LockKeyhole size={13}/>OpenAI ao vivo <ChevronDown size={13}/></button></div>
         {!showLive&&<div className="toolbar-actions"><button onClick={()=>{stopAudio();setSound(!sound);}} aria-pressed={sound} title="Reprodução com voz local do dispositivo, quando disponível">{sound?<Volume2 size={17}/>:<VolumeX size={17}/>}<span>{sound?'Som ligado':'Som desligado'}</span></button><button onClick={reset}><RotateCcw size={16}/><span>Recomeçar</span></button></div>}
@@ -74,7 +74,7 @@ export default function ServiceDesk(){
             <button className="primary start" onClick={()=>replay('access')}><Play size={17} fill="currentColor"/>Explorar cenário<ArrowRight size={17}/></button>
             <span className="welcome-caption">Reprodução simulada · sem microfone · sem API</span>
           </div>:<div className="transcript" aria-label="Transcrição do cenário" aria-live="polite" aria-relevant="additions">
-            {state.messages.map(message=><article className={'message '+message.role} key={`${state.session}-${message.id}`}><div className="message-label">{message.role==='assistant'?<Headphones size={13}/>:<MessageSquareText size={13}/>}<span>{message.role==='assistant'?'MESA TI':'PESSOA SOLICITANTE'}</span><span className="fixture-label">CENÁRIO</span></div><p>{message.text}</p></article>)}
+            {state.messages.map(message=><article className={'message '+message.role} key={`${state.session}-${message.id}`}><div className="message-label">{message.role==='assistant'?<Headphones size={13}/>:<MessageSquareText size={13}/>}<span>{message.role==='assistant'?'ALÔ, TI':'PESSOA SOLICITANTE'}</span><span className="fixture-label">CENÁRIO</span></div><p>{message.text}</p></article>)}
             {state.status==='analyzing'&&<div className="thinking"><LoaderCircle size={15} className="spin"/>Reproduzindo análise do exemplo…</div>}
             <div ref={end}/>
           </div>}

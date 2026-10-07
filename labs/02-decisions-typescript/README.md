@@ -1,6 +1,6 @@
 # LAB · Decisions API: do relato ao encaminhamento
 
-[Início](../../README.md) · [Aplicação Mesa TI](../../apps/decisions/README.md) · [Guia da apresentadora](../../docs/guia-apresentadora.md)
+[Início](../../README.md) · [Aplicação Alô, TI](../../apps/decisions/README.md) · [Guia da apresentadora](../../docs/guia-apresentadora.md)
 
 ## Objetivo
 
@@ -27,7 +27,7 @@ Sugestão de prática: 20–30 minutos, a confirmar após ensaio completo.
 
    **Confira:** os testes de correção, resposta atrasada, reset e confirmação humana passam.
 2. Leia as três perguntas e os cenários em `apps/decisions/src/domain/service-desk.ts`. **Confira:** uma probabilidade de contexto, uma escolha de equipe e um score de impacto têm papéis diferentes.
-3. Após instalar a interface pelo README, abra Mesa TI e escolha “Acesso ao portal”. **Confira:** o selo Simulado e a transcrição do cenário estão visíveis. Nenhum microfone é capturado.
+3. Após instalar a interface pelo README, abra a demo Alô, TI e escolha “Acesso ao portal”. **Confira:** o selo Simulado e a transcrição do cenário estão visíveis. Nenhum microfone é capturado.
 4. Clique “Analisar relato”. **Confira:** a equipe sugerida é Acessos e identidade; o ticket continua rascunho. Os números são fixtures.
 5. Clique “Simular uma correção” e analise novamente. **Confira:** o relato passa a descrever erro 500 para o time; a análise anterior perde a validade; a nova sugestão é Aplicações internas.
 6. Revise o título, relato e equipe; marque a caixa de revisão e clique “Confirmar e criar ticket simulado”. **Confira:** aparece DEMO-0001, sem envio a qualquer sistema externo.

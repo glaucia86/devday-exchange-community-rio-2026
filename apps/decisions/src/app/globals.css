@@ -13,3 +13,5 @@
 .live-lab .panel-heading { gap: 1rem; flex-wrap: wrap; }
 .live-lab .suggestion p { overflow-wrap: anywhere; }
 @media(max-width:600px) { .live-lab > p, .live-access { margin: 1rem; } .live-lab .example-badge { white-space: normal; } }
+
+.conversation:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
