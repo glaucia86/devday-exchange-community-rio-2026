@@ -66,7 +66,7 @@ export default function ServiceDesk(){
       </div>
       {showLive&&<LiveDesk/>}
       {!showLive&&<div className="workspace-grid">
-        <section className="conversation" id="conversation" aria-label="Conversa e transcrição">
+        <section className="conversation" id="conversation" tabIndex={-1} aria-label="Conversa e transcrição">
           <div className="panel-heading"><div><span className="step-label">01 / O RELATO</span><h2>Vamos conversar</h2></div><span className={'conversation-state '+(speaking?'speaking':'')}>{speaking?<AudioLines size={14}/>:<span className="small-dot"/>}{speaking?'Reproduzindo voz local':STATUS[state.status]}</span></div>
           {!active?<div className="welcome">
             <div className="voice-symbol" aria-hidden="true"><i/><i/><i/><i/><i/><i/><i/></div>
