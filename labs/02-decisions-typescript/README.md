@@ -6,7 +6,7 @@
 
 Entender três formatos de decisão (`predicate`, `choice`, `score`), observar o efeito de uma correção e exigir revisão humana antes de criar um ticket simulado. O cenário é um service desk fictício.
 
-**Estado atual:** domínio, TypeScript, build e fluxo mock em Chromium verificados; dependências fixadas e capturas desktop/celular inspecionadas. A integração OpenAI de voz para voz está documentada, ainda não implementada/conectada ou validada de ponta a ponta. Não confunda a reprodução mock com uma chamada de API.
+**Estado atual:** domínio, TypeScript, build e fluxo mock em Chromium verificados; dependências fixadas e capturas desktop/celular inspecionadas. Os adaptadores OpenAI de voz para voz estão implementados e desativados por padrão. A integração ainda não foi ensaiada com API e áudio reais; veja o [guia de ativação local](../../docs/integracao-live.md). Não confunda a reprodução mock com uma chamada de API.
 
 ## Pré-requisitos
 

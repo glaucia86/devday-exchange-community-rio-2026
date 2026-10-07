@@ -15,10 +15,10 @@
 | Interface Chromium | Fluxo mock aprovado, sem erros não capturados no navegador |
 | Capturas desktop e celular | Inspecionadas; sem corte, sobreposição ou overflow horizontal observado |
 | Voz real pelo dispositivo | Ainda não ensaiada; regressão usa simulação da API do navegador |
-| GPT-Live + Decisions | Arquitetura documentada; ainda não implementada/conectada ou validada de ponta a ponta |
+| GPT-Live + Decisions | Adaptadores implementados; ensaio com conta e áudio reais pendente |
 | Dots / Codex CLI / Codex Cloud | Guias disponíveis; fluxos nos produtos ainda não ensaiados |
 
-O conjunto unitário contém **26 testes**. Testes de seleção de fala não comprovam que áudio foi ouvido.
+A integração ampliou o conjunto unitário para **46 testes**. Os 26 testes anteriores e suas execuções abaixo permanecem como referência histórica; confira a CI no SHA atual. Testes de seleção de fala não comprovam que áudio foi ouvido.
 
 ## Execuções de referência
 
@@ -49,8 +49,18 @@ A CI usa runners padrão do repositório público e permissões de leitura. Os p
 
 - Ensaiar projeção e acessibilidade com teclado/leitor de tela
 - Ouvir a saída real de áudio em dispositivos-alvo
-- Implementar o adaptador GPT-Live/Decisions após autorização de configuração; ensaiar fala, transcrição, interrupção e resposta tardia
+- Configurar o runtime local somente após autorização; ensaiar o adaptador com fala, transcrição, interrupção e resposta tardia reais
 - Ensaiar os LABS nos produtos Dots, Codex CLI e Codex Cloud
 - Confirmar limites de acesso e consumo antes de qualquer API real
 
 Nos próximos ensaios, registrar data, commit, ambiente, versões, comandos, resultados e limitações. Falha continua sendo falha; mock continua sendo mock.
+
+## Verificação do adaptador
+
+Os novos testes cobrem autenticação local, origem/Host, limites de entrada e sessão, contrato Decisions, recusa, respostas atrasadas, perda do sideband, encerramento idempotente, correções e ticket confirmado. Chromium usa microfone, WebRTC, transporte HTTP e respostas simulados; não chama OpenAI.
+
+Um teste de handshake usa apenas loopback para verificar headers no WebSocket nativo do Node. Não recebe uma chave real. O modo live permanece desativado no servidor da CI.
+
+A revisão revelou regressões reproduzidas antes das correções: fala apagando ticket, sideband perdido e fechamento concorrente. A evidência final deve sempre ser o resultado do SHA exato; uma build antiga ou um teste parcial não valida alterações posteriores.
+
+[Guia Windows](integracao-live.md) · [Workflow](https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-labs.yml)
