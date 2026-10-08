@@ -223,7 +223,7 @@ cd apps/decisions
 npm start
 ```
 
-O script confere o Node, executa `npm ci --ignore-scripts`, os 71 testes, a aceitação do encaminhador e `npm run build`. Ele imprime o endereço local. Se preferir os comandos separados, ainda em `apps/decisions`:
+O script confere o Node, executa `npm ci --ignore-scripts`, os 72 testes, a aceitação do encaminhador e `npm run build`. Ele imprime o endereço local. Se preferir os comandos separados, ainda em `apps/decisions`:
 
 ```sh
 npm ci --ignore-scripts
@@ -259,7 +259,7 @@ node scripts/check-workshop-examples.mjs
 node scripts/check-doc-links.mjs
 ```
 
-O conjunto contém **71 testes**: 3 do starter, 8 da solução, 5 da candidata de revisão, 5 do exercício de contrato e 50 da Alô, TI. Além deles, a verificação pedagógica executa 18 casos de aceitação em cada versão do encaminhador: starter com 10 falhas esperadas, candidata com 2 e solução sem falhas. Consulte a CI do commit atual para o resultado. Testes verdes da candidata não significam que ela já está correta.
+O conjunto contém **72 testes**: 3 do starter, 8 da solução, 5 da candidata de revisão, 5 do exercício de contrato e 51 da Alô, TI. Além deles, a verificação pedagógica executa 18 casos de aceitação em cada versão do encaminhador: starter com 10 falhas esperadas, candidata com 2 e solução sem falhas. Consulte a CI do commit atual para o resultado. Testes verdes da candidata não significam que ela já está correta.
 
 Dentro de **`apps/decisions`**, após instalar as dependências:
 
@@ -281,7 +281,7 @@ A [execução de referência](https://github.com/glaucia86/devday-exchange-commu
 | Área | Situação |
 | --- | --- |
 | Quatro LABS e guia da apresentadora | Disponíveis |
-| Encaminhador e Alô, TI | 71 testes e aceitação red/green; resultado por commit no Actions |
+| Encaminhador e Alô, TI | 72 testes e aceitação red/green; resultado por commit no Actions |
 | TypeScript e build Next.js | Aprovados na execução de referência |
 | Interface mock em Chromium | Revisão, correção, reset e tratamento de erro verificados |
 | Capturas desktop e celular | Inspecionadas |
@@ -310,7 +310,7 @@ Use a [programação](docs/programacao.md) para os detalhes do encontro e as [re
 - [ ] Escolhi um LAB e li seus requisitos.
 - [ ] Para os LABS de código: Node.js 24.21.0 ou posterior, npm e Git respondem no terminal.
 - [ ] Para ensaiar a Alô, TI: `node scripts/prepare-stage.mjs` e, em seguida, `npm start` em `apps/decisions`.
-- [ ] Se o ensaio incluir o Codex CLI: `codex --version` mostra `codex-cli 0.161.0`, `codex login status` confirma a sessão, a abertura usa `-m gpt-6-luna -s workspace-write`, a pasta foi confiada antes do projetor e, dentro do agente, `node --version` mostra v24.21 ou posterior.
+- [ ] Se o ensaio incluir o Codex CLI: `codex --version` mostra `codex-cli 0.161.0`, `codex login status` confirma a sessão, a abertura usa `-m gpt-6-luna -s workspace-write`, a pasta foi confiada antes do projetor e, dentro do agente, `node --version` mostra v24.21 ou posterior. A Alô, TI desse bloco sobe com `npm run dev` em `apps/decisions`, antes do relógio.
 - [ ] Clonei a branch indicada e executei os testes offline.
 - [ ] Se vou abrir a Alô, TI, instalei as dependências e conferi o modo Simulado.
 - [ ] Conferi meu acesso ao produto necessário e os limites de uso aplicáveis.

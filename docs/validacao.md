@@ -111,6 +111,8 @@ O bloco de palco do CLI deixou de ser o encaminhador de 18 casos. O texto novo p
 
 Isso confere o texto e os links citados no LAB. Não é um ensaio autenticado: esta revisão não abriu o microfone, não entrou com conta e não deixou o agente editar a Alô, TI. A gravação de plano B continua por fazer no notebook do projetor. O encaminhador segue no LAB Cloud.
 
+O reload do bloco CLI usa `npm run dev`, aberto antes do relógio. O `npm start` da véspera serve a build do `prepare-stage.mjs` e não mostraria a edição. O teste que despacha `FAILED` trava o defeito atual: a frase fica no aviso, fora da conversa, e `getSpokenReply` desse estado devolve vazio. A suíte continua verde com o defeito. O pedido do palco manda o agente atualizar esse teste junto com o redutor. Depois do reload, o roteiro liga de novo o som, que volta desligado, e repete **Explorar cenário** antes de **Analisar relato**.
+
 ```sh
 node scripts/check-cli-stage.mjs
 ```

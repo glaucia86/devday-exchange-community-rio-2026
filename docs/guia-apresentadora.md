@@ -48,7 +48,7 @@ node --test apps/decisions/tests/*.test.mts
 node scripts/check-workshop-examples.mjs
 ```
 
-Esperado: Node.js 24.21.0 ou posterior, 71 testes aprovados no conjunto atual e aceitação com falhas didáticas conferidas: starter 8/18, candidata 16/18, solução 18/18. Isso verifica os exemplos locais; os ensaios nos produtos são uma etapa adicional.
+Esperado: Node.js 24.21.0 ou posterior, 72 testes aprovados no conjunto atual e aceitação com falhas didáticas conferidas: starter 8/18, candidata 16/18, solução 18/18. Isso verifica os exemplos locais; os ensaios nos produtos são uma etapa adicional.
 
 ## Abertura e transições
 
@@ -86,22 +86,22 @@ Mostre o índice. Apresente o contexto: relatos de suporte fictícios que precis
 
 O encaminhador não entra neste bloco. Ele continua no Cloud. Aqui a plateia vê a voz dentro do terminal, a visão `/agents` e uma correção curta na Alô, TI. Comandos, fontes e o texto falado estão no LAB. A versão fixada continua `codex-cli 0.161.0`. O modelo do palco é `gpt-6-luna`, com `-s workspace-write`.
 
-**Deixar pronto, fora deste relógio:** login ChatGPT já conferido, `Trust this folder?` já respondido para este repositório, `node --version` dentro do agente em v24.21.0 ou posterior (se vier outra versão, reabra com `-c allow_login_shell=false`), microfone ensaiado com `/voice` e `/voice stop`, Alô, TI em http://127.0.0.1:3000 na aba **Simulado**, e uma gravação do ensaio que passou. Cada plano B abaixo é essa gravação: diga “isto é gravação” antes de dar play. Sem gravação, diga que o passo não rodou.
+**Deixar pronto, fora deste relógio:** login ChatGPT já conferido, `Trust this folder?` já respondido para este repositório, `node --version` dentro do agente em v24.21.0 ou posterior (se vier outra versão, reabra com `-c allow_login_shell=false`), microfone ensaiado com `/voice` e `/voice stop`. A Alô, TI deste bloco não usa o `npm start` da véspera: pare esse processo se ele ocupar a porta 3000 e, em `apps/decisions`, deixe `npm run dev` aberto em http://127.0.0.1:3000, aba **Simulado**, página recém-carregada. Fora do relógio, clique **Som desligado** e confira que existe voz local em português; recarregue em seguida, para o palco começar com o som desligado e sem cenário. Tenha uma gravação do ensaio que passou. Cada plano B abaixo é essa gravação: diga “isto é gravação” antes de dar play. Sem gravação, diga que o passo não rodou.
 
 | Tempo | Ação | Fala | Tela | Plano B GRAVAÇÃO |
 | --- | --- | --- | --- | --- |
-| 0:00–0:20 | **Por trás da decisão**, marque **Simular falha na próxima análise** e clique **Analisar relato** | “A falha está no aviso do lado. A conversa não a repete.” | Aviso `A análise falhou. Seu relato continua aqui; tente novamente.` | Gravação dessa tela. |
+| 0:00–0:20 | Na página recém-aberta: **Por trás da decisão**, marque **Simular falha na próxima análise**, **Explorar cenário** e **Analisar relato** | “A falha está no aviso do lado. A conversa não a repete.” | Aviso `A análise falhou. Seu relato continua aqui; tente novamente.` A conversa não ganha essa frase. | Gravação dessa tela. |
 | 0:20–0:40 | No Codex já aberto com `codex -m gpt-6-luna -s workspace-write -a on-request`, digite `/status` | “O modelo desta versão, por padrão, é o GPT-6.1 Sol. No palco eu fixo o Luna: no catálogo da 0.161.0 ele é o modelo rápido e mais barato, para tarefas mais simples.” | `gpt-6-luna` e escrita no workspace. A conta fica fora da projeção. | Gravação do `/status`, com a conta coberta. |
 | 0:40–1:10 | `/voice`, fale o pedido do LAB e encerre com `/voice stop` | “Eu começo a tarefa falando, no mesmo terminal.” | Rodapé de voz e a legenda da frase. | Digite o pedido. Se `/voice` não existir nesta instalação, diga isso e use a gravação. |
 | 1:10–1:40 | `/agents`, enquanto a tarefa anda | “Esta é a visão nova: as tarefas do terminal num lugar só. Worktree, retomada e a tela cheia ficam para casa.” | O agent command center lista a tarefa. | Gravação do `/agents`. |
-| 1:40–2:20 | `/diff` e, depois de `/quit`, `node --test tests/spoken-reply.test.mts tests/service-desk.test.mts` em `apps/decisions` | “O diff cabe numa tela. O teste é a evidência, não a frase do agente.” | Diff curto e suíte desses arquivos aprovada. Se passar de 2:00, corte. | Gravação do diff e do teste. Não chame de ao vivo. |
-| 2:20–2:50 | Recarregue a Alô, TI e repita a falha simulada | “A mesma frase agora entra na conversa.” | A frase aparece na transcrição. | Gravação do reload. |
+| 1:40–2:20 | `/diff` e, depois de `/quit`, `node --test tests/spoken-reply.test.mts tests/service-desk.test.mts` em `apps/decisions` | “O diff cabe numa tela. O teste é a evidência, não a frase do agente.” | Diff curto nos dois arquivos de domínio e nos dois testes. A suíte desses arquivos aprovada. Se passar de 2:00, corte. | Gravação do diff e do teste. Não chame de ao vivo. |
+| 2:20–2:50 | Recarregue. Clique **Som desligado** até o botão mostrar **Som ligado**. Repita **Por trás da decisão**, a falha, **Explorar cenário** e **Analisar relato** | “A mesma frase agora entra na conversa, e a voz local a fala uma vez.” | A frase aparece na transcrição e é falada. Se o aviso disser que não há voz local em português, diga isso e fique na transcrição. Se a recompilação passar de 2:50, corte. | Gravação desse reload, com a frase falada. |
 
 **Transição:** “No Cloud, a revisão muda de lugar. O encaminhador continua lá.”
 
-**Reset:** se o diff for só `service-desk.ts`, `spoken-reply.ts` e `spoken-reply.test.mts`, descarte esses três arquivos e não faça push. A Alô, TI volta à falha simulada, com a frase fora da conversa.
+**Reset:** se o diff for só `service-desk.ts`, `spoken-reply.ts`, `spoken-reply.test.mts` e `service-desk.test.mts`, descarte esses arquivos e não faça push. Pare o `npm run dev`. O `next-env.d.ts` que ele reescreve fica fora do Git. A Alô, TI do Decisions volta com `npm start`, na build do `prepare-stage.mjs`, com a frase fora da conversa.
 
-**Ponto de parada:** login, microfone, `/voice` ausente no menu, ou diff fora de `service-desk.ts`, `spoken-reply.ts` e `spoken-reply.test.mts`. A versão do encontro continua `codex-cli 0.161.0`. O catálogo dessa versão não inclui `gpt-5.4-mini`. `codex exec` só edita com `-s workspace-write`; ele não substitui a voz da TUI. `Trust this folder?` pode aparecer mesmo com a pasta já versionada: resolva antes do projetor.
+**Ponto de parada:** login, microfone, `/voice` ausente no menu, ou diff fora de `service-desk.ts`, `spoken-reply.ts`, `spoken-reply.test.mts` e `service-desk.test.mts`. A versão do encontro continua `codex-cli 0.161.0`. O catálogo dessa versão não inclui `gpt-5.4-mini`. `codex exec` só edita com `-s workspace-write`; ele não substitui a voz da TUI. `Trust this folder?` pode aparecer mesmo com a pasta já versionada: resolva antes do projetor.
 
 ## Codex Cloud
 

@@ -8,7 +8,7 @@ No evento, Glaucia opera o terminal e o público acompanha. Este LAB é para rep
 
 ## O que entra no palco
 
-Três coisas, nesta ordem: o modelo e a permissão certos, a voz dentro do terminal, e o centro de agentes enquanto uma correção pequena da Alô, TI acontece. A correção é real e curta. O caso `FAILED` em [service-desk.ts](../../apps/decisions/src/domain/service-desk.ts) grava o aviso `A análise falhou. Seu relato continua aqui; tente novamente.` e não acrescenta essa frase à conversa. [getSpokenReply](../../apps/decisions/src/domain/spoken-reply.ts) devolve vazio quando o status é `error`, e o [teste](../../apps/decisions/tests/spoken-reply.test.mts) trava esse silêncio mesmo com uma mensagem da assistente na revisão atual. Na tela, a frase fica no aviso lateral.
+Três coisas, nesta ordem: o modelo e a permissão certos, a voz dentro do terminal, e o centro de agentes enquanto uma correção pequena da Alô, TI acontece. A correção é real e curta. O caso `FAILED` em [service-desk.ts](../../apps/decisions/src/domain/service-desk.ts) grava o aviso `A análise falhou. Seu relato continua aqui; tente novamente.` e não acrescenta essa frase à conversa. [getSpokenReply](../../apps/decisions/src/domain/spoken-reply.ts) devolve vazio quando o status é `error`, e o [teste de fala](../../apps/decisions/tests/spoken-reply.test.mts) trava esse silêncio mesmo com uma mensagem da assistente na revisão atual. O [teste do redutor](../../apps/decisions/tests/service-desk.test.mts) despacha `FAILED` e trava o outro lado: a frase não entra na conversa e não é falada a partir desse estado. Na tela, a frase fica no aviso lateral.
 
 Se essa frase já estiver na conversa no commit que você clonou, pare. Outra alteração pode ter tratado o caso. Não invente um segundo bug para o palco continuar.
 
@@ -55,30 +55,31 @@ codex -m gpt-6-luna -s workspace-write -a on-request
 2. Se aparecer `Trust this folder?`, com `1. Trust and continue` e `2. Back to Agent Command Center`, confira o caminho e escolha 1 só se for este repositório. O `git init` não tira essa tela: ela apareceu em 8 de outubro de 2026 na 0.161.0 mesmo depois do commit inicial. A documentação oficial fala num pedido de confiança ao abrir a pasta: [aprovações](https://developers.openai.com/codex/agent-approvals-security.md). Faça isso antes do projetor.
 3. Dentro do agente, peça só isto: `Execute node --version e pare. Não edite arquivos.` O esperado é `v24.21.0` ou posterior, o mesmo piso de `.nvmrc`. Se vier outra versão, o agente está num login shell com outro PATH. Saia com `/quit` e abra de novo com `-c allow_login_shell=false`. A chave `allow_login_shell` está na [configuração avançada](https://developers.openai.com/codex/config-advanced). O flag `-c` está na [referência](https://developers.openai.com/codex/cli/reference).
 4. Ligue `/voice`, diga uma frase, ouça o retorno e encerre com `/voice stop`. Confira o microfone no dispositivo que a sala vai ouvir. A 0.161.0 também escolhe microfone, alto-falante e canal em `/voice settings`. Fonte: [release 0.161.0](https://github.com/openai/codex/releases/tag/rust-v0.161.0).
-5. Deixe uma gravação do ensaio que passou, fora do repositório. O nome leva a palavra `GRAVAÇÃO` e a data. Sem essa gravação, o plano B é dizer que o passo não rodou.
+5. Na pasta `apps/decisions`, pare um `npm start` que esteja na porta 3000 e execute `npm run dev`. Abra http://127.0.0.1:3000 na aba **Simulado**. Clique **Som desligado** e confira que o botão passa a **Som ligado** sem o aviso de voz local em português ausente. Recarregue. A página do palco começa de novo: som desligado, sem cenário. `npm run dev` reescreve `next-env.d.ts`; esse arquivo é gerado e não entra no Git. O `npm start` da véspera continua sendo o servidor do Decisions, depois deste bloco: ele serve a build e não mostra a edição do agente.
+6. Deixe uma gravação do ensaio que passou, fora do repositório. O nome leva a palavra `GRAVAÇÃO` e a data. Sem essa gravação, o plano B é dizer que o passo não rodou.
 
 Para sair, use `/quit` ou `/exit`. Fonte: `slash_command.rs` da tag 0.161.0. No ensaio de 8 de outubro, um Ctrl+C sozinho não encerrou a TUI.
 
 ## Roteiro de 2–3 minutos
 
-Deixe a Alô, TI aberta em http://127.0.0.1:3000, aba **Simulado**, e o Codex já aberto no comando da seção anterior. A instalação e o login ficam fora deste relógio.
+Deixe a Alô, TI aberta em http://127.0.0.1:3000, aba **Simulado**, e o Codex já aberto no comando da seção anterior. A instalação e o login ficam fora deste relógio. O servidor deste bloco é `npm run dev`, em `apps/decisions`, iniciado antes do relógio. O `npm start` serve a build do `prepare-stage.mjs` e continuaria mostrando a falha antiga depois da edição.
 
 | Tempo | Comando | Tela esperada | Plano B, rotulado GRAVAÇÃO |
 | --- | --- | --- | --- |
-| 0:00–0:20 | No navegador: **Por trás da decisão**, marque **Simular falha na próxima análise**, **Analisar relato** | O aviso lateral diz `A análise falhou. Seu relato continua aqui; tente novamente.` A conversa não ganha essa frase. | Diga “isto é gravação” e mostre o ensaio dessa tela. |
+| 0:00–0:20 | Na página recém-aberta: **Por trás da decisão**, marque **Simular falha na próxima análise**, **Explorar cenário**, **Analisar relato** | O aviso lateral diz `A análise falhou. Seu relato continua aqui; tente novamente.` A conversa não ganha essa frase. **Analisar relato** só existe depois de **Explorar cenário**. | Diga “isto é gravação” e mostre o ensaio dessa tela. |
 | 0:20–0:40 | No Codex, `/status` | Modelo `gpt-6-luna`, escrita no workspace. A conta não aparece na projeção. | Gravação do `/status` do ensaio, com a conta coberta. |
 | 0:40–1:10 | `/voice` e fale o pedido abaixo. Quando a legenda fechar o pedido, `/voice stop`. | Rodapé de voz (`listening` ou `speaking`) e a legenda do que foi dito. | Digite o mesmo pedido. Se a voz não abrir, diga isso e use a gravação do ensaio em que `/voice` funcionou. |
 | 1:10–1:40 | `/agents` | O agent command center lista a tarefa. Fale os outros nomes uma vez: `/worktree`, `/resume`, `/tui`. Não os execute. | Gravação do centro de agentes. |
-| 1:40–2:20 | Quando a tarefa terminar, `/diff`. Fora do Codex, na pasta `apps/decisions`: `node --test tests/spoken-reply.test.mts tests/service-desk.test.mts` | Diff curto nos dois arquivos de domínio e no teste. A suíte desses arquivos passa. | Se passar de 2:00 sem diff, corte para a gravação. Diga que não é ao vivo. |
-| 2:20–2:50 | Recarregue a Alô, TI e repita a falha simulada | A mesma frase entra na conversa. | Gravação desse reload. |
+| 1:40–2:20 | Quando a tarefa terminar, `/diff`. Fora do Codex, na pasta `apps/decisions`: `node --test tests/spoken-reply.test.mts tests/service-desk.test.mts` | Diff curto nos dois arquivos de domínio e nos dois testes. A suíte desses arquivos passa. | Se passar de 2:00 sem diff, corte para a gravação. Diga que não é ao vivo. |
+| 2:20–2:50 | Recarregue a Alô, TI. O reload desliga o som e volta à página inicial: clique **Som desligado** até o botão mostrar **Som ligado**, abra **Por trás da decisão**, marque a falha, **Explorar cenário** e **Analisar relato** | A mesma frase entra na conversa e a voz local em português a fala uma vez. Se o aviso disser que não há voz local em português, a transcrição é a evidência. O `npm run dev` recompila ao recarregar; se passar de 2:50, corte. | Gravação desse reload, com a frase falada. |
 
 Pedido falado, numa frase:
 
 ```text
-A falha simulada da Alô, TI fica só no aviso do lado. Coloque essa mesma frase na conversa, como mensagem da assistente, e deixe a voz local falá-la uma vez, sem repetir uma sugestão antiga. Mexa só em src/domain/service-desk.ts, src/domain/spoken-reply.ts e tests/spoken-reply.test.mts. Não instale nada e não faça commit.
+A falha simulada da Alô, TI fica só no aviso do lado. Coloque essa mesma frase na conversa, como mensagem da assistente, e deixe a voz local falá-la uma vez, sem repetir uma sugestão antiga. Atualize o teste que despacha FAILED para exigir essa mensagem e a fala desse estado. Mexa só em src/domain/service-desk.ts, src/domain/spoken-reply.ts, tests/spoken-reply.test.mts e tests/service-desk.test.mts. Não instale nada e não faça commit.
 ```
 
-O diff esperado descreve três mudanças: o caso `FAILED` passa a anexar a frase que já está no aviso; `getSpokenReply` aceita o status `error` quando a última mensagem é da assistente nesta revisão; o teste continua mudo para uma sugestão antiga e passa a exigir uma fala para a frase nova. Se o agente editar outro arquivo, peça para reverter essa parte e pare.
+O diff esperado descreve quatro mudanças. O caso `FAILED` passa a anexar a frase que já está no aviso, como mensagem da assistente nesta revisão. `getSpokenReply` aceita o status `error` quando essa última mensagem é da assistente nesta revisão. `tests/spoken-reply.test.mts` continua mudo para uma sugestão antiga e passa a exigir uma fala para a frase nova. `tests/service-desk.test.mts` deixa de afirmar que a frase fica fora da conversa: o mesmo `FAILED` precisa criar a mensagem, e a fala sai desse estado, não de um objeto montado à mão. Se o agente editar outro arquivo, peça para reverter essa parte e pare.
 
 Saia com `/quit` antes de rodar o `node --test`.
 
@@ -92,12 +93,14 @@ Uma tarde, com Node.js 24.21.0 ou posterior e o login ChatGPT. Não use chave de
 4. Resolva a confiança da pasta e o `node --version` dentro do agente, como na véspera.
 5. Envie o pedido da tabela. Pode ser por `/voice` ou digitado. Os dois usam o mesmo texto.
 6. Rode os dois arquivos de teste citados e leia o `git diff`.
-7. Suba a Alô, TI com `npm start` só se quiser ver a frase na conversa. O mock não chama a API.
+7. Para ver a frase na conversa, o processo precisa servir o código já editado. Na pasta `apps/decisions`, se ainda não houver `node_modules`, rode `npm ci --ignore-scripts`. Em seguida `npm run dev` e abra http://127.0.0.1:3000. Recarregue, clique **Som desligado** até o botão mostrar **Som ligado**, abra **Por trás da decisão**, marque **Simular falha na próxima análise**, clique **Explorar cenário** e **Analisar relato**. A frase entra na transcrição. Com uma voz local em português no dispositivo, ela é falada uma vez.
+
+Se `npm start` já estiver no ar com a build de antes da correção, ele continua nessa build. Pare com Ctrl+C, rode `npm run build` e só então `npm start`. Essa reconstrução não cabe no bloco de 2–3 minutos; no palco o caminho é o `npm run dev` aberto antes do relógio. O mock não chama a API.
 
 `codex exec` só entra se a TUI não abrir. Na pasta `apps/decisions`:
 
 ```sh
-codex exec -m gpt-6-luna -s workspace-write "A falha simulada da Alô, TI fica só no aviso do lado. Coloque essa mesma frase na conversa, como mensagem da assistente, e deixe a voz local falá-la uma vez, sem repetir uma sugestão antiga. Mexa só em src/domain/service-desk.ts, src/domain/spoken-reply.ts e tests/spoken-reply.test.mts. Não instale nada e não faça commit."
+codex exec -m gpt-6-luna -s workspace-write "A falha simulada da Alô, TI fica só no aviso do lado. Coloque essa mesma frase na conversa, como mensagem da assistente, e deixe a voz local falá-la uma vez, sem repetir uma sugestão antiga. Atualize o teste que despacha FAILED para exigir essa mensagem e a fala desse estado. Mexa só em src/domain/service-desk.ts, src/domain/spoken-reply.ts, tests/spoken-reply.test.mts e tests/service-desk.test.mts. Não instale nada e não faça commit."
 ```
 
 Sem `-s workspace-write`, o exec permanece somente leitura e não edita. Esse caminho não tem `/voice`.

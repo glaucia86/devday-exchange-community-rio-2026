@@ -61,7 +61,8 @@ Na pasta apps/decisions, execute:
   ${npm} start
 Abra http://127.0.0.1:3000
 
-Use esta build no encontro. npm run dev reescreve next-env.d.ts; esse arquivo é gerado e não entra no Git.
+Use esta build no encontro, com ${npm} start, para a Alô, TI da camada que sempre funciona e para o Decisions. npm run dev reescreve next-env.d.ts; esse arquivo é gerado e não entra no Git.
+O bloco do Codex CLI edita o fonte. Antes desse relógio, pare este processo e, na pasta apps/decisions, execute ${npm} run dev. Ao terminar o bloco, volte a ${npm} start. A build deste script não inclui a edição do agente.
 Antes de Dots, Codex ou voz, confira o ensaio em docs/roteiro-de-palco.md.
 Se for usar o Codex CLI:
   ${npm} install -g @openai/codex@0.161.0
