@@ -36,8 +36,13 @@ jobs:
         run: node scripts/check-workshop-examples.mjs
       - name: Conferir links locais da documentação
         run: node scripts/check-doc-links.mjs
+<<<<<<< HEAD
       - name: Conferir o roteiro do Codex CLI
         run: node scripts/check-cli-stage.mjs
+=======
+      - name: Conferir o guia de Dots
+        run: node --test scripts/check-dots-guide.test.mjs
+>>>>>>> origin/main
       - name: Conferir o mínimo de Node do ensaio
         run: node --test scripts/prepare-stage.test.mjs
   ui-build:
