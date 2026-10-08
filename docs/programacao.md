@@ -12,7 +12,7 @@ Confira inscrição, aprovação e eventuais mudanças na [página do evento no 
 
 ## Conteúdo do encontro
 
-A abertura será dedicada a um recap do OpenAI DevDay. A parte prática cobre **quatro temas independentes**:
+A abertura será dedicada a um recap do OpenAI DevDay. Glaucia conduz **quatro demonstrações**, enquanto o público acompanha. Cada uma tem um LAB correspondente para reproduzir em casa depois:
 
 - [Dots](../labs/01-dots/README.md): contexto, limites e revisão de uma entrega
 - [Codex CLI](../labs/codex-cli/README.md): tarefa de código acompanhada no terminal
@@ -25,8 +25,8 @@ Voz faz parte do tema Decisions. CLI e Cloud podem reutilizar o mesmo exercício
 
 ## Como acompanhar
 
-- **Antes:** escolha um LAB e confira acesso e pré-requisitos
-- **Durante:** observe a tarefa, o resultado esperado e a verificação
-- **Depois:** repita os passos em casa, incluindo os cenários de falha e o reset
+- **Antes:** salve o material; instalação e acesso podem ser preparados depois, para o estudo em casa
+- **Durante:** acompanhe as demonstrações de Glaucia e observe a tarefa, o resultado e a verificação. Não haverá execução coletiva dos LABS
+- **Depois:** repita em casa as mesmas demonstrações usando os LABS, incluindo os cenários de falha e o reset
 
 Consulte o [estado real da validação](validacao.md) antes de depender de qualquer demonstração ao vivo.

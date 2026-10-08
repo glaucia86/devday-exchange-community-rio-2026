@@ -1,0 +1,7 @@
+{
+  "answers": [
+    { "type": "score", "name": "impacto", "score": 1.25, "confidence": 0.8 },
+    { "type": "choice", "name": "equipe", "choice": "applications", "confidence": 0.91 },
+    { "type": "predicate", "name": "contexto", "probability": 0.96 }
+  ]
+}

@@ -4,9 +4,15 @@
 
 ## Estado
 
-Adaptadores implementados para GPT-Live, WebRTC e Decisions. A CI usa transporte simulado e respostas de teste. Ainda não houve ensaio com chave, inferência ou áudio reais. Acesso aos modelos, latência, reconhecimento e saída audível continuam pendentes.
+Adaptadores implementados para GPT-Live, WebRTC e Decisions. A CI usa transporte simulado e respostas de teste. Ainda não houve ensaio com chave, inferência ou áudio reais. Acesso aos modelos, latência, reconhecimento e saída audível continuam pendentes. O fluxo principal planejado para o palco é voz para voz; os testes offline e o mock são preparação/contingência. Use os mesmos relatos e critérios do [LAB para reproduzir em casa](../labs/02-decisions-typescript/README.md) e do [roteiro da apresentadora](guia-apresentadora.md#decisions-api).
 
 O modo padrão permanece offline. Abrir a aba ao vivo não inicia uma sessão paga nem solicita o microfone.
+
+## Se você veio do LAB e o mock já abriu
+
+A preparação inicial já foi feita. Não clone novamente nem inicie um segundo servidor. Pare sua execução com Ctrl+C antes de editar a configuração e avance para **Chave existente: inserção manual** abaixo. Se você iniciou o mock por outro guia usando `npm run dev`, gere antes a build com `npm run build` (ou `npm.cmd run build` no PowerShell); os próximos passos usam `npm start`.
+
+Se ainda não conseguiu abrir o mock, faça uma das preparações por sistema abaixo. Só prossiga para a chave quando a interface local funcionar.
 
 ## Windows: primeiro execute o mock
 
@@ -41,6 +47,22 @@ npm.cmd start
 
 Abra http://127.0.0.1:3000. Mantenha o terminal aberto. O mock não usa a chave. Este fluxo ainda não foi ensaiado em Windows; os comandos seguem os scripts do repositório e devem ser conferidos no computador de destino.
 
+## Se estiver no macOS ou Linux
+
+Use o mesmo repositório e Node.js 22.18+. No terminal, na raiz:
+
+```sh
+cd apps/decisions
+node --version
+npm ci --ignore-scripts
+npm run typecheck
+npm test
+npm run build
+npm start
+```
+
+Os comandos `npm.cmd` do caminho Windows tornam-se `npm` nesses sistemas. Abra a URL local indicada pelo servidor. Mantenha o terminal aberto; Ctrl+C encerra essa sua execução. A execução completa nesses sistemas/dispositivos também precisa ser registrada como ensaio, separadamente da CI Linux.
+
 ## Chave existente: inserção manual, somente no seu computador
 
 Não envie a chave em chat, screenshot ou commit. O arquivo local é ignorado pelo Git, mas não é criptografado; proteja sua conta e o acesso ao computador.
@@ -51,13 +73,21 @@ Na pasta apps/decisions, pare o servidor com Ctrl+C. Se .env.local já existir, 
 Copy-Item .env.example .env.local
 ```
 
+No macOS/Linux, você pode fazer a cópia sem sobrescrever um arquivo existente com este comando, na mesma pasta `apps/decisions` e com o servidor parado:
+
+```sh
+node -e "const fs=require('node:fs');fs.copyFileSync('.env.example','.env.local',fs.constants.COPYFILE_EXCL)"
+```
+
+Se o arquivo já existir, o comando recusa a cópia. Preserve-o e edite somente as variáveis deste projeto com um editor de texto/código. Não imprima seu conteúdo no terminal. No Windows, também é possível usar esse comando em vez de `Copy-Item`.
+
 Antes de abrir o arquivo, confira sem revelar o conteúdo:
 
 ```powershell
 git check-ignore -v .env.local
 ```
 
-Deve aparecer a regra .env.* do .gitignore. Se ela não aparecer, pare antes de inserir o segredo. Depois, abra com notepad .env.local e preencha pelo editor, sem colocar o segredo na linha de comando:
+Deve aparecer a regra .env.* do .gitignore. Se ela não aparecer, pare antes de inserir o segredo. Depois, abra `.env.local` pelo seu editor. No Windows, `notepad .env.local` abre o arquivo; em outros sistemas, use o editor de texto/código que já tem. Preencha pelo editor, sem colocar o segredo na linha de comando:
 - OPENAI_API_KEY: cole a chave de projeto que você já criou e guardou.
 - MESA_LIVE_ACCESS_TOKEN: escolha uma senha aleatória exclusiva da demo, com pelo menos 32 caracteres entre letras, números, hífen e sublinhado. Esse código é diferente da chave OpenAI; é ele que você digitará na interface.
 - MESA_LIVE_ENABLED: mantenha false até aprovar um teste com custo.
@@ -71,7 +101,7 @@ Antes de habilitar:
 2. Defina o orçamento do teste e acompanhe o consumo. Saldo em conta não é autorização automática de gasto.
 3. Use somente dados fictícios, de preferência fones de ouvido, e permita o microfone apenas nesta página local.
 
-Para habilitar por sua própria ação, altere MESA_LIVE_ENABLED para true no editor e reinicie npm.cmd start. Abra a aba OpenAI ao vivo, digite o código MESA_LIVE_ACCESS_TOKEN (nunca a chave OpenAI), leia o consentimento e clique em Iniciar conversa real.
+Para habilitar por sua própria ação, altere MESA_LIVE_ENABLED para true no editor e reinicie npm.cmd start. Abra a aba OpenAI ao vivo, digite o código MESA_LIVE_ACCESS_TOKEN (nunca a chave OpenAI), leia o consentimento e, somente se concordar com o envio e tiver autorizado o gasto, marque a caixa “Entendi o envio de áudio e texto à OpenAI e estou autorizada a usar a API com custo nesta demo.”. Então clique em Iniciar conversa real.
 
 Faça um ensaio curto:
 - Diga um relato fictício de falha de acesso.

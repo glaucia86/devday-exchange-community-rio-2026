@@ -1,0 +1,7 @@
+{
+  "answers": [
+    { "type": "refusal", "name": "contexto" },
+    { "type": "choice", "name": "equipe", "choice": "applications", "confidence": 0.91 },
+    { "type": "score", "name": "impacto", "score": 1.25, "confidence": 0.8 }
+  ]
+}

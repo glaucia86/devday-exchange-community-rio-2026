@@ -66,6 +66,11 @@ A abertura terá um recap do OpenAI DevDay, seguido dos temas técnicos e da tro
 
 Este repositório reúne **material original em português** para acompanhar o encontro e continuar praticando depois dele.
 
+**No evento, Glaucia conduz as demonstrações e o público acompanha. Os LABS são para fazer em casa depois, reproduzindo as mesmas demonstrações. Não haverá execução coletiva dos exercícios durante a apresentação.**
+
+O fio condutor é o suporte fictício da Aurora: revisar os relatos, melhorar o encaminhamento, revisar uma entrega remota e conversar por voz antes de confirmar um ticket simulado. Cada LAB tem o mesmo cenário, pedido e critérios da demonstração correspondente no [guia da apresentadora](docs/guia-apresentadora.md).
+
+
 | Se você quer… | Comece por… |
 | --- | --- |
 | Experimentar um dos temas | Os [quatro LABS](#labs), com requisitos, passos e resultados esperados |
@@ -83,19 +88,40 @@ Conhecer o básico de JavaScript/TypeScript, terminal e Git ajuda na parte de c�
 <a id="labs"></a>
 ## 🧪 Escolha seu LAB
 
-São **quatro temas independentes**, com objetivos e instruções próprios. Esta ordem facilita a navegação; não define uma nova ordem de palco.
+São **quatro demonstrações, cada uma com um LAB para reproduzir em casa**. Os roteiros são independentes para estudo, mas seguem o mesmo contexto de suporte fictício. Esta ordem facilita a navegação; não define novos horários de palco.
 
-| LAB | O que você vai praticar | Abrir o material |
+| Demonstração | O que você vai reproduzir em casa | Abrir o LAB |
 | --- | --- | --- |
 | **Dots** | Dar contexto, limitar ações e revisar uma entrega | [Cenário e passo a passo](labs/01-dots/README.md) |
 | **Codex CLI** | Acompanhar uma mudança no terminal, inspecionar o diff e verificar testes | [LAB do CLI](labs/codex-cli/README.md) |
-| **Codex Cloud** | Delegar uma tarefa remota e revisar o resultado | [LAB do Cloud](labs/codex-cloud/README.md) |
-| **Decisions API** | Inspecionar uma decisão tipada, corrigir o relato e confirmar o encaminhamento | [LAB Decisions](labs/02-decisions-typescript/README.md) |
+| **Codex Cloud** | Revisar uma candidata com testes verdes, reproduzir a regressão e conferir uma correção remota | [LAB do Cloud](labs/codex-cloud/README.md) |
+| **Decisions API** | Conversar por voz, corrigir o relato e revisar o ticket; com alternativa simulada e exercícios de contrato | [LAB Decisions](labs/02-decisions-typescript/README.md) |
 
-CLI e Cloud usam o mesmo [exercício fictício de encaminhamento](exercises/ticket-router/README.md), com experiências de execução e revisão separadas. A experiência de voz para voz faz parte de **Decisions API**. A [arquitetura proposta](docs/arquitetura-decisions.md) descreve o fluxo e suas etapas pendentes.
+CLI e Cloud usam o mesmo [contrato de encaminhamento fictício](exercises/ticket-router/README.md), com pontos de partida diferentes: implementação a partir do starter no CLI e revisão de uma candidata defeituosa no Cloud. A experiência de voz para voz faz parte de **Decisions API**. A [arquitetura proposta](docs/arquitetura-decisions.md) descreve o fluxo e suas etapas pendentes.
 
 <a id="preparacao"></a>
-## 🧰 1. Prepare seu ambiente
+## 🧰 Prepare seu ambiente
+
+
+### Se esta é sua primeira vez com terminal
+
+Você não precisa ter assistido à apresentação. Comece aqui e depois siga um LAB por vez.
+
+- **Terminal:** janela em que você digita comandos. No Windows, abra o PowerShell ou Prompt de Comando pelo menu Iniciar; no macOS ou Linux, abra o aplicativo Terminal
+- **Pasta atual:** lugar em que o terminal está trabalhando. `cd nome-da-pasta` entra em uma pasta; `cd ..` volta um nível
+- **Repositório:** a pasta deste projeto, com código, textos e histórico. **Clonar** baixa uma cópia para seu computador
+- **Raiz do repositório:** a pasta principal `devday-exchange-community-rio-2026`, antes de entrar em `apps`, `labs` ou `exercises`
+- **Node.js:** executa os exemplos JavaScript/TypeScript. **npm:** instala os pacotes que a interface precisa. **Git:** obtém o projeto e compara alterações
+
+Nos blocos marcados como comandos, copie uma linha, cole no terminal e pressione Enter. Aguarde o resultado antes da próxima. Nos blocos **texto para enviar**, cole na conversa do produto indicado, não no terminal. As saídas esperadas são exemplos do que ler; não são comandos para copiar.
+
+### Instale apenas o que faltar
+
+1. Execute os três comandos da tabela abaixo. Se uma ferramenta responder com sua versão, ela já está disponível.
+2. Se aparecer “comando não encontrado” ou “não é reconhecido”, abra o link oficial da ferramenta, selecione seu sistema e instale. Para Node.js, escolha uma versão LTS compatível com **22.18 ou posterior**.
+3. Feche e abra o terminal de novo, então repita a verificação. Não prossiga com uma versão de Node menor que 22.18.
+4. Editor e navegador são locais à sua escolha. Não é preciso instalar uma extensão de IA no editor.
+
 
 | Ferramenta | Requisito | Para que serve |
 | --- | --- | --- |
@@ -113,7 +139,53 @@ npm --version
 git --version
 ```
 
+Como ler a saída: `node --version` começa com `v`, como `v24.19.0`; `npm --version` traz números; `git --version` começa com `git version`. O `v24.19.0` foi observado no ensaio cloud deste material. Sua versão pode diferir se respeitar o mínimo indicado.
+
 Os testes offline e o mock não exigem conta OpenAI nem chave de API. Instalar dependências requer acesso ao registro npm. O acesso aos produtos dos LABS deve ser preparado separadamente.
+
+### Obtenha o projeto antes de escolher um LAB de código
+
+Dots usa somente o cenário na conversa. Para CLI, Cloud ou Decisions, abra um terminal na pasta onde você guarda projetos e execute:
+
+```sh
+git clone --branch main https://github.com/glaucia86/devday-exchange-community-rio-2026.git
+cd devday-exchange-community-rio-2026
+node --test exercises/ticket-router/starter/router.test.mjs
+```
+
+Para conferir a pasta atual em qualquer um desses sistemas:
+
+```sh
+node -p "process.cwd()"
+```
+
+O caminho exibido deve terminar em `devday-exchange-community-rio-2026`. Se terminar em `apps/decisions`, use `cd ../..` para voltar à raiz. Se abriu outro terminal, ele pode ter começado em uma pasta diferente; confira de novo.
+
+No final do teste inicial, procure esta contagem. O desenho dos símbolos e os tempos variam:
+
+```text
+tests 3
+pass 3
+fail 0
+```
+
+**Confira:** o terminal está na pasta `devday-exchange-community-rio-2026` e os três testes passam. Quando um LAB disser “na raiz do repositório”, é esta pasta. Se `node` ou `git` não existir, instale pela fonte oficial da tabela e reabra o terminal.
+
+Se já tiver uma cópia, não clone por cima nem descarte alterações. Confira `git status --short`; atualize somente quando souber o que está preservando. O material publicado fica em `main`.
+
+**Se não conseguiu chegar até aqui:**
+
+| O que apareceu | O que fazer |
+| --- | --- |
+| A pasta de destino já existe | Não clone por cima. Abra a cópia existente ou escolha outra pasta para um clone novo |
+| `Cannot find module` | Confira `node -p "process.cwd()"` e o caminho do comando. Não crie um arquivo vazio para esconder o erro |
+| Falha de download/conexão | Confira a conexão e tente o mesmo comando novamente; não mude configurações de segurança para contornar o problema |
+| Terminal mostra `>` e parece esperar mais texto | Pode faltar fechar uma aspa. Cancele com Ctrl+C e cole novamente a linha inteira do guia |
+
+O site do evento é um portal de leitura. **A Alô, TI só aparece em `127.0.0.1` depois que você inicia a aplicação no seu computador**. `127.0.0.1` significa “esta máquina”; o servidor da demo não é o site público do evento.
+
+Os exercícios de código não precisam de `npm install`. A instalação com `npm ci --ignore-scripts` é necessária apenas para abrir a interface Alô, TI, conforme [Execute a demo](#executar). Os LABS de CLI e Cloud explicam separadamente o login e a preparação do produto.
+
 
 <details>
 <summary><strong>🪟 Usando Windows com PowerShell?</strong></summary>
@@ -123,15 +195,17 @@ Se o PowerShell informar que `npm.ps1` não pode ser carregado, abra o Prompt de
 </details>
 
 <a id="executar"></a>
-## 🚀 2. Execute a demo Alô, TI
+## 🚀 Execute a demo Alô, TI
 
 A demo **Alô, TI** é um service desk fictício. Você escolhe um cenário, analisa o relato, simula uma correção e revisa os campos antes de criar um ticket simulado.
 
 O fluxo padrão usa fixtures e estado em memória, sem API ou microfone. A integração ao vivo exige configuração segura e autorização de custo. Consulte o [guia Windows e os limites](docs/integracao-live.md).
 
-### Clone o material
+### Abra sua cópia do material
 
-O material está na branch **`main`**:
+Se você já seguiu **Prepare seu ambiente**, use a mesma pasta `devday-exchange-community-rio-2026` e pule o bloco de clone abaixo. Não clone o projeto dentro dele mesmo.
+
+**Somente se ainda não clonou:** abra o terminal na pasta onde guarda projetos. O material está na branch **`main`**:
 
 ```sh
 git clone --branch main https://github.com/glaucia86/devday-exchange-community-rio-2026.git
@@ -159,7 +233,7 @@ Execute um comando por vez e deixe o terminal aberto. Acesse **http://127.0.0.1:
 Quando disponível, a interface pode ler respostas com a **voz local do dispositivo**. Não é áudio OpenAI nem transcrição real. A saída de áudio ainda precisa de ensaio nos dispositivos-alvo. Veja o [README da aplicação](apps/decisions/README.md).
 
 <a id="validar"></a>
-## ✅ 3. Verifique seu ambiente
+## ✅ Verifique seu ambiente
 
 Na **raiz do repositório**, com Node.js 22.18 ou posterior:
 
@@ -167,10 +241,12 @@ Na **raiz do repositório**, com Node.js 22.18 ou posterior:
 node --test exercises/ticket-router/starter/router.test.mjs
 node --test exercises/ticket-router/solution/router.test.mjs
 node --test apps/decisions/tests/*.test.mts
+node --test exercises/ticket-router/review-candidate/router.test.mjs exercises/decisions-contract/inspect.test.mts
+node scripts/check-workshop-examples.mjs
 node scripts/check-doc-links.mjs
 ```
 
-O conjunto unitário contém **46 testes**: 3 do starter, 8 da solução e 35 de domínio, contratos e proteções da Alô, TI. Consulte a CI do commit atual para o resultado.
+O conjunto contém **56 testes**: 3 do starter, 8 da solução, 5 da candidata de revisão, 5 do exercício de contrato e 35 da Alô, TI. Além deles, a verificação pedagógica executa 18 casos de aceitação em cada versão do encaminhador: starter com 10 falhas esperadas, candidata com 2 e solução sem falhas. Consulte a CI do commit atual para o resultado. Testes verdes da candidata não significam que ela já está correta.
 
 Dentro de **`apps/decisions`**, após instalar as dependências:
 
@@ -192,7 +268,7 @@ A [execução de referência](https://github.com/glaucia86/devday-exchange-commu
 | Área | Situação |
 | --- | --- |
 | Quatro LABS e guia da apresentadora | Disponíveis |
-| Encaminhador e Alô, TI | 46 testes definidos; resultado por commit no Actions |
+| Encaminhador e Alô, TI | 56 testes e aceitação red/green; resultado por commit no Actions |
 | TypeScript e build Next.js | Aprovados na execução de referência |
 | Interface mock em Chromium | Revisão, correção, reset e tratamento de erro verificados |
 | Capturas desktop e celular | Inspecionadas |
@@ -208,15 +284,22 @@ O [roteiro](docs/guia-apresentadora.md) reúne preparação, objetivos, falas-ch
 Use a [programação](docs/programacao.md) para os detalhes do encontro e as [referências](docs/referencias.md) para aprofundamento técnico.
 
 <a id="checklist"></a>
-## 🎒 Checklist para o encontro
+## 🎒 Checklist para acompanhar e reproduzir
+
+### No encontro
 
 - [ ] Confirmei minha inscrição.
-- [ ] Escolhi os LABS e li seus requisitos.
-- [ ] Node.js, npm e Git respondem no terminal.
+- [ ] Salvei o material para reproduzir as demonstrações depois.
+- [ ] Sei que Glaucia conduz as demos; não preciso instalar nem executar os LABS junto com a apresentação.
+
+### Em casa, quando for praticar
+
+- [ ] Escolhi um LAB e li seus requisitos.
+- [ ] Para os LABS de código: Node.js, npm e Git respondem no terminal.
 - [ ] Clonei a branch indicada e executei os testes offline.
-- [ ] Se vou usar a demo Alô, TI, instalei as dependências e abri a interface.
-- [ ] Conferi meu acesso ao produto necessário.
-- [ ] Separei notebook e carregador.
+- [ ] Se vou abrir a Alô, TI, instalei as dependências e conferi o modo Simulado.
+- [ ] Conferi meu acesso ao produto necessário e os limites de uso aplicáveis.
+- [ ] Se optar por voz real, autorizei meu orçamento de teste e segui a configuração segura.
 - [ ] Usarei somente dados fictícios ou públicos.
 
 <a id="estrutura"></a>
@@ -268,3 +351,4 @@ Documentação e código originais sob a [licença MIT](LICENSE). Marcas e mater
 </p>
 <p><a href="#topo">↑ Voltar ao topo</a></p>
 </div>
+

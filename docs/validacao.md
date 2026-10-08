@@ -64,3 +64,43 @@ Um teste de handshake usa apenas loopback para verificar headers no WebSocket na
 A revisão revelou regressões reproduzidas antes das correções: fala apagando ticket, sideband perdido e fechamento concorrente. A evidência final deve sempre ser o resultado do SHA exato; uma build antiga ou um teste parcial não valida alterações posteriores.
 
 [Guia Windows](integracao-live.md) · [Workflow](https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-labs.yml)
+
+
+
+## Revisão dos LABS como participante · 8 de outubro de 2026
+
+A revisão partiu do portal público e dos arquivos do commit `fc939b501182d488d4e3d91d423623e14b87d472`. O caminho “Prepare seu ambiente” omitia o clone antes de pedir comandos na raiz; o LAB Decisions apontava para o arquivo errado das perguntas. O novo material inclui preparação, checkpoints e resultados observáveis.
+
+Execução local desta revisão, no computador cloud, com Node.js 24.19.0:
+
+- 46 testes existentes: 46 aprovados, sem inferência ou áudio reais
+- Verificador independente do encaminhador: starter 8/18, candidata de revisão 16/18 e solução 18/18. As falhas iniciais são intencionais e conferidas por script; arquivo ausente não vale como “vermelho”
+- Cópia do starter, execução, comparação de diff e reset percorridos em diretório temporário: três testes iniciais, aceitação vermelha, solução verde e recusa de sobrescrita confirmados. A correção foi reproduzida com a solução local, sem chamar o agente Codex
+- Os quatro arquivos do exercício Cloud foram montados em uma pasta independente e executados localmente, sem criar tarefa remota
+- Cinco testes do exercício TypeScript de contrato: resposta completa, contexto insuficiente, recusa, equipe inválida e arquivo ausente
+- CLI disponível no ambiente: `codex-cli 0.159.2`; ajuda e sintaxe de login consultadas, sem autenticar ou executar uma tarefa de modelo
+
+O conjunto passou a ter 56 testes, contando os cinco testes deliberadamente incompletos da candidata e os cinco do exercício de contrato. A aceitação independente acrescenta 18 verificações para cada versão do encaminhador. A CI executa tanto o verde quanto as falhas didáticas esperadas.
+
+Isso comprova os exercícios locais e seus critérios. Não comprova que uma pessoa concluiu Dots, a interação autenticada do CLI ou uma tarefa Codex Cloud. Esses ensaios continuam pendentes, assim como microfone, áudio audível e APIs reais. O walkthrough público confirma a navegação e o conteúdo que estava publicado; alterações de um PR só chegam ao site após integração e deploy autorizados.
+
+Comandos novos, na raiz:
+
+```sh
+node --test exercises/ticket-router/review-candidate/router.test.mjs exercises/decisions-contract/inspect.test.mts
+node scripts/check-workshop-examples.mjs
+```
+
+Para conferir o patch atual, use a [CI dos LABS](https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-labs.yml) e a [CI do portal](https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-portal.yml). Não reutilize uma execução de outro SHA como prova de uma alteração posterior.
+
+
+### Finalidade dos roteiros
+
+No evento, Glaucia conduz as quatro demonstrações e o público acompanha. Os quatro LABS são para reproduzir essas mesmas demonstrações em casa depois; não haverá execução coletiva durante a apresentação. Tempos do guia da apresentadora são estimativas de palco/ensaio; tempos dos LABS são de estudo em casa, fora da grade oficial.
+
+Decisions mantém voz para voz real como demonstração principal planejada, condicionada ao ensaio real ainda pendente. Mock e fixtures continuam identificados como preparação, alternativa e aprofundamento. Documentar o roteiro principal não comprova que ele foi executado.
+
+
+### Autonomia de quem estuda em casa
+
+Os guias incluem abertura do terminal, conceitos básicos, verificação de versões, pasta atual, preparação de cópias, distinção entre comandos e mensagens ao agente, saídas esperadas e recuperação de erros. O caminho essencial fica separado do aprofundamento opcional. A cópia Cloud com os dois comandos de Node e os quatro arquivos foi repetida em uma pasta temporária: cinco testes verdes, aceitação 16/18 e recusa de sobrescrita confirmadas. Navegação de conta e upload no GitHub seguem fontes oficiais, mas não foram ensaiados com login nesta revisão.
