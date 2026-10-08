@@ -33,7 +33,7 @@ Com o servidor da build aberto, clique **Modo palco**. Fique na aba **Simulado**
 
 1. **Explorar cenário.** Leia o relato da senha e peça um palpite de equipe.
 2. **Analisar relato.** Aparece Acessos e identidade. O botão de criar ticket continua desligado.
-3. Pergunte: “E se a senha funcionar e o portal cair para o time inteiro?” Clique **Corrigir o relato** e analise de novo.
+3. Pergunte: “E se a senha funcionar e o portal cair para o time inteiro?” Clique **Simular uma correção** e analise de novo. **Corrigir o relato** só abre o texto para edição.
 4. A sugestão passa para Aplicações internas. A revisão anterior sai.
 5. Marque a revisão e crie `DEMO-0001`.
 

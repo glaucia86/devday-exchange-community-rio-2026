@@ -6,7 +6,7 @@ import { canCreate, createDesk, deskReducer, mockDecision, SCENARIOS, TEAMS, typ
 import LiveDesk from './live-desk';
 import { getSpokenReply } from '../domain/spoken-reply';
 
-const STATUS = {ready:'Pronto para começar','needs-analysis':'Relato recebido',analyzing:'Analisando o relato',review:'Pronto para revisar',clarify:'Precisamos esclarecer',created:'Ticket criado',error:'Tente novamente'};
+const STATUS = {ready:'Pronto para começar','needs-analysis':'Relato recebido',analyzing:'Analisando o relato',review:'Pronto para revisar',clarify:'Precisamos esclarecer',unsupported:'Texto livre não analisado',created:'Ticket criado',error:'Tente novamente'};
 export default function ServiceDesk(){
   const [state,dispatch]=useReducer(deskReducer,undefined,()=>createDesk());
   const [sound,setSound]=useState(false);
@@ -19,6 +19,7 @@ export default function ServiceDesk(){
   const [voiceReady,setVoiceReady]=useState(false);
   const spoken=useRef('');
   const end=useRef<HTMLDivElement>(null);
+  const incident=useRef<HTMLTextAreaElement>(null);
   useEffect(()=>{
     if(!('speechSynthesis' in window))return;
     const check=()=>setVoiceReady(window.speechSynthesis.getVoices().some(v=>v.localService&&v.lang.startsWith('pt')));
@@ -47,7 +48,10 @@ export default function ServiceDesk(){
   function stopAudio(){if('speechSynthesis' in window)window.speechSynthesis.cancel();setSpeaking(false);}
   function replay(id:ScenarioId){stopAudio();spoken.current='';dispatch({type:'REPLAY',scenario:id});}
   function reset(){stopAudio();spoken.current='';dispatch({type:'RESET'});setVoiceNotice('');}
+  function editReport(){stopAudio();const field=incident.current;if(!field||field.disabled)return;field.focus();field.select();}
   const active=state.status!=='ready';
+  const unsupported=state.status==='unsupported';
+  const locked=state.ticket?'Ticket já criado. Use Recomeçar para outro relato.':undefined;
   return <main className={stage?'stage':undefined}>
     <a className="skip" href="#conversation">Pular para a conversa</a>
     <header className="topbar">
@@ -68,27 +72,27 @@ export default function ServiceDesk(){
       {showLive&&<LiveDesk/>}
       {!showLive&&<div className="workspace-grid">
         <section className="conversation" id="conversation" tabIndex={-1} aria-label="Conversa e transcrição">
-          <div className="panel-heading"><div><span className="step-label">01 / O RELATO</span><h2>Vamos conversar</h2></div><span className={'conversation-state '+(speaking?'speaking':'')}>{speaking?<AudioLines size={14}/>:<span className="small-dot"/>}{speaking?'Reproduzindo voz local':STATUS[state.status]}</span></div>
+          <div className="panel-heading"><div><span className="step-label">01 / O RELATO</span><h2>Vamos conversar</h2></div><span className={'conversation-state '+(speaking?'speaking ':'')+(unsupported?'attention':'')}>{speaking?<AudioLines size={14}/>:<span className="small-dot"/>}{speaking?'Reproduzindo voz local':STATUS[state.status]}</span></div>
           {!active?<div className="welcome">
             <div className="voice-symbol" aria-hidden="true"><i/><i/><i/><i/><i/><i/><i/></div>
             <h3>Toda solução começa<br/>com um bom relato.</h3><p>Escolha um cenário para acompanhar uma conversa.<br/>Você pode corrigir os detalhes antes de seguir.</p>
             <button className="primary start" onClick={()=>replay('access')}><Play size={17} fill="currentColor"/>Explorar cenário<ArrowRight size={17}/></button>
             <span className="welcome-caption">Escolha um relato para ver a equipe sugerida.</span>
           </div>:<div className="transcript" aria-label="Transcrição do cenário" aria-live="polite" aria-relevant="additions">
-            {state.messages.map(message=><article className={'message '+message.role} key={`${state.session}-${message.id}`}><div className="message-label">{message.role==='assistant'?<Headphones size={13}/>:<MessageSquareText size={13}/>}<span>{message.role==='assistant'?'ALÔ, TI':'PESSOA SOLICITANTE'}</span></div><p>{message.text}</p></article>)}
+            {state.messages.map(message=>{const attention=unsupported&&message.id===state.messages.at(-1)?.id;return <article className={'message '+message.role+(attention?' attention':'')} key={`${state.session}-${message.id}`}><div className="message-label">{message.role==='assistant'?<Headphones size={13}/>:<MessageSquareText size={13}/>}<span>{message.role==='assistant'?'ALÔ, TI':'PESSOA SOLICITANTE'}</span></div><p>{message.text}</p></article>;})}
             {state.status==='analyzing'&&<div className="thinking"><LoaderCircle size={15} className="spin"/>Analisando o relato…</div>}
             <div ref={end}/>
           </div>}
-          {active&&<div className="input-area"><label htmlFor="incident">Relato atual <span>versão {state.revision}</span></label><textarea id="incident" value={state.draftText} rows={3} disabled={!!state.ticket} onChange={e=>dispatch({type:'EDIT',value:e.target.value})}/><div className="input-actions"><button className="text-button" disabled={state.corrected||!!state.ticket} onClick={()=>{stopAudio();dispatch({type:'CORRECT'});}}>Corrigir o relato <ArrowRight size={14}/></button><button className="primary" disabled={state.status==='analyzing'||!state.draftText.trim()||!!state.ticket} onClick={()=>dispatch({type:'ANALYZE'})}>{state.status==='analyzing'?<LoaderCircle size={15} className="spin"/>:<Sparkles size={15}/>}Analisar relato</button></div><p className="input-caption">Se um detalhe mudou, corrija o relato antes de confirmar.</p></div>}
+          {active&&<div className="input-area"><label htmlFor="incident">Relato atual <span>versão {state.reportVersion}</span></label><textarea id="incident" ref={incident} value={state.draftText} rows={3} disabled={!!state.ticket} title={locked} onChange={e=>dispatch({type:'EDIT',value:e.target.value})}/><div className="input-actions"><div className="edit-actions"><button className="text-button" disabled={!!state.ticket} title={locked??'Abre o relato atual para você editar'} onClick={editReport}>Corrigir o relato <ArrowRight size={14}/></button><button className="text-button" disabled={state.corrected||!!state.ticket} title={locked??'Insere um exemplo pronto do palco, separado do que você escrever'} onClick={()=>{stopAudio();dispatch({type:'CORRECT'});}}>Simular uma correção <ArrowRight size={14}/></button></div><button className="primary" disabled={state.status==='analyzing'||!state.draftText.trim()||!!state.ticket} title={locked} onClick={()=>dispatch({type:'ANALYZE'})}>{state.status==='analyzing'?<LoaderCircle size={15} className="spin"/>:<Sparkles size={15}/>}Analisar relato</button></div><p className="input-caption">{state.ticket?'Ticket criado. Use Recomeçar para abrir outro relato.':'Edite o relato e analise de novo. Simular uma correção insere um exemplo pronto, separado do que você escrever.'}</p></div>}
           <div className="scenarios"><span className="scenarios-label">OUTROS RELATOS</span><div>{(Object.entries(SCENARIOS) as [ScenarioId,typeof SCENARIOS[ScenarioId]][]).map(([id,scenario])=><button key={id} onClick={()=>replay(id)} className={active&&state.scenario===id?'selected':''}><span>{scenario.label}</span><ArrowUpRight size={13}/></button>)}</div></div>
         </section>
         <aside className="decision-panel" aria-label="Análise e revisão do ticket">
           <div className="panel-heading"><div><span className="step-label">02 / O ENCAMINHAMENTO</span><h2>Um passo de cada vez</h2></div><span className="panel-symbol"><Ticket size={19}/></span></div>
           <div className="decision-content">
-            <div className={'suggestion '+(state.analysis?'has-result':'')}><div className="suggestion-heading"><span>EQUIPE SUGERIDA</span>{state.analysis?null:<CircleHelp size={15}/>}</div><h3>{state.analysis?TEAMS[state.analysis.team]:'Ainda estamos ouvindo'}</h3><p>{state.analysis?state.analysis.explanation:'A sugestão aparece depois que o relato estiver pronto para análise.'}</p>{state.analysis&&<div className="human-reminder"><ShieldCheck size={13}/>A revisão humana continua necessária</div>}</div>
+            <div className={'suggestion '+(state.analysis?'has-result':'')+(unsupported?' unsupported':'')}><div className="suggestion-heading"><span>{unsupported?'SEM ENCAMINHAMENTO':'EQUIPE SUGERIDA'}</span>{state.analysis||unsupported?null:<CircleHelp size={15}/>}</div><h3>{state.analysis?TEAMS[state.analysis.team]:unsupported?'Nenhuma equipe sugerida':'Ainda estamos ouvindo'}</h3><p>{state.analysis?state.analysis.explanation:unsupported?(state.messages.at(-1)?.text??''):'A sugestão aparece depois que o relato estiver pronto para análise.'}</p>{state.analysis&&<div className="human-reminder"><ShieldCheck size={13}/>A revisão humana continua necessária</div>}</div>
             <div className="flow-connector"><ArrowDown size={16}/></div>
             {state.ticket?<div className="ticket-created"><span className="ticket-check"><CheckCheck size={25}/></span><p className="step-label">TICKET SIMULADO CRIADO</p><h3>{state.ticket.id}</h3><h4>{state.ticket.title}</h4><p>{state.ticket.description}</p><div><span>Equipe confirmada</span><strong>{TEAMS[state.ticket.team]}</strong></div><div><span>Origem</span><strong>Demo local · versão {state.ticket.revision}</strong></div><p className="ticket-footnote">Nenhum sistema externo recebeu este ticket.</p></div>:<div className="ticket-draft"><div className="draft-heading"><span><FileText size={16}/>Prévia do ticket</span><span className="draft-badge">RASCUNHO</span></div><label htmlFor="ticket-title">Título</label><input id="ticket-title" value={state.title} placeholder="O que precisa ser resolvido?" disabled={!active} onChange={e=>dispatch({type:'TITLE',value:e.target.value})}/><label htmlFor="ticket-team">Equipe responsável</label><select id="ticket-team" value={state.team} disabled={state.status!=='review'} onChange={e=>dispatch({type:'TEAM',value:e.target.value as Team})}>{Object.entries(TEAMS).map(([id,label])=><option value={id} key={id}>{label}</option>)}</select><label className="review-check"><input type="checkbox" checked={state.reviewed} disabled={state.status!=='review'} onChange={e=>dispatch({type:'REVIEW',checked:e.target.checked})}/><span>Revisei o relato e a equipe responsável.</span></label><button className="create-button" disabled={!canCreate(state)} onClick={()=>dispatch({type:'CREATE'})}><Check size={16}/>Confirmar e criar ticket simulado</button><p className="draft-caption"><LockKeyhole size={11}/>Nada é criado sem a sua confirmação.</p></div>}
-            {!!state.notice&&<p className={'notice '+(state.status==='error'?'error':'')} role="status">{state.notice}</p>}
+            {!!state.notice&&<p className={'notice '+(state.status==='error'?'error':unsupported?'attention':'')} role="status">{state.notice}</p>}
           </div>
         </aside>
       </div>

@@ -34,7 +34,7 @@ Fragmentos de fala não devem disparar uma análise a cada palavra. A primeira v
 
 Uma edição incrementa a revisão e invalida análise e confirmação. Resultados carregam sessão e revisão; os antigos são descartados. A resposta a ser narrada também precisa corresponder à revisão vigente. Reset troca a sessão e interrompe a leitura. Clique repetido não duplica o ticket.
 
-Texto livre no mock recebe um aviso de não interpretação. Não se devolve uma fixture como se tivesse sido produzida para um relato arbitrário.
+Texto livre no mock entra na conversa e recebe uma resposta explícita de não interpretação. O estado não reutiliza “precisamos esclarecer”, nem conserva equipe, título ou transcrição do cenário anterior como se o texto novo tivesse sido analisado. Não se devolve uma fixture como se tivesse sido produzida para um relato arbitrário.
 
 ## Integração OpenAI implementada
 

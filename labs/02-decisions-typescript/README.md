@@ -40,7 +40,7 @@ Siga somente [Prepare seu ambiente](../../README.md#preparacao) até clonar o pr
 node --test apps/decisions/tests/*.test.mts
 ```
 
-**Esperado:** no fim da saída, `tests 35`, `pass 35`, `fail 0`. O teste de handshake usa somente loopback, isto é, comunicação interna na própria máquina, sem chave real ou internet. Se o comando falhar por caminho ou versão do Node, corrija a preparação antes de seguir.
+**Esperado:** no fim da saída, `tests 40`, `pass 40`, `fail 0`. O teste de handshake usa somente loopback, isto é, comunicação interna na própria máquina, sem chave real ou internet. Se o comando falhar por caminho ou versão do Node, corrija a preparação antes de seguir.
 
 Agora use o terminal que está confirmado na raiz do repositório. Execute uma linha por vez para entrar na pasta da aplicação, instalar e iniciar:
 
@@ -118,9 +118,9 @@ Na parte superior da aplicação, selecione **Simulado**. Se vinha da conversa r
 
 ### B. Corrija o relato antes de confirmar
 
-Clique **Corrigir o relato**. A senha funciona; agora há erro 500 afetando todo o time. Para projetar, use **Modo palco**: o texto da equipe fica maior. O seletor **Simulado** e o rodapé registram que as respostas desta aba são preparadas.
+Clique **Corrigir o relato** para abrir o texto, editar e analisar de novo. Para a virada ensaiada, clique **Simular uma correção**: a senha funciona e passa a haver erro 500 para todo o time. Para projetar, use **Modo palco**: o texto da equipe fica maior. O seletor **Simulado** e o rodapé registram que as respostas desta aba são preparadas.
 
-**Confira:** a análise anterior perdeu a validade e a confirmação ficou bloqueada. Analise de novo; a sugestão muda para **Aplicações internas**.
+**Confira:** depois de **Simular uma correção**, a análise anterior perdeu a validade e a confirmação ficou bloqueada. Analise de novo; a sugestão muda para **Aplicações internas**.
 
 Revise título, relato e equipe. Marque **Revisei o relato e a equipe responsável.** Edite o título e confira que a revisão foi desmarcada. Revise novamente e só então confirme.
 
@@ -131,7 +131,7 @@ Revise título, relato e equipe. Marque **Revisei o relato e a equipe responsáv
 - **Falta de contexto:** clique **Recomeçar**, escolha **Relato incompleto** e analise. A equipe fica em **Revisão humana**; confirmação continua bloqueada
 - **Falha de análise:** escolha **Acesso ao portal**, abra **Por trás da decisão** se o painel não estiver aberto, marque **Simular falha na próxima análise** e analise. Confira que o relato foi preservado. Desmarque a opção e tente novamente
 
-Texto livre não é interpretado pelo mock: ao editar o relato fora dos cenários, ele pede um cenário pronto. Não avalie a qualidade de um modelo por essa resposta fixa.
+Texto livre não é interpretado pelo mock. A conversa mostra o que você escreveu e explica que é preciso escolher um cenário ou mudar para OpenAI ao vivo. Nenhuma equipe é sugerida, e o estado não diz “Precisamos esclarecer”. Não avalie a qualidade de um modelo por essa resposta fixa.
 
 ## Aprofundamento em casa: inspecione o contrato sem chamar a API
 
@@ -187,10 +187,10 @@ Anote o modo usado: voz real, interface simulada ou somente contrato offline. No
 | Resposta sugere outra equipe | Transcrição e correção mais recente | Revise o dado; não confirme uma sugestão errada para obter um ticket |
 | Finalização da sessão não confirmada | Aviso após Encerrar conversa | Verifique sessão e consumo; não reinicie em sequência nem trate trocar de aba como encerramento |
 
-- **36 testes falham por sintaxe TypeScript:** confira Node.js 24.21.0 ou posterior e o diretório atual
+- **40 testes falham por sintaxe TypeScript:** confira Node.js 24.21.0 ou posterior e o diretório atual
 - **`ARQUIVO_INVALIDO`:** confira caminho e sintaxe JSON; não é a recusa esperada
 - **Porta 3000 ocupada:** veja a URL do terminal ou encerre somente o servidor de uma tentativa sua; não termine processos desconhecidos
-- **Texto livre não foi analisado:** recarregue um cenário; não é uma falha de acesso à API
+- **Texto livre não foi analisado:** a conversa explica o motivo. Escolha um cenário ou mude para OpenAI ao vivo; não é uma falha de acesso à API
 - **Recomeçar:** limpa o estado em memória da demo. Para os JSONs, trabalhe em cópias e preserve os originais
 - **Sem instalação da interface:** faça o aprofundamento de contrato e os testes; registre que o navegador não foi ensaiado nessa máquina
 
