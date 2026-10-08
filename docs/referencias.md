@@ -35,7 +35,15 @@ Consulta destes links do CLI: **8 de outubro de 2026**.
 - [LAB do CLI](../labs/codex-cli/README.md)
 
 ## Codex Cloud
-- [Codex Cloud: ambientes e tarefas](https://learn.chatgpt.com/docs/cloud)
+
+Páginas lidas em **8 de outubro de 2026**. A ajuda da OpenAI respondeu 403 na leitura automática; as frases de interface usadas no LAB vêm das páginas que abriram e do teste na conta real do mesmo dia. Rótulos podem variar.
+
+- [Codex Cloud](https://developers.openai.com/codex/cloud)
+- [Cloud environments](https://learn.chatgpt.com/docs/environments/cloud-environments)
+- [Visão geral](https://learn.chatgpt.com/docs/cloud)
+- [Modos e o que uma tarefa altera](https://learn.chatgpt.com/docs/environments/modes)
+- [Codex Cloud (Legacy)](https://learn.chatgpt.com/docs/environments/cloud-environment)
+- [Using Codex Cloud](https://help.openai.com/en/articles/20001545-using-codex-cloud)
 - [LAB do Cloud](../labs/codex-cloud/README.md)
 
 ## Decisions e voz
