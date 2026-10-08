@@ -66,7 +66,12 @@ test('uncertain context is routed to human without converting score into priorit
 test('invalid and unrelated Live events cannot become instructions',()=>{
  assert.equal(parseLiveEvent('not json'),null);
  assert.equal(parseLiveEvent(JSON.stringify({type:'execute',command:'anything'})),null);
+ assert.equal(parseLiveEvent(JSON.stringify({type:'response.function_call_arguments.done',name:'analisar',arguments:'{}'})),null);
+ assert.equal(parseLiveEvent(JSON.stringify({type:'response.event',event:{type:'response.function_call_arguments.delta',delta:'{}'}})),null);
  assert.equal(parseLiveEvent(JSON.stringify({type:'session.delegation.created',delegation:{id:'d1'}}))?.type,'session.delegation.created');
+ const tool=parseLiveEvent(JSON.stringify({type:'response.event',event:{type:'response.output_item.done',item:{type:'function_call',status:'completed',name:'analisar',call_id:'call_1',arguments:'{}'}}}));
+ assert.equal(tool?.type,'response.function_call');
+ if(tool?.type==='response.function_call'){assert.equal(tool.name,'analisar');assert.equal(tool.callId,'call_1');}
 });
 const origin='http://127.0.0.1:3000';
 const token='test-only-demo-access-token-not-a-real-secret';
@@ -99,18 +104,29 @@ test('auth, cross-origin, public host and oversized input are rejected before in
  assert.equal((await handle(req({action:'start',sdp:'x'.repeat(70000)}))).status,413);
  assert.equal(calls,0);
 });
-test('server creates only client-delegation WebRTC sessions and never returns the project key',async()=>{
+test('server creates a tool-using GPT-Live WebRTC session and never returns the project key',async()=>{
  let seenUrl='',seenBody:any;
  const handle=createLiveHandler(env,async(url,init)=>{seenUrl=String(url);seenBody=JSON.parse(String(init?.body));return Response.json({session:{id:'sess_test'},transport:{type:'webrtc',sdp:'v=0\r\nanswer'}});},guard);
  const res=await handle(req({action:'start',sdp:'v=0\r\noffer'}));
  assert.equal(res.status,200);const json=await res.json();
  assert.equal(seenUrl,'https://api.openai.com/v1/live/sessions');
- assert.deepEqual(seenBody.session.delegation,{type:'client'});
+ assert.equal(seenBody.session.delegation.type,'responses');
+ assert.equal(seenBody.session.delegation.responses.model,'gpt-6-luna');
+ assert.equal(seenBody.session.delegation.responses.tool_choice,'auto');
+ assert.equal(seenBody.session.delegation.responses.parallel_tool_calls,false);
+ assert.deepEqual(seenBody.session.delegation.responses.tools.map((tool:any)=>tool.name),['registrar_relato','corrigir_relato','analisar','confirmar_ticket','recomecar']);
+ assert.equal(JSON.stringify(seenBody.session.delegation.responses.tools).includes('shell'),false);
+ assert.equal(seenBody.session.audio.output.voice,'bossa');
+ assert.deepEqual(seenBody.session.client.data_channel.allowed_client_events,['session.close','session.commentary.append','session.thinking.append','response.item.create','response.create']);
+ assert.equal(seenBody.session.client.data_channel.allowed_client_events.includes('session.update'),false);
+ assert.equal(seenBody.session.client.data_channel.allowed_client_events.includes('session.instructions.append'),false);
  assert.equal(seenBody.session.model,'gpt-live-1');
+ assert.equal(seenBody.session.store,false);
  assert.ok(seenBody.session.instructions.startsWith('Você é Alô, TI, demo fictícia de service desk.'),'the spoken persona uses the current visible brand');
  assert.equal(seenBody.transport.type,'webrtc');
  assert.equal(json.sessionId,'sess_test');
  assert.equal(JSON.stringify(json).includes(env.OPENAI_API_KEY),false);
+ assert.equal(JSON.stringify(seenBody).includes(env.OPENAI_API_KEY),false);
 });
 test('unknown sessions and invalid actions never reach upstream',async()=>{
  let calls=0;const handle=createLiveHandler(env,async()=>{calls++;throw Error('network forbidden');},guard);

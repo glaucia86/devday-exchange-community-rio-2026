@@ -26,7 +26,7 @@ As três perguntas avaliam o mesmo relato:
 - choice: acessos, aplicações internas, infraestrutura ou revisão humana?
 - score: orientação sem bloqueio, trabalho degradado com alternativa ou trabalho bloqueado sem alternativa?
 
-Probabilidade e score não autorizam uma ação. O score pode ser fracionário e não é arredondado para uma prioridade operacional. A pessoa revisa título, relato e equipe; somente um clique explícito cria o ticket simulado.
+Probabilidade e score não autorizam uma ação. O score pode ser fracionário e não é arredondado para uma prioridade operacional. A pessoa revisa título, relato e equipe. O ticket simulado só nasce com confirmação explícita, pelo botão ou pela função `confirmar_ticket` quando o argumento booleano vem verdadeiro.
 
 ## Correção e concorrência
 
@@ -34,11 +34,11 @@ Fragmentos de fala não devem disparar uma análise a cada palavra. A primeira v
 
 Uma edição incrementa a revisão e invalida análise e confirmação. Resultados carregam sessão e revisão; os antigos são descartados. A resposta a ser narrada também precisa corresponder à revisão vigente. Reset troca a sessão e interrompe a leitura. Clique repetido não duplica o ticket.
 
-Texto livre no mock recebe um aviso de não interpretação. Não se devolve uma fixture como se tivesse sido produzida para um relato arbitrário.
+Texto livre no mock entra na conversa e recebe uma resposta explícita de não interpretação. O estado não reutiliza “precisamos esclarecer”, nem conserva equipe, título ou transcrição do cenário anterior como se o texto novo tivesse sido analisado. Não se devolve uma fixture como se tivesse sido produzida para um relato arbitrário.
 
 ## Integração OpenAI implementada
 
-O [guia oficial](https://developers.openai.com/api/docs/guides/decisions-voice) descreve GPT-Live com delegação client e Decisions no servidor. A aplicação reúne transcrições, associa delegações e devolve resultados atuais para serem falados.
+O [guia oficial de voz com Decisions](https://developers.openai.com/api/docs/guides/decisions-voice) usa delegação client para escolher uma ação sem parâmetros. Esta mesa usa delegação Responses: o modelo devolve uma função com o relato ou a confirmação, e o navegador executa o redutor. A Decisions continua responsável pela triagem da equipe. O monitoramento final é calculado na mesa e falado com `session.commentary.append`.
 
 Em 7/10/2026, o exemplo [WebRTC](https://developers.openai.com/api/docs/guides/voice-webrtc?api=live) usa gpt-live-1, e [Decisions](https://developers.openai.com/api/docs/guides/decisions) documenta gpt-6-luna. A disponibilidade na conta ainda não foi verificada.
 

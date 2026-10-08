@@ -48,7 +48,7 @@ node --test apps/decisions/tests/*.test.mts
 node scripts/check-workshop-examples.mjs
 ```
 
-Esperado: Node.js 24.21.0 ou posterior, 57 testes aprovados no conjunto atual e aceitação com falhas didáticas conferidas: starter 8/18, candidata 16/18, solução 18/18. Isso verifica os exemplos locais; os ensaios nos produtos são uma etapa adicional.
+Esperado: Node.js 24.21.0 ou posterior, 71 testes aprovados no conjunto atual e aceitação com falhas didáticas conferidas: starter 8/18, candidata 16/18, solução 18/18. Isso verifica os exemplos locais; os ensaios nos produtos são uma etapa adicional.
 
 ## Abertura e transições
 
@@ -131,7 +131,7 @@ O encaminhador não entra neste bloco. Ele continua no Cloud. Aqui a plateia vê
 
 **Estimativa de palco: 10–12 minutos.** [Reprodução em casa](../labs/02-decisions-typescript/README.md) · [Roteiro de palco](roteiro-de-palco.md)
 
-**O que entra sem ensaio:** a aba **Simulado**, com **Modo palco**, a virada de Acessos e identidade para Aplicações internas e o ticket `DEMO-0001`. O botão na tela é **Corrigir o relato**.
+**O que entra sem ensaio:** a aba **Simulado**, com **Modo palco**, a virada de Acessos e identidade para Aplicações internas e o ticket `DEMO-0001`. O botão do exemplo pronto é **Simular uma correção**. **Corrigir o relato** abre o texto para a pessoa editar.
 
 **Demonstração ao vivo, só depois do ensaio:** voz para voz real com GPT-Live + Decisions. O mock não prova que a conversa real funcionou.
 
@@ -151,19 +151,21 @@ Enquanto esses itens estiverem pendentes, o fluxo principal não deve ser anunci
 
 Deixe a aplicação local aberta com `npm start`, a partir da build do `node scripts/prepare-stage.mjs`. Na aba **OpenAI ao vivo**, já configurada. Não comece a captura enquanto explica a arquitetura ou ajusta projeção. Sessões têm limite local de dois minutos; esse controle não garante teto de gasto.
 
-Fala sugerida: “Vou falar com a Alô, TI. GPT-Live cuida da conversa e Decisions sugere o encaminhamento. O ticket continua fictício e só nasce depois da minha revisão.”
+Fala sugerida: “Até aqui eu cliquei. Agora eu falo com a Alô, TI. Ela pede uma função, a mesa executa, e o ticket continua fictício até eu confirmar.”
+
+O meio da demonstração continua na aba **Simulado**. A voz entra no fechamento. Sem o ensaio de áudio, leia a frase de monitoramento que a aba simulada mostra depois do ticket e diga que a conversa real não rodou.
 
 ### Sequência da conversa
 
 1. **Iniciar:** confira o código local; leia o consentimento e, somente após concordar com o envio e autorizar o custo, marque **Entendi o envio de áudio e texto à OpenAI e estou autorizada a usar a API com custo nesta demo.** Clique **Iniciar conversa real** e espere **Microfone ativo**.
-2. **Relatar:** diga “Não consigo entrar no portal interno desde que troquei a senha. Só eu fui afetada e consigo continuar as outras tarefas.”
-   - Esperado: transcrição correspondente, resposta audível e sugestão de **Acessos e identidade**, sujeita a revisão. Valores e palavras do modelo não são fixos.
-   - Se a análise não for delegada automaticamente, use **Analisar com Decisions** e explique que acionou esse passo manualmente.
-3. **Preparar a revisão, sem confirmar:** mostre que ainda não existe ticket. Marque a revisão inicial sem criar o ticket.
-4. **Corrigir por voz:** diga “Correção: a senha funciona. O portal mostra erro 500 para todo o time, ninguém consegue trabalhar e não há alternativa.”
-   - Esperado: análise antiga invalidada, revisão desmarcada e nova sugestão de **Aplicações internas**. Confira a transcrição; não force uma saída incorreta para seguir a fala preparada.
-5. **Confirmar:** revise título, relato e equipe; marque **Revisei este relato ao vivo e a equipe.** e clique **Confirmar ticket simulado ao vivo**.
-   - Esperado: `DEMO-0001`, sem envio a sistema externo. Ouça a resposta de confirmação; transcrição sozinha não comprova saída de voz.
+2. **Registrar:** diga “Registra este relato: a rede da sala de reunião cai durante as chamadas. O restante do escritório funciona.”
+   - Esperado: o log mostra `registrar_relato` e o texto aparece no relato. Ainda não há ticket. A transcrição sozinha não preenche o campo.
+3. **Analisar:** diga “Analisa o relato.”
+   - Esperado: uma fala curta de que está analisando e, em seguida, a equipe sugerida. Se a função não vier, use **Analisar com Decisions** e diga que acionou o botão.
+4. **Interromper:** no meio da resposta, diga “Corrige: na verdade é o time todo e ninguém consegue trabalhar. Não há alternativa.”
+   - Esperado: o log mostra `corrigir_relato`, a análise some e a sugestão anterior não volta.
+5. **Analisar de novo** e, só então, dizer “Confirma e abre o ticket.”
+   - Esperado: `DEMO-0001`. Sem esse pedido explícito o ticket não nasce. A tela mostra o monitoramento de demonstração. Depois de uma pausa, a assistente fala a frase uma vez. Aponte o rótulo de dados de demonstração: não é um painel real.
 6. **Encerrar:** clique **Encerrar conversa** e espere **Conversa encerrada. Microfone liberado.**.
    - Se aparecer finalização não confirmada, pare os novos inícios e verifique sessão/consumo. Não reinicie em sequência.
 
@@ -177,7 +179,7 @@ O exercício de editar fixtures e comparar recusas fica no LAB para estudo em ca
 
 **Reset real:** confirmar o encerramento e só então iniciar outra sessão autorizada. Não usar “Recomeçar” do mock para inferir que uma sessão remota foi encerrada.
 
-**Plano B no palco:** se uma conversa real foi iniciada, clique **Encerrar conversa** e confirme o fechamento antes de trocar para Simulado. Se a finalização não for confirmada, pare os novos inícios e siga a verificação de sessão/consumo do guia local; trocar de aba não comprova encerramento remoto. Depois, anuncie “Agora vou reproduzir o fluxo com respostas preparadas”. Na aba **Simulado**, clique **Modo palco → Explorar cenário → Analisar relato → Corrigir o relato → Analisar relato**, revise e crie `DEMO-0001`. O seletor e o rodapé já dizem que esta aba é simulada. Não há microfone nem inferência nesse caminho. Voz local opcional do dispositivo não é GPT-Live. Se nem a interface estiver disponível, mostrar os testes e fixtures, sem dizer que houve conversa.
+**Plano B no palco:** se uma conversa real foi iniciada, clique **Encerrar conversa** e confirme o fechamento antes de trocar para Simulado. Se a finalização não for confirmada, pare os novos inícios e siga a verificação de sessão/consumo do guia local; trocar de aba não comprova encerramento remoto. Depois, anuncie “Agora vou reproduzir o fluxo com respostas preparadas”. Na aba **Simulado**, clique **Modo palco → Explorar cenário → Analisar relato → Simular uma correção → Analisar relato**, revise e crie `DEMO-0001`. Leia a frase de monitoramento na tela e diga que os registros marcados como demonstração não são chamados reais. O seletor e o rodapé já dizem que esta aba é simulada. Não há microfone nem inferência nesse caminho. Voz local opcional do dispositivo não é GPT-Live. Se nem a interface estiver disponível, mostrar os testes e fixtures, sem dizer que houve conversa.
 
 ## Fechamento
 

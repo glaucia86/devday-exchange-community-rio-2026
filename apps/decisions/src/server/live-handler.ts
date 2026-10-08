@@ -1,5 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
 import { buildDecisionRequest, parseDecision, type TranscriptLine } from '../domain/live-contract.ts';
+import { liveSessionBody } from '../domain/live-session.ts';
 import type { GuardFactory, SessionGuard } from './live-guard.ts';
 type Env=Record<string,string|undefined>;
 type Fetcher=(url:string|URL|Request,init?:RequestInit)=>Promise<Response>;
@@ -34,8 +35,6 @@ async function readBody(request:Request):Promise<unknown>{
  const all=new Uint8Array(size);let at=0;for(const chunk of chunks){all.set(chunk,at);at+=chunk.length;}
  return JSON.parse(new TextDecoder().decode(all));
 }
-const instructions='Você é Alô, TI, demo fictícia de service desk. Fale português brasileiro de modo breve. Converse por voz e pergunte serviço, falha, quem foi afetado e alternativa. Delegue ao aplicativo quando houver relato ou correção para avaliar. Só o aplicativo pode consultar Decisions e sugerir equipe. Não invente análises ou tickets. Informe que o usuário precisa revisar e confirmar na tela. Ações disponíveis: analisar relato e esclarecer contexto. Não crie ticket por voz, não execute comandos, não acesse computadores ou serviços externos. Correções invalidam sugestões anteriores. Use somente dados fictícios; não solicite credenciais ou dados pessoais.';
-
 export function createLiveHandler(env:Env,fetcher:Fetcher,openGuard:GuardFactory){
  const sessions=new Map<string,Active>();const confirmedClosed=new Map<string,number>();let starting=false,blocked=false;
  let windowStart=Date.now(),starts=0,decisions=0;
@@ -82,7 +81,7 @@ export function createLiveHandler(env:Env,fetcher:Fetcher,openGuard:GuardFactory
    starting=true;starts++;
    let id:string|undefined;
    try{
-    const value=await upstream('live/sessions',{session:{model:'gpt-live-1',store:false,delegation:{type:'client'},instructions},transport:{type:'webrtc',sdp:body.sdp}});
+    const value=await upstream('live/sessions',liveSessionBody(body.sdp));
     if(!object(value)||!object(value.session)||typeof value.session.id!=='string'||!/^[a-zA-Z0-9_-]{1,200}$/.test(value.session.id)||!object(value.transport)||value.transport.type!=='webrtc'||typeof value.transport.sdp!=='string'||value.transport.sdp.length>60000)throw Error('contract');
     id=value.session.id;
     const active:Active={revision:-1,busy:false,expires:Date.now()+120000,guard:null,closed:false,usable:true};sessions.set(id,active);
