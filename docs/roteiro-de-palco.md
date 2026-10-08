@@ -33,7 +33,7 @@ Com o servidor da build aberto, clique **Modo palco**. Fique na aba **Simulado**
 
 1. **Explorar cenário.** Leia o relato da senha e peça um palpite de equipe.
 2. **Analisar relato.** Aparece Acessos e identidade. O botão de criar ticket continua desligado.
-3. Pergunte: “E se a senha funcionar e o portal cair para o time inteiro?” Clique **Corrigir o relato** e analise de novo.
+3. Pergunte: “E se a senha funcionar e o portal cair para o time inteiro?” Clique **Simular uma correção** e analise de novo. **Corrigir o relato** só abre o texto para edição.
 4. A sugestão passa para Aplicações internas. A revisão anterior sai.
 5. Marque a revisão e crie `DEMO-0001`.
 
@@ -41,15 +41,17 @@ O seletor **Simulado** e o rodapé dizem que esta aba usa respostas preparadas. 
 
 **Plano B:** se a página não abrir, mostre os testes e as fixtures e diga que não houve conversa.
 
+O miolo desta demonstração, cerca de três minutos no projetor, fica na aba **Simulado**: cenário, análise, correção, nova equipe e ticket. A voz é o fechamento, não o meio. Sem ensaio de áudio, o fechamento é a frase de monitoramento na própria aba simulada, lida em voz alta por você.
+
 ## Camada 2 · só com ensaio feito
 
 Cada bloco abaixo fica de fora se o ensaio da véspera não tiver passado no notebook do projetor. A camada 1 continua de pé.
 
 | Bloco | Ensaio que libera o palco | Plano B |
 | --- | --- | --- |
-| **Dots** | O dots abre na conta, sem conectar aplicativos. O resumo separa fato de lacuna e a correção do A-102 muda só o que foi corrigido. | Leia o exemplo comentado do cenário e diga que o dots não foi executado. |
-| **Codex CLI** | `codex --version` mostra `codex-cli 0.161.0` e `codex login status` confirma a sessão. A frase **A senha falhou e a conexão caiu** está vermelha no starter. | Rode a solução de referência e os 18 critérios. Diga que a mudança não veio do CLI. |
-| **Codex Cloud** | O ambiente publicado aponta para `glaucia86/devday-exchange-community-rio-2026` e `bug-rede.test.mts` ainda falha na explicação da rede. A tarefa de correção já foi enviada antes do bloco. | Aos 3 minutos sem diff e sem a saída do teste, abra o plano B com o letreiro GRAVADO ANTES · não é ao vivo. |
-| **Voz** | No notebook do projetor: fala reconhecida, resposta audível na sala, correção refletida na equipe, sessão encerrada e consumo conferido. | Fique na Alô, TI simulada. Diga que a conversa real não foi executada. |
+| **Dots** | No notebook do projetor, com este cenário: o dot abre pelo nome, em `chatgpt.com/dots/<id>`, sem aplicativos e sem computador. O relatório preparado confere com as páginas públicas. A pergunta ao vivo “o que mudou” foi respondida dentro de cerca de 45 s, sem inventar item e sem pedir conexão. O ensaio de 8 de outubro de 2026 usou outro cenário e não libera este bloco. | **Plano B · relatório preparado.** Mostre o relatório conferido antes, ao lado da página pública, e diga que a consulta ao vivo não foi concluída. |
+| **Codex CLI** | `codex --version` mostra `codex-cli 0.161.0`. A abertura é `codex -m gpt-6-luna -s workspace-write -a on-request` em `apps/decisions`. `Trust this folder?` já foi respondido. Dentro do agente, `node --version` mostra v24.21.0 ou posterior. `/voice` legenda uma frase e `/agents` abre o centro de agentes. | Diga “isto é gravação” e rode o ensaio etiquetado GRAVAÇÃO. Se não houver gravação, mostre a falha simulada na Alô, TI e diga que o CLI não rodou. |
+| **Codex Cloud** | O ambiente publicado ainda começa em 16/18, com a candidata original. | Faça a caça ao bug da camada 1 e diga que a tarefa remota não rodou. |
+| **Voz** | No notebook do projetor: os cinco comandos aparecem no log, a correção no meio da frase troca a equipe, o ticket só nasce depois de “confirma”, a frase de monitoramento sai uma vez e a sessão encerra. | Fique na Alô, TI simulada. Crie o ticket pelos botões. Aponte a frase de monitoramento na tela e diga que a conversa real não foi executada. |
 
-A versão do Codex fica fixa em `@openai/codex@0.161.0` para o encontro. `codex login status` entra no checklist da véspera, antes de abrir o projetor.
+A versão do Codex fica fixa em `@openai/codex@0.161.0` para o encontro. Na véspera do CLI, antes do projetor: `codex login status` sem mostrar a conta; `codex -m gpt-6-luna -s workspace-write -a on-request` na pasta `apps/decisions`; a pasta confiada se surgir `Trust this folder?`; dentro do agente, `node --version` em v24.21.0 ou posterior (se vier outra, reabra com `-c allow_login_shell=false`); `/voice` ensaiado até `/voice stop`. A Alô, TI desse bloco abre com `npm run dev` na mesma pasta, antes do relógio: o `npm start` da véspera serve a build e não mostra a edição do agente. Depois do bloco, o Decisions volta ao `npm start`. O plano B desse bloco é uma gravação etiquetada GRAVAÇÃO.

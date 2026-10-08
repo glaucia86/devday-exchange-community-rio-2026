@@ -1,4 +1,6 @@
 /** Deterministic teaching fixtures. No model or external service is called. */
+import { demoHistory, monitoringInsight, type HistoryEntry, type MonitoringInsight } from './monitoring.ts';
+export type { HistoryEntry, MonitoringInsight };
 export type Team = 'access' | 'applications' | 'infrastructure' | 'human';
 export type ScenarioId = 'access' | 'network' | 'ambiguous';
 export const TEAMS: Record<Team, string> = {
@@ -22,14 +24,18 @@ export const SCENARIOS = {
     correction: 'O portal interno mostra erro 500 para todo o time e ninguém consegue trabalhar. Não há alternativa.',
   },
 } satisfies Record<ScenarioId, { label:string;category:string;title:string;text:string;correction:string }>;
+/** Shown in the conversation when simulated mode cannot score typed text. Not a team suggestion. */
+export const FREE_TEXT_REPLY = 'O modo simulado só analisa os três relatos prontos. Este texto ficou registrado, mas nenhuma equipe foi sugerida. Escolha um cenário em Outros relatos ou mude para OpenAI ao vivo.';
 export type Decision = { team:Team; probability:number; confidence:number; score:number; explanation:string; source:'mock'|'openai' };
 export type Message = { id:number;role:'user'|'assistant';text:string;revision:number };
 export type Ticket = { id:string;title:string;description:string;team:Team;revision:number;simulated:true };
 export type DeskState = {
-  mode:'mock'|'live'; session:number;revision:number;scenario:ScenarioId;corrected:boolean;
-  status:'ready'|'needs-analysis'|'analyzing'|'review'|'clarify'|'created'|'error';
+  mode:'mock'|'live'; session:number;revision:number;reportVersion:number;draftDirty:boolean;
+  scenario:ScenarioId;corrected:boolean;
+  status:'ready'|'needs-analysis'|'analyzing'|'review'|'clarify'|'unsupported'|'created'|'error';
   draftText:string;title:string;team:Team;messages:Message[];analysis:Decision|null;
   reviewed:boolean;ticket:Ticket|null;notice:string;
+  history:HistoryEntry[];insight:MonitoringInsight|null;
 };
 export type DeskEvent =
  | {type:'REPLAY';scenario:ScenarioId} | {type:'CORRECT'} | {type:'EDIT';value:string}
@@ -37,7 +43,7 @@ export type DeskEvent =
  | {type:'ANALYZE'} | {type:'RESOLVED';session:number;revision:number;result:Decision}
  | {type:'FAILED';session:number;revision:number} | {type:'CREATE'} | {type:'RESET'};
 export function createDesk(session=1,mode:DeskState['mode']='mock'):DeskState {
-  return {mode,session,revision:0,scenario:'access',corrected:false,status:'ready',draftText:'',title:'',team:'human',messages:[],analysis:null,reviewed:false,ticket:null,notice:''};
+  return {mode,session,revision:0,reportVersion:0,draftDirty:false,scenario:'access',corrected:false,status:'ready',draftText:'',title:'',team:'human',messages:[],analysis:null,reviewed:false,ticket:null,notice:'',history:demoHistory(Date.now()),insight:null};
 }
 export function mockDecision(scenario:ScenarioId,corrected:boolean):Decision {
   if ((scenario==='access'||scenario==='ambiguous')&&corrected) return {
@@ -51,25 +57,42 @@ export function mockDecision(scenario:ScenarioId,corrected:boolean):Decision {
 function append(state:DeskState,role:Message['role'],text:string):Message[] {
   return [...state.messages,{id:(state.messages.at(-1)?.id??0)+1,role,text,revision:state.revision}];
 }
+/** The transcript follows the draft that will be analyzed. An open turn is rewritten; an answered turn stays in history. */
+function commitDraft(state:DeskState):DeskState {
+  const text=state.draftText;
+  const last=state.messages.at(-1);
+  if(last?.role==='user'&&last.text===text) return {...state,draftDirty:false};
+  if(last?.role==='user') return {...state,draftDirty:false,messages:state.messages.slice(0,-1).concat({...last,text,revision:state.revision})};
+  return {...state,draftDirty:false,messages:append(state,'user',text)};
+}
+/** Replaces the current report with text the person supplied. This is the edit path, not the canned stage correction. */
+export function recordReportEdit(state:DeskState,value:string):DeskState {
+  const edited=deskReducer(state,{type:'EDIT',value});
+  return edited===state?state:commitDraft(edited);
+}
 export function canCreate(state:DeskState):boolean {
   return state.status==='review' && state.reviewed && state.analysis!==null &&
     state.team!=='human' && state.title.trim().length>0 && state.draftText.trim().length>0 && state.ticket===null;
 }
 export function deskReducer(state:DeskState,event:DeskEvent):DeskState {
   switch(event.type) {
-    case 'RESET': return createDesk(state.session+1,state.mode);
+    case 'RESET': return {...createDesk(state.session+1,state.mode),history:state.history};
     case 'REPLAY': {
       const scenario=SCENARIOS[event.scenario];
-      return {...createDesk(state.session+1),scenario:event.scenario,revision:1,status:'needs-analysis',draftText:scenario.text,title:scenario.title,
+      return {...createDesk(state.session+1),history:state.history,scenario:event.scenario,revision:1,reportVersion:1,status:'needs-analysis',draftText:scenario.text,title:scenario.title,
         messages:[{id:1,revision:1,role:'assistant',text:'Olá! Conte o que aconteceu e quem foi afetado. Vamos preparar um ticket juntos.'},{id:2,revision:1,role:'user',text:scenario.text}],
         notice:''};
     }
-    case 'EDIT': return state.ticket?state:{...state,revision:state.revision+1,draftText:event.value,status:'needs-analysis',analysis:null,reviewed:false,ticket:null,notice:'Relato alterado. A análise anterior perdeu a validade.'};
+    case 'EDIT': {
+      if(state.ticket||event.value===state.draftText) return state;
+      const opening=!state.draftDirty;
+      return {...state,revision:state.revision+1,reportVersion:opening?state.reportVersion+1:state.reportVersion,draftDirty:true,draftText:event.value,status:'needs-analysis',analysis:null,reviewed:false,ticket:null,corrected:event.value===SCENARIOS[state.scenario].correction,notice:'Relato alterado. A análise anterior perdeu a validade.'};
+    }
     case 'CORRECT': {
       if(state.ticket)return state;
       const correction=SCENARIOS[state.scenario].correction;
-      return {...state,revision:state.revision+1,corrected:true,draftText:correction,status:'needs-analysis',analysis:null,reviewed:false,ticket:null,
-        messages:append({...state,revision:state.revision+1},'user',correction),notice:'Correção recebida. Vamos analisar esta nova versão.'};
+      const next:DeskState={...state,revision:state.revision+1,reportVersion:state.reportVersion+1,draftDirty:false,corrected:true,draftText:correction,status:'needs-analysis',analysis:null,reviewed:false,ticket:null,notice:'Correção recebida. Vamos analisar esta nova versão.'};
+      return {...next,messages:append(next,'user',correction)};
     }
     case 'TITLE': return state.ticket ? state : {...state,title:event.value,reviewed:false};
     case 'TEAM': return state.ticket ? state : {...state,team:event.value,reviewed:false};
@@ -77,8 +100,15 @@ export function deskReducer(state:DeskState,event:DeskEvent):DeskState {
     case 'ANALYZE': {
       if(!state.draftText.trim()||state.ticket||state.status==='analyzing') return state;
       const fixture=SCENARIOS[state.scenario];
-      if(state.mode==='mock'&&state.draftText!==fixture.text&&state.draftText!==fixture.correction) return {...state,status:'clarify',analysis:null,reviewed:false,notice:'O mock reproduz apenas os cenários prontos. Texto livre não foi analisado. Escolha um cenário ou use a integração ao vivo quando disponível.'};
-      return {...state,status:'analyzing',analysis:null,reviewed:false,corrected:state.draftText===fixture.correction,notice:state.mode==='mock'?'Analisando o relato.':'Consultando Decisions no servidor.'};
+      const freeText=state.mode==='mock'&&state.draftText!==fixture.text&&state.draftText!==fixture.correction;
+      if(freeText){
+        const last=state.messages.at(-1),previous=state.messages.at(-2);
+        if(last?.role==='assistant'&&last.text===FREE_TEXT_REPLY&&previous?.role==='user'&&previous.text===state.draftText) return {...state,status:'unsupported',analysis:null,reviewed:false,corrected:false,team:'human',title:state.title===fixture.title?'':state.title,draftDirty:false,notice:FREE_TEXT_REPLY};
+        const committed=commitDraft(state);
+        return {...committed,status:'unsupported',analysis:null,reviewed:false,corrected:false,team:'human',title:state.title===fixture.title?'':state.title,messages:append(committed,'assistant',FREE_TEXT_REPLY),notice:FREE_TEXT_REPLY};
+      }
+      const committed=state.mode==='mock'?commitDraft(state):{...state,draftDirty:false};
+      return {...committed,status:'analyzing',analysis:null,reviewed:false,corrected:state.draftText===fixture.correction,notice:state.mode==='mock'?'Analisando o relato.':'Consultando Decisions no servidor.'};
     }
     case 'RESOLVED': {
       if(event.session!==state.session||event.revision!==state.revision||state.status!=='analyzing') return state;
@@ -89,8 +119,10 @@ export function deskReducer(state:DeskState,event:DeskEvent):DeskState {
     case 'FAILED': return event.session!==state.session||event.revision!==state.revision||state.status!=='analyzing'?state:{...state,status:'error',analysis:null,reviewed:false,notice:'A análise falhou. Seu relato continua aqui; tente novamente.'};
     case 'CREATE': {
       if(!canCreate(state)) return state;
-      const ticket:Ticket={id:'DEMO-0001',title:state.title.trim(),description:state.draftText.trim(),team:state.team,revision:state.revision,simulated:true};
-      return {...state,status:'created',ticket,notice:'Ticket simulado criado. Nenhum sistema externo recebeu informações.',messages:append(state,'assistant',`O ticket simulado DEMO-0001 foi criado para ${TEAMS[state.team]}.`)};
+      const ticket:Ticket={id:'DEMO-0001',title:state.title.trim(),description:state.draftText.trim(),team:state.team,revision:state.reportVersion,simulated:true};
+      const at=Date.now();
+      const history=[...state.history,{id:ticket.id,team:ticket.team,at,demo:false,title:ticket.title}];
+      return {...state,status:'created',ticket,history,insight:monitoringInsight(history,{team:ticket.team,at},TEAMS[ticket.team]),notice:'Ticket simulado criado. Nenhum sistema externo recebeu informações.',messages:append(state,'assistant',`O ticket simulado DEMO-0001 foi criado para ${TEAMS[state.team]}.`)};
     }
   }
 }

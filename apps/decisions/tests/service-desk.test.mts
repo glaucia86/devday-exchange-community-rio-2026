@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createDesk, deskReducer, mockDecision } from '../src/domain/service-desk.ts';
+import { createDesk, deskReducer, FREE_TEXT_REPLY, mockDecision, SCENARIOS } from '../src/domain/service-desk.ts';
+import { getSpokenReply } from '../src/domain/spoken-reply.ts';
 
 function reviewable() {
   let s = createDesk();
@@ -30,7 +31,9 @@ test('explicit review enables a single simulated ticket and repeated clicks are 
 test('a correction invalidates the analysis and old approval', () => {
   let s = deskReducer(reviewable(), { type: 'REVIEW', checked: true });
   const old = s.revision; s = deskReducer(s, { type: 'CORRECT' });
-  assert.ok(s.revision > old); assert.equal(s.reviewed, false); assert.equal(s.analysis, null);
+  assert.ok(s.revision > old); assert.equal(s.reportVersion, 2);
+  assert.equal(s.draftText, SCENARIOS.access.correction);
+  assert.equal(s.reviewed, false); assert.equal(s.analysis, null);
   assert.equal(deskReducer(s, { type: 'CREATE' }).ticket, null);
 });
 test('an old result cannot overwrite a corrected request', () => {
@@ -64,8 +67,82 @@ test('failure and ambiguous cases require clarification without invented tickets
   s=deskReducer(s,{type:'RESOLVED',session:s.session,revision:s.revision,result:mockDecision('ambiguous',false)});
   assert.equal(s.status,'clarify');assert.equal(s.ticket,null);
 });
+test('simulated failure keeps the notice beside the conversation and does not speak it', () => {
+  let s = deskReducer(deskReducer(createDesk(), { type: 'REPLAY', scenario: 'access' }), { type: 'ANALYZE' });
+  assert.equal(s.status, 'analyzing');
+  const before = s.messages.map((message) => ({ ...message }));
+  assert.deepEqual(deskReducer(s, { type: 'FAILED', session: s.session, revision: s.revision - 1 }), s);
+  s = deskReducer(s, { type: 'FAILED', session: s.session, revision: s.revision });
+  assert.equal(s.status, 'error');
+  assert.equal(s.analysis, null);
+  assert.equal(s.reviewed, false);
+  assert.equal(s.draftText, SCENARIOS.access.text);
+  assert.equal(s.notice, 'A análise falhou. Seu relato continua aqui; tente novamente.');
+  assert.deepEqual(s.messages, before);
+  assert.equal(s.messages.some((message) => message.role === 'assistant' && message.text === s.notice), false);
+  assert.equal(getSpokenReply(s, ''), null);
+});
 
 test('free text does not get a canned suggestion disguised as an analysis',()=>{
  let s=deskReducer(createDesk(),{type:'EDIT',value:'Um relato fora das fixtures'});
- s=deskReducer(s,{type:'ANALYZE'}); assert.equal(s.status,'clarify'); assert.equal(s.analysis,null);
+ s=deskReducer(s,{type:'ANALYZE'});
+ assert.equal(s.status,'unsupported'); assert.notEqual(s.status,'clarify');
+ assert.equal(s.analysis,null); assert.equal(s.team,'human'); assert.equal(s.ticket,null);
+ assert.equal(s.messages.filter(message=>message.role==='user').at(-1)?.text,'Um relato fora das fixtures');
+ assert.equal(s.messages.at(-1)?.text,FREE_TEXT_REPLY);
+ assert.equal(deskReducer(s,{type:'ANALYZE'}).messages.length,s.messages.length);
+});
+test('simulated free text stays in the conversation and does not keep the previous scenario',()=>{
+ let s=deskReducer(createDesk(),{type:'REPLAY',scenario:'network'});
+ s=deskReducer(s,{type:'ANALYZE'});
+ s=deskReducer(s,{type:'RESOLVED',session:s.session,revision:s.revision,result:mockDecision('network',false)});
+ assert.equal(s.team,'infrastructure'); assert.equal(s.title,SCENARIOS.network.title);
+ const typed='Desde as 9h o VPN da filial de Niterói cai a cada 10 minutos, afeta o time financeiro inteiro';
+ s=deskReducer(s,{type:'EDIT',value:typed});
+ s=deskReducer(s,{type:'ANALYZE'});
+ assert.equal(s.status,'unsupported'); assert.equal(s.analysis,null); assert.equal(s.team,'human');
+ assert.equal(s.title,''); assert.equal(s.ticket,null); assert.equal(s.notice,FREE_TEXT_REPLY);
+ assert.equal(s.messages.filter(message=>message.role==='user').at(-1)?.text,typed);
+ assert.equal(s.messages.at(-1)?.text,FREE_TEXT_REPLY);
+ assert.equal(s.messages.filter(message=>message.text===SCENARIOS.network.text).length,1);
+});
+test('replacing an incomplete report does not resend the earlier text',()=>{
+ let s=deskReducer(createDesk(),{type:'REPLAY',scenario:'ambiguous'});
+ s=deskReducer(s,{type:'ANALYZE'});
+ s=deskReducer(s,{type:'RESOLVED',session:s.session,revision:s.revision,result:mockDecision('ambiguous',false)});
+ const previous=s.messages.at(-1)?.text??'';
+ assert.match(previous,/esclarecer/);
+ s=deskReducer(s,{type:'EDIT',value:'não está funcionando'});
+ const version=s.reportVersion;
+ s=deskReducer(s,{type:'ANALYZE'});
+ assert.equal(s.reportVersion,version); assert.equal(s.status,'unsupported');
+ assert.equal(s.messages.filter(message=>message.role==='user').at(-1)?.text,'não está funcionando');
+ assert.notEqual(s.messages.at(-1)?.text,previous);
+ assert.ok(s.messages.some(message=>message.text===SCENARIOS.ambiguous.text));
+});
+test('reanalysis uses the report the person edited',()=>{
+ let s=deskReducer(createDesk(),{type:'REPLAY',scenario:'access'});
+ s=deskReducer(s,{type:'ANALYZE'});
+ s=deskReducer(s,{type:'RESOLVED',session:s.session,revision:s.revision,result:mockDecision('access',false)});
+ const edited=SCENARIOS.access.correction;
+ s=deskReducer(s,{type:'EDIT',value:edited});
+ assert.equal(s.draftText,edited); assert.equal(s.analysis,null); assert.equal(s.reportVersion,2);
+ s=deskReducer(s,{type:'ANALYZE'});
+ assert.equal(s.status,'analyzing'); assert.equal(s.corrected,true);
+ assert.equal(s.messages.filter(message=>message.role==='user').at(-1)?.text,edited);
+ s=deskReducer(s,{type:'RESOLVED',session:s.session,revision:s.revision,result:mockDecision(s.scenario,s.corrected)});
+ assert.equal(s.analysis?.team,'applications');
+ assert.equal(s.messages.at(-1)?.text,s.analysis?.explanation);
+});
+test('the visible report version advances once per edit while every change invalidates in-flight work',()=>{
+ let s=deskReducer(createDesk(),{type:'REPLAY',scenario:'network'});
+ assert.equal(s.reportVersion,1);
+ s=deskReducer(s,{type:'ANALYZE'});
+ const old={session:s.session,revision:s.revision};
+ s=deskReducer(s,{type:'EDIT',value:'Desde'});
+ s=deskReducer(s,{type:'EDIT',value:'Desde as 9h o VPN'});
+ assert.equal(s.reportVersion,2); assert.equal(s.revision,old.revision+2);
+ assert.deepEqual(deskReducer(s,{type:'RESOLVED',...old,result:mockDecision('network',false)}),s);
+ s=deskReducer(s,{type:'ANALYZE'});
+ assert.equal(s.reportVersion,2); assert.equal(s.revision,old.revision+2);
 });

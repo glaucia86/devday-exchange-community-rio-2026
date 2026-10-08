@@ -57,13 +57,15 @@ As capturas ficam em test-results. O teste usa uma simulação da API de voz do 
 
 ## Fluxo do LAB
 
-Escolha um cenário → analise o relato → simule uma correção → analise novamente → revise os campos → marque a revisão → crie o ticket simulado. Recomeçar limpa o estado em memória e interrompe a voz local.
+Escolha um cenário → analise o relato → corrija o texto ou simule uma correção → analise novamente → revise os campos → marque a revisão → crie o ticket simulado. Recomeçar limpa o estado em memória e interrompe a voz local.
 
-A espera de 900 ms é parte do mock, não uma medida de latência de API. Probabilidades são fixtures. Texto livre recebe um aviso; nunca uma sugestão pronta disfarçada de análise.
+A espera de 900 ms é parte do mock, não uma medida de latência de API. Probabilidades são fixtures. **Corrigir o relato** abre o texto atual para edição; a nova análise usa esse texto. **Simular uma correção** insere o exemplo pronto do palco. Texto livre fica na conversa, com uma explicação de que o simulado não o encaminha; nunca vira uma sugestão pronta disfarçada de análise.
 
 ## OpenAI ao vivo: integração experimental
 
-A aba OpenAI ao vivo conecta microfone e áudio por WebRTC, acumula transcrições, recebe delegações, consulta Decisions no servidor e devolve sugestões ao GPT-Live. Correções invalidam a revisão anterior. Somente o clique humano cria o ticket simulado.
+A aba OpenAI ao vivo conecta microfone e áudio por WebRTC. GPT-Live pede uma função (`registrar_relato`, `corrigir_relato`, `analisar`, `confirmar_ticket`, `recomecar`); o navegador executa o mesmo redutor dos botões e devolve o resultado. A transcrição não altera o relato sozinha. `analisar` consulta Decisions no servidor. O ticket simulado só nasce com confirmação explícita, por voz ou pelo botão. Depois do ticket, a tela mostra um monitoramento calculado dos registros de demonstração da semana; com a sessão ativa, essa frase é falada uma vez por `session.commentary.append`, depois de uma pausa.
+
+Sem microfone ou sem API, a aba Simulado repete o fluxo e mostra a mesma frase na tela. O ensaio offline, sem chave, é `node scripts/replay-voice-commands.mts` nesta pasta.
 
 O live fica desativado por padrão. Abrir a aba não pede microfone nem inicia inferência. A ativação exige configuração segura, acesso aos modelos e autorização de custo. A rota aceita apenas loopback HTTP, mesma origem e um código de acesso da demo distinto da chave OpenAI.
 

@@ -14,14 +14,14 @@ Confira inscrição, aprovação e eventuais mudanças na [página do evento no 
 
 A abertura será dedicada a um recap do OpenAI DevDay. Glaucia conduz **quatro demonstrações**, enquanto o público acompanha. Cada uma tem um LAB correspondente para reproduzir em casa depois:
 
-- [Dots](../labs/01-dots/README.md): contexto, limites e revisão de uma entrega
-- [Codex CLI](../labs/codex-cli/README.md): tarefa de código acompanhada no terminal
-- [Codex Cloud](../labs/codex-cloud/README.md): ajuste na Alô, TI, no repositório do evento, com teto de 3 minutos
+- [Dots](../labs/01-dots/README.md): responsabilidade contínua sobre issues e pull requests públicos
+- [Codex CLI](../labs/codex-cli/README.md): voz no terminal (`/voice`), visão `/agents` e uma correção curta da Alô, TI
+- [Codex Cloud](../labs/codex-cloud/README.md): tarefa remota e revisão da entrega
 - [Decisions API](../labs/02-decisions-typescript/README.md): decisões tipadas e experiência de voz para voz planejada
 
 Essa enumeração não fixa a sequência ou novos horários de palco. As sugestões de duração no [guia da apresentadora](guia-apresentadora.md) são blocos de ensaio ajustáveis, não a agenda oficial.
 
-Voz faz parte do tema Decisions. O CLI usa o encaminhador. O Cloud usa um ajuste na Alô, TI, com roteiro próprio.
+A voz para voz da Alô, TI faz parte do tema Decisions. A voz dentro do terminal (`/voice`) faz parte do CLI. O encaminhador de chamados fica no Cloud.
 
 ## Como acompanhar
 

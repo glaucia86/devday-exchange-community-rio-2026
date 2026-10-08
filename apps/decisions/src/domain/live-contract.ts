@@ -1,4 +1,5 @@
 import { TEAMS, type Decision, type Team } from './service-desk.ts';
+import { readToolCall } from './voice-commands.ts';
 
 export type TranscriptLine = {role:'user'|'assistant';text:string};
 type Question = {type:'predicate'|'choice'|'score';name:string;instructions:string;choices?:{value:string;description:string}[];levels?:{label:string;description:string}[]};
@@ -46,7 +47,8 @@ export type LiveEvent =
  | {type:'session.started'}
  | {type:'session.closed';usage?:{seconds:number}}
  | {type:'session.usage.updated';usage:{seconds:number}}
- | {type:'error'};
+ | {type:'error'}
+ | {type:'response.function_call';callId:string;name:string;arguments:string};
 export function parseLiveEvent(raw:string):LiveEvent|null {
   if(raw.length>65536)return null;
   let value:unknown;try{value=JSON.parse(raw);}catch{return null;}
@@ -59,5 +61,7 @@ export function parseLiveEvent(raw:string):LiveEvent|null {
   if(type==='session.started'||type==='error')return {type};
   if(type==='session.closed')return {type,...(object(value.usage)&&between(value.usage.seconds,86400)?{usage:{seconds:value.usage.seconds}}:{})};
   if(type==='session.usage.updated'&&object(value.usage)&&between(value.usage.seconds,86400))return {type,usage:{seconds:value.usage.seconds}};
+  const tool=readToolCall(value);
+  if(tool)return {type:'response.function_call',callId:tool.callId,name:tool.name,arguments:tool.arguments};
   return null;
 }

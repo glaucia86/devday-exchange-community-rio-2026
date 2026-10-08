@@ -16,7 +16,8 @@
 | Capturas desktop e celular | Inspecionadas; sem corte, sobreposição ou overflow horizontal observado |
 | Voz real pelo dispositivo | Ainda não ensaiada; regressão usa simulação da API do navegador |
 | GPT-Live + Decisions | Adaptadores implementados; ensaio com conta e áudio reais pendente |
-| Dots / Codex CLI / Codex Cloud | Guias disponíveis; fluxos nos produtos ainda não ensaiados |
+| Dots | Cenário antigo executado uma vez em 8 de outubro de 2026; o cenário novo ainda não foi ensaiado |
+| Codex CLI / Codex Cloud | Guias disponíveis; fluxos nos produtos ainda não ensaiados |
 
 A integração ampliou o conjunto unitário para **46 testes**. Os 26 testes anteriores e suas execuções abaixo permanecem como referência histórica; confira a CI no SHA atual. Testes de seleção de fala não comprovam que áudio foi ouvido.
 
@@ -28,7 +29,7 @@ A integração ampliou o conjunto unitário para **46 testes**. Os 26 testes ant
 
 Ambiente: Ubuntu 24.04, Node.js 24.21.0. Os manifests resolvidos na terceira execução foram preservados para instalação com npm ci. Consulte também a execução correspondente ao HEAD da branch; uma aprovação de um SHA anterior não valida alterações posteriores.
 
-O teste de navegador cobre: cenário, bloqueio antes da revisão humana, correção, alteração de título, criação do ticket, ambiguidade, reset durante análise, texto livre, falha/nova tentativa, ausência de overflow horizontal e erros não capturados. A regressão de carregamento tardio de voz é simulada; a nova execução no HEAD deve confirmar seu resultado.
+O teste de navegador cobre: cenário, bloqueio antes da revisão humana, edição do relato, correção ensaiada, alteração de título, criação do ticket, pista para recomeçar, ambiguidade, texto livre no simulado, reset durante análise, falha/nova tentativa, ausência de overflow horizontal e erros não capturados. A regressão de carregamento tardio de voz é simulada; a nova execução no HEAD deve confirmar seu resultado.
 
 ## Como repetir
 
@@ -50,8 +51,8 @@ A CI usa runners padrão do repositório público e permissões de leitura. Os p
 - Ensaiar projeção e acessibilidade com teclado/leitor de tela
 - Ouvir a saída real de áudio em dispositivos-alvo
 - Configurar o runtime local somente após autorização; ensaiar o adaptador com fala, transcrição, interrupção e resposta tardia reais
-- Ensaiar os LABS nos produtos Dots, Codex CLI e Codex Cloud
-- Ensaiar o roteiro novo do Codex Cloud na conta real: ambiente publicado sem corrigir a explicação da rede, revisão com teto de 3 minutos e plano B gravado com data
+- Ensaiar o cenário novo de Dots no notebook do projetor. O cenário antigo foi executado uma vez em 8 de outubro de 2026 e não libera o palco
+- Ensaiar os LABS nos produtos Codex CLI e Codex Cloud
 - Confirmar limites de acesso e consumo antes de qualquer API real
 
 Nos próximos ensaios, registrar data, commit, ambiente, versões, comandos, resultados e limitações. Falha continua sendo falha; mock continua sendo mock.
@@ -81,9 +82,11 @@ Execução local desta revisão, no computador cloud, com Node.js 24.19.0:
 - Cinco testes do exercício TypeScript de contrato: resposta completa, contexto insuficiente, recusa, equipe inválida e arquivo ausente
 - CLI disponível no ambiente: `codex-cli 0.159.2`; ajuda e sintaxe de login consultadas, sem autenticar ou executar uma tarefa de modelo
 
-O conjunto passou a ter 56 testes, contando os cinco testes deliberadamente incompletos da candidata e os cinco do exercício de contrato. A aceitação independente acrescenta 18 verificações para cada versão do encaminhador. A CI executa tanto o verde quanto as falhas didáticas esperadas.
+O conjunto passou a ter 71 testes, contando os cinco testes deliberadamente incompletos da candidata e os cinco do exercício de contrato. A aceitação independente acrescenta 18 verificações para cada versão do encaminhador. A CI executa tanto o verde quanto as falhas didáticas esperadas.
 
-Isso comprova os exercícios locais e seus critérios. Não comprova que uma pessoa concluiu Dots, a interação autenticada do CLI ou uma tarefa Codex Cloud. Esses ensaios continuam pendentes, assim como microfone, áudio audível e APIs reais. O walkthrough público confirma a navegação e o conteúdo que estava publicado; alterações de um PR só chegam ao site após integração e deploy autorizados.
+Isso comprova os exercícios locais e seus critérios. Não comprova que esta revisão concluiu Dots, a interação autenticada do CLI ou uma tarefa Codex Cloud. CLI, Cloud, microfone, áudio audível e APIs reais continuam pendentes. O walkthrough público confirma a navegação e o conteúdo que estava publicado; alterações de um PR só chegam ao site após integração e deploy autorizados.
+
+Esta revisão de repositório não executou Dots. Mais tarde, em 8 de outubro de 2026, o cenário antigo de Dots foi executado uma vez numa conta ChatGPT. O registro está em [Dots · ensaio de 8 de outubro de 2026](#dots-ensaio-2026-10-08). O cenário novo continua sem ensaio.
 
 Comandos novos, na raiz:
 
@@ -93,6 +96,21 @@ node scripts/check-workshop-examples.mjs
 ```
 
 Para conferir o patch atual, use a [CI dos LABS](https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-labs.yml) e a [CI do portal](https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-portal.yml). Não reutilize uma execução de outro SHA como prova de uma alteração posterior.
+
+<a id="dots-ensaio-2026-10-08"></a>
+
+### Dots · ensaio de 8 de outubro de 2026
+
+Conta real em chatgpt.com. Cenário daquele dia: resumo dos relatos fictícios da Aurora, com uma correção no segundo bloco. Não é o cenário atual.
+
+- A resposta completa chegou em 20 a 45 segundos
+- O checklist daquele cenário passou: separou fatos de lacunas e não inventou prioridade nem responsável
+- Não havia um item chamado “dots”. O dot aparecia pelo próprio nome no topo da barra lateral, abaixo de “New chat”, em `https://chatgpt.com/dots/<id>`. Os rótulos podem variar
+- O envio era a seta do campo ou Enter. Não havia um botão com o texto “Enviar”
+- O dot reutilizado já tinha uma rodada igual no histórico. A conferência da correção ficou contaminada
+- A documentação oficial descreve o dot como agente de responsabilidade contínua. Aquele ensaio pediu um resumo único e não mostrou isso
+
+O cenário novo, vigiar as issues e os pull requests públicos deste repositório e relatar só o que mudou, ainda não foi ensaiado. O ensaio de 8 de outubro não libera o bloco de palco.
 
 
 ### Finalidade dos roteiros
@@ -114,4 +132,16 @@ O roteiro passou a usar o repositório do evento, ou um fork de um clique, e o d
 
 ### Autonomia de quem estuda em casa
 
-Os guias incluem abertura do terminal, conceitos básicos, verificação de versões, pasta atual, preparação de cópias, distinção entre comandos e mensagens ao agente, saídas esperadas e recuperação de erros. O caminho essencial fica separado do aprofundamento opcional. A cópia Cloud com os dois comandos de Node e os quatro arquivos foi repetida em uma pasta temporária: cinco testes verdes, aceitação 16/18 e recusa de sobrescrita confirmadas. Navegação de conta e upload no GitHub seguem fontes oficiais, mas não foram ensaiados com login nesta revisão. Esse caminho de cópia e upload deixou de ser o roteiro do Cloud; o registro abaixo explica a troca.
+Os guias incluem abertura do terminal, conceitos básicos, verificação de versões, pasta atual, preparação de cópias, distinção entre comandos e mensagens ao agente, saídas esperadas e recuperação de erros. O caminho essencial fica separado do aprofundamento opcional. A cópia Cloud com os dois comandos de Node e os quatro arquivos foi repetida em uma pasta temporária: cinco testes verdes, aceitação 16/18 e recusa de sobrescrita confirmadas. Navegação de conta e upload no GitHub seguem fontes oficiais, mas não foram ensaiados com login nesta revisão.
+
+## Roteiro curto do Codex CLI · 8 de outubro de 2026
+
+O bloco de palco do CLI deixou de ser o encaminhador de 18 casos. O texto novo pede a CLI `0.161.0`, o modelo `gpt-6-luna`, `-s workspace-write`, a tela `Trust this folder?` mesmo com a pasta versionada, e `node --version` dentro do agente. A voz documentada é `/voice` na TUI da tag 0.161.0. A página de slash commands em developers.openai.com, nessa data, ainda não listava `/voice` nem `/agents`.
+
+Isso confere o texto e os links citados no LAB. Não é um ensaio autenticado: esta revisão não abriu o microfone, não entrou com conta e não deixou o agente editar a Alô, TI. A gravação de plano B continua por fazer no notebook do projetor. O encaminhador segue no LAB Cloud.
+
+O reload do bloco CLI usa `npm run dev`, aberto antes do relógio. O `npm start` da véspera serve a build do `prepare-stage.mjs` e não mostraria a edição. O teste que despacha `FAILED` trava o defeito atual: a frase fica no aviso, fora da conversa, e `getSpokenReply` desse estado devolve vazio. A suíte continua verde com o defeito. O pedido do palco manda o agente atualizar esse teste junto com o redutor. Depois do reload, o roteiro liga de novo o som, que volta desligado, e repete **Explorar cenário** antes de **Analisar relato**.
+
+```sh
+node scripts/check-cli-stage.mjs
+```
