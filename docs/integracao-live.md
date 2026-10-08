@@ -45,7 +45,7 @@ npm.cmd run build
 npm.cmd start
 ```
 
-Abra http://127.0.0.1:3000. Mantenha o terminal aberto. O mock não usa a chave. Este fluxo ainda não foi ensaiado em Windows; os comandos seguem os scripts do repositório e devem ser conferidos no computador de destino.
+Abra http://127.0.0.1:3000. Mantenha o terminal aberto. O mock não usa a chave. http://localhost:3000 chega no mesmo processo, mas o navegador trata os dois nomes como origens diferentes: use um só na aba da demonstração. O servidor aceita os dois quando o `Host` e o `Origin` coincidem e são loopback. Este fluxo ainda não foi ensaiado em Windows; os comandos seguem os scripts do repositório e devem ser conferidos no computador de destino.
 
 ## Se estiver no macOS ou Linux
 
@@ -124,7 +124,7 @@ Ao terminar, volte MESA_LIVE_ENABLED para false e reinicie ou encerre o servidor
 - Pessoa: só o clique explícito cria o ticket fictício. Fala posterior não apaga um ticket confirmado
 - Encerramento: session.close no cliente e sideband autenticado no servidor; confirmação por session.closed
 
-Os limiares 0,8 para contexto e 0,7 para confiança são didáticos e ainda não calibrados. Score de 0 a 2 pode ser fracionário; não é prioridade operacional. O texto explicativo é composto pelo aplicativo, não uma justificativa livre gerada por Decisions.
+A pergunta de contexto pede se o relato atual diz qual serviço falhou, o que aconteceu e quem foi afetado. Essa redação foi conferida na Decisions real nos três relatos de palco: acesso e conexão instável ficaram acima de 0,8; o relato incompleto ficou em 0. Os limiares 0,8 para contexto e 0,7 para confiança continuam didáticos. Score de 0 a 2 pode ser fracionário; não é prioridade operacional. O texto explicativo é composto pelo aplicativo, não uma justificativa livre gerada por Decisions.
 
 ## Limites e segurança
 

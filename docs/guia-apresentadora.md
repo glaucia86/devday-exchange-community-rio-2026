@@ -48,7 +48,7 @@ node --test apps/decisions/tests/*.test.mts
 node scripts/check-workshop-examples.mjs
 ```
 
-Esperado: Node.js 24.21.0 ou posterior, 56 testes aprovados no conjunto atual e aceitação com falhas didáticas conferidas: starter 8/18, candidata 16/18, solução 18/18. Isso verifica os exemplos locais; os ensaios nos produtos são uma etapa adicional.
+Esperado: Node.js 24.21.0 ou posterior, 57 testes aprovados no conjunto atual e aceitação com falhas didáticas conferidas: starter 8/18, candidata 16/18, solução 18/18. Isso verifica os exemplos locais; os ensaios nos produtos são uma etapa adicional.
 
 ## Abertura e transições
 
@@ -103,7 +103,7 @@ Mostre o índice. Apresente o contexto: relatos de suporte fictícios que precis
 
 **Plano B no palco:** execute a solução e os 18 critérios, identificando-a como referência pronta. Não diga que o CLI gerou a mudança se a interação falhou ou não foi executada.
 
-**Ponto de parada:** problema de login, permissões não compreendidas ou mudança fora do escopo. O agente usa conexão e acesso da conta; o código do exercício não chama APIs.
+**Ponto de parada:** problema de login, permissões não compreendidas ou mudança fora do escopo. O agente usa conexão e acesso da conta; o código do exercício não chama APIs. A cópia precisa do `git init` do LAB: sem ele, `codex exec` pede `--skip-git-repo-check` e o modo interativo pede para confiar na pasta. Se o sandbox só mostrar `tests 1 / fail 1`, peça `node --test --test-isolation=none router.test.mjs`. Se uma conta nova responder `rate limit exceeded` no modelo padrão, entre com ChatGPT ou use `codex -m gpt-5.4-mini`. A versão do encontro continua `codex-cli 0.161.0`.
 
 ## Codex Cloud
 

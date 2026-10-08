@@ -45,7 +45,7 @@ node -p "process.cwd()"
 node -e "console.log(require('node:fs').readdirSync('.').sort().join(' | '))"
 ```
 
-O caminho termina em `rio-codex-cli`. A lista deve ser `README.md | router.mjs | router.test.mjs`. O primeiro arquivo explica o desafio, o segundo contém a função e o terceiro contém seus testes iniciais. Se faltar um, volte à cópia antes de continuar.
+O caminho termina em `rio-codex-cli`. A lista deve ser `AGENTS.md | README.md | router.mjs | router.test.mjs`. `AGENTS.md` diz ao agente como executar os testes dentro do sandbox. `README.md` explica o desafio, `router.mjs` contém a função e `router.test.mjs` contém os testes iniciais. Se faltar um, volte à cópia antes de continuar.
 
 Agora execute a verificação do desafio, ainda nessa pasta:
 
@@ -56,6 +56,18 @@ node ../devday-exchange-community-rio-2026/exercises/ticket-router/verify.mjs ro
 **Esperado antes da mudança:** `ACCEPTANCE {"total":18,"passed":8,"failed":10}` e código de saída 1. Aqui, falhar é parte do exercício: os três testes iniciais não cobrem os requisitos novos. Erro de arquivo ausente ou de sintaxe não conta como esse resultado.
 
 No palco, mostre a falha da frase **A senha falhou e a conexão caiu**. O verificador diz `esperado revisao_humana; recebido acessos`. A outra frase com duas equipes, **O aplicativo falhou e a rede caiu**, já passa neste starter: ele só reconhece a palavra senha e, sem ela, devolve `revisao_humana` por acaso. Não use essa segunda frase para ilustrar a ambiguidade.
+
+Grave esse ponto de partida no Git da cópia. Assim o Codex reconhece a pasta como repositório, o `git diff` mostra só a mudança do exercício e o modo não interativo não pede `--skip-git-repo-check`:
+
+```sh
+git init -b main
+git config user.name "Exercicio"
+git config user.email "exercicio@example.invalid"
+git add AGENTS.md README.md router.mjs router.test.mjs
+git commit -m "Ponto de partida do exercício"
+```
+
+Esses `git config` valem só para esta cópia; não alteram o Git do restante do computador. `git status` deve ficar limpo. O pedido ao agente continua proibindo commit e push: este commit é a foto de antes da mudança.
 
 ## 2. Entre no Codex
 
@@ -76,12 +88,16 @@ Depois do login, `codex login status` deve confirmar uma sessão autenticada. A 
 
 Na pasta `rio-codex-cli`, execute `codex` e espere aparecer a interface do agente. Digite `/status` dentro dela para conferir a sessão e `/permissions` para revisar permissões. Esses comandos com barra pertencem ao Codex; não são comandos do PowerShell ou bash. Não desative proteções para destravar o exercício.
 
+Se o Codex pedir para confiar na pasta, confira se o caminho é a cópia `rio-codex-cli` que você acabou de criar. A confiança é desta pasta de exercício, não de outro projeto.
+
+`codex exec` é a alternativa não interativa, na mesma versão `codex-cli 0.161.0`. Na pasta da cópia, ele recebe o mesmo pedido da etapa 3 entre aspas. Como a pasta já é um repositório, não use `--skip-git-repo-check`. Sem o `git init` acima, o `codex exec` recusa a pasta e o modo interativo pede para confiar nela.
+
 ## 3. Peça a mudança
 
 Com o Codex aberto, cole o pedido completo no campo da conversa do agente e envie. Este bloco é texto para o agente, não um comando para o terminal:
 
 ```text
-Leia README.md, router.mjs e router.test.mjs desta pasta.
+Leia AGENTS.md, README.md, router.mjs e router.test.mjs desta pasta.
 Amplie routeTicket(text) para ignorar maiúsculas e acentos.
 Palavras inteiras senha/login/permissão retornam acessos;
 conexão/Wi-Fi/rede retornam infraestrutura;
@@ -90,7 +106,10 @@ Nenhuma categoria ou mais de uma categoria retorna revisao_humana.
 Duas palavras da mesma categoria continuam sendo uma categoria.
 Entrada ausente ou não textual retorna revisao_humana sem erro.
 
-Primeiro acrescente testes e execute-os para mostrar as falhas.
+Primeiro acrescente testes e execute-os com
+node --test --test-isolation=none router.test.mjs
+para mostrar qual teste falhou. Sem --test-isolation=none, o sandbox
+pode imprimir só o resumo do arquivo (tests 1 / fail 1).
 Depois faça a menor implementação que passa a suíte inteira.
 Não instale dependências, acesse serviços externos, altere outras pastas,
 faça commit ou push. Não altere o verificador do material original.
@@ -125,16 +144,20 @@ node -e "console.log(require('node:fs').readFileSync('router.mjs','utf8'))"
 Procure três partes: normalização do texto, detecção das categorias e decisão de encaminhar ou pedir revisão. Para comparar com o início:
 
 ```sh
-git diff --no-index -- ../devday-exchange-community-rio-2026/exercises/ticket-router/starter/router.mjs router.mjs
+git diff
+git status
 ```
 
-Se o diff abrir um visualizador com `(END)` no rodapé, pressione `q` para voltar ao terminal. O diff usa `-` para linhas antigas e `+` para novas. Código de saída 1 significa que encontrou diferenças; nesse comando isso é normal.
+Se o diff abrir um visualizador com `(END)` no rodapé, pressione `q` para voltar ao terminal. O diff usa `-` para linhas antigas e `+` para novas. Um diff vazio com `git status` limpo pode significar que o agente commitou mesmo com o pedido em contrário: `git log --oneline` e `git show` mostram esse commit. Não faça push.
 
 **Critério de conclusão:** normalização explicável, nenhuma dependência nova, ambiguidade enviada para revisão humana e testes cobrindo o comportamento. Em especial, “senha e login” é uma equipe; “senha e conexão” são duas. Só depois compare com a [solução de referência](../../exercises/ticket-router/solution/router.mjs).
 
 ## Problemas e reset
 
-- **`codex` não encontrado:** reabra o terminal após instalar e confira `codex --version`
+- **`codex` não encontrado:** reabra o terminal após instalar e confira `codex --version`. A versão do encontro é `codex-cli 0.161.0`, instalada com `npm install -g @openai/codex@0.161.0`
+- **`codex exec` pede `--skip-git-repo-check` ou o modo interativo pede para confiar na pasta:** a cópia não é um repositório. Rode o `git init` e o commit da etapa 1 nesta pasta, não no material do evento
+- **O agente diz que um teste falhou, mas não mostra qual:** no sandbox, `node --test router.test.mjs` pode resumir o arquivo inteiro como `tests 1 / fail 1`. Peça `node --test --test-isolation=none router.test.mjs`
+- **`rate limit exceeded` ou `Request too large` no modelo padrão, em conta nova:** entre com ChatGPT, como este LAB recomenda, ou use um modelo menor, por exemplo `codex -m gpt-5.4-mini`. Não cole a chave na conversa
 - **Falha de login ou acesso:** use o editor e os mesmos testes; registre que o produto Codex não foi ensaiado
 - **`ARQUIVO_INVALIDO` no verificador:** confira o diretório atual e o nome `router.mjs`; isso não é uma falha esperada do desafio
 - **Os testes do agente passam, mas o verificador falha:** leia o caso que falhou e peça um teste de regressão antes da correção
