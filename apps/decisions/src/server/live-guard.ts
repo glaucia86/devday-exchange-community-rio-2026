@@ -1,4 +1,4 @@
-/** Sideband só no servidor. O header de autorização do WebSocket existe desde o Node 22.18; este repositório exige 24.21. */
+/** Sideband só no servidor. O header de autorização do WebSocket existe desde o Node 22.18; a faixa aceita deste repositório vai de 24.12.0 a 24.21.0. */
 export type SessionGuard = { close:()=>Promise<boolean>; finalized:Promise<boolean> };
 export type GuardFactory = (sessionId:string,key:string)=>Promise<SessionGuard>;
 type NodeWebSocketConstructor = new(url:string,options:{headers:Record<string,string>})=>WebSocket;

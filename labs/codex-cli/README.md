@@ -22,11 +22,11 @@ Implementar uma mudança com Codex no terminal e verificar o resultado com teste
 - **Diff** mostra o que mudou entre duas versões
 - `routeTicket(text)` recebe o texto de um relato e retorna o nome de uma categoria; não cria tickets reais
 
-Você precisa de Node.js 24.21.0 ou posterior, Git, uma conexão para usar Codex e uma conta com acesso. A preparação compartilhada explica como abrir o terminal e conferir versões. Não precisa usar uma conta corporativa nem conectar dados de trabalho.
+Você precisa de Node.js de 24.12.0 a 24.21.0, Git, uma conexão para usar Codex e uma conta com acesso. A preparação compartilhada explica como abrir o terminal e conferir versões. O arquivo `.nvmrc` recomenda 24.21.0, a versão da CI. Não precisa usar uma conta corporativa nem conectar dados de trabalho.
 
 ## 1. Prepare uma cópia de trabalho
 
-Siga [Prepare seu ambiente](../../README.md#preparacao) para instalar Node.js 24.21.0 ou posterior, verificar Git e clonar o material. Abra o terminal na pasta `devday-exchange-community-rio-2026`.
+Siga [Prepare seu ambiente](../../README.md#preparacao) para instalar Node.js de 24.12.0 a 24.21.0, verificar Git e clonar o material. Abra o terminal na pasta `devday-exchange-community-rio-2026`.
 
 Execute uma vez. Este comando de Node funciona no PowerShell, macOS e Linux e recusa sobrescrever uma cópia existente:
 

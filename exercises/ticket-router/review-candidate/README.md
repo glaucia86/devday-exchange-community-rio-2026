@@ -2,7 +2,7 @@
 
 Esta implementação tem um defeito intencional. Cinco testes passam, mas relatos com mais de uma categoria ainda são encaminhados automaticamente. Sua tarefa é reproduzir, corrigir e revisar esse problema.
 
-Requisito: Node.js 24.21.0 ou posterior. Não precisa de pacotes, chave ou API.
+Requisito: Node.js de 24.12.0 a 24.21.0. Não precisa de pacotes, chave ou API.
 
 ## Execute na raiz da cópia de exercício
 

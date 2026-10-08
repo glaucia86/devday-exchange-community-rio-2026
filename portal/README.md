@@ -4,7 +4,7 @@ Portal Astro + Starlight em português, separado da aplicação Alô, TI. As pá
 
 ## Desenvolvimento
 
-Na pasta portal, com Node.js 24.21 ou posterior:
+Na pasta portal, com Node.js de 24.12.0 a 24.21.0 (`.nvmrc` recomenda 24.21.0, a versão da CI). O Firebase deste portal pede Node 24.12.0, o início da faixa:
 
 ```sh
 npm ci --ignore-scripts

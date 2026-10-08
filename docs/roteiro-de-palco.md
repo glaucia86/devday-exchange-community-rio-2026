@@ -10,7 +10,7 @@ Na véspera, na raiz do repositório:
 node scripts/prepare-stage.mjs
 ```
 
-Depois, em `apps/decisions`, `npm start` e http://127.0.0.1:3000. O script pede Node.js 24.21.0 ou posterior, o valor de `.nvmrc`.
+Depois, em `apps/decisions`, `npm start` e http://127.0.0.1:3000. O script aceita Node.js de 24.12.0 a 24.21.0. O arquivo `.nvmrc` recomenda 24.21.0, a versão da CI.
 
 ## Camada 1 · o que sempre funciona
 

@@ -1,6 +1,6 @@
 # Ponto de partida · encaminhador fictício
 
-Esta pasta é independente e pode ser copiada para um diretório ou repositório de exercício. Requisito: Node.js 24.21.0 ou posterior. Não precisa instalar pacotes nem configurar chaves. `AGENTS.md` pede ao agente que rode `node --test --test-isolation=none router.test.mjs`, porque no sandbox o resumo padrão pode esconder qual teste falhou.
+Esta pasta é independente e pode ser copiada para um diretório ou repositório de exercício. Requisito: Node.js de 24.12.0 a 24.21.0. Não precisa instalar pacotes nem configurar chaves. `AGENTS.md` pede ao agente que rode `node --test --test-isolation=none router.test.mjs`, porque no sandbox o resumo padrão pode esconder qual teste falhou.
 
 ## Linha de base
 
