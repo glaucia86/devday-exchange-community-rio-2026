@@ -4,7 +4,7 @@
 
 ## Estado
 
-Adaptadores implementados para GPT-Live, WebRTC e Decisions. A CI usa transporte simulado e respostas de teste. Ainda não houve ensaio com chave, inferência ou áudio reais. Acesso aos modelos, latência, reconhecimento e saída audível continuam pendentes.
+Adaptadores implementados para GPT-Live, WebRTC e Decisions. A CI usa transporte simulado e respostas de teste. Ainda não houve ensaio com chave, inferência ou áudio reais. Acesso aos modelos, latência, reconhecimento e saída audível continuam pendentes. O fluxo principal planejado para o palco é voz para voz; os testes offline e o mock são preparação/contingência. Use os mesmos relatos e critérios do [LAB para reproduzir em casa](../labs/02-decisions-typescript/README.md) e do [roteiro da apresentadora](guia-apresentadora.md#decisions-api).
 
 O modo padrão permanece offline. Abrir a aba ao vivo não inicia uma sessão paga nem solicita o microfone.
 
@@ -71,7 +71,7 @@ Antes de habilitar:
 2. Defina o orçamento do teste e acompanhe o consumo. Saldo em conta não é autorização automática de gasto.
 3. Use somente dados fictícios, de preferência fones de ouvido, e permita o microfone apenas nesta página local.
 
-Para habilitar por sua própria ação, altere MESA_LIVE_ENABLED para true no editor e reinicie npm.cmd start. Abra a aba OpenAI ao vivo, digite o código MESA_LIVE_ACCESS_TOKEN (nunca a chave OpenAI), leia o consentimento e clique em Iniciar conversa real.
+Para habilitar por sua própria ação, altere MESA_LIVE_ENABLED para true no editor e reinicie npm.cmd start. Abra a aba OpenAI ao vivo, digite o código MESA_LIVE_ACCESS_TOKEN (nunca a chave OpenAI), leia o consentimento e, somente se concordar com o envio e tiver autorizado o gasto, marque a caixa “Entendi o envio de áudio e texto à OpenAI e estou autorizada a usar a API com custo nesta demo.”. Então clique em Iniciar conversa real.
 
 Faça um ensaio curto:
 - Diga um relato fictício de falha de acesso.

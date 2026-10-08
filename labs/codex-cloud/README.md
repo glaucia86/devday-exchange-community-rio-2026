@@ -6,7 +6,9 @@
 
 Delegar uma correção em ambiente remoto e decidir se a entrega pode ser aceita. Você receberá uma candidata com cinco testes verdes e um defeito intencional: ela escolhe a primeira equipe encontrada, mesmo quando o relato envolve mais de uma.
 
-**Sua entrega:** uma tarefa concluída, um diff revisado e evidências de que a regressão foi corrigida. Prática sugerida: 15–20 minutos, além da configuração prévia da conta. Não é necessário ter feito o LAB CLI.
+**Para fazer em casa:** reproduza a demonstração Cloud do [guia da apresentadora](../../docs/guia-apresentadora.md#codex-cloud): mesma candidata preparada, tarefa remota e revisão. Ela continua o contexto de encaminhamento mostrado no CLI, mas usa uma cópia com defeito intencional para estudar revisão. Não é apresentada como uma falha produzida pelo CLI.
+
+**Sua entrega:** uma tarefa concluída, um diff revisado e evidências de que a regressão foi corrigida. Estimativa de estudo em casa: 15–20 minutos, além da configuração da conta; duração não medida. Não é necessário ter feito o LAB CLI. No evento, o público apenas acompanha Glaucia.
 
 **Validação:** a candidata, suas falhas esperadas e a solução são testadas offline. Ainda não houve ensaio deste roteiro em uma conta Codex Cloud. Conta, permissões e consumo precisam ser conferidos por quem participa.
 

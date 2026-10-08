@@ -6,7 +6,9 @@
 
 Implementar uma mudança com Codex no terminal e verificar o resultado com testes que ficam fora da pasta editada pelo agente. Você vai ampliar um encaminhador fictício de relatos.
 
-**Sua entrega:** `router.mjs`, novos testes e um diff que você consegue explicar. Prática sugerida: 15–20 minutos, com o ambiente preparado antes.
+**Para fazer em casa:** reproduza a demonstração de CLI do [guia da apresentadora](../../docs/guia-apresentadora.md#codex-cli), com o mesmo starter, pedido e verificador. No evento, Glaucia opera o terminal e o público acompanha.
+
+**Sua entrega:** `router.mjs`, novos testes e um diff que você consegue explicar. Estimativa de estudo em casa: 15–20 minutos, além da preparação do ambiente; duração não medida.
 
 **Validação:** starter, solução e verificação independente são executáveis localmente. A interação autenticada com Codex CLI ainda precisa de ensaio. O código do exercício não chama APIs; usar o agente requer conexão, autenticação e o acesso/consumo da sua conta.
 

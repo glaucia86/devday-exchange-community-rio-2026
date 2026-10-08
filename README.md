@@ -66,6 +66,11 @@ A abertura terá um recap do OpenAI DevDay, seguido dos temas técnicos e da tro
 
 Este repositório reúne **material original em português** para acompanhar o encontro e continuar praticando depois dele.
 
+**No evento, Glaucia conduz as demonstrações e o público acompanha. Os LABS são para fazer em casa depois, reproduzindo as mesmas demonstrações. Não haverá execução coletiva dos exercícios durante a apresentação.**
+
+O fio condutor é o suporte fictício da Aurora: revisar os relatos, melhorar o encaminhamento, revisar uma entrega remota e conversar por voz antes de confirmar um ticket simulado. Cada LAB tem o mesmo cenário, pedido e critérios da demonstração correspondente no [guia da apresentadora](docs/guia-apresentadora.md).
+
+
 | Se você quer… | Comece por… |
 | --- | --- |
 | Experimentar um dos temas | Os [quatro LABS](#labs), com requisitos, passos e resultados esperados |
@@ -83,14 +88,14 @@ Conhecer o básico de JavaScript/TypeScript, terminal e Git ajuda na parte de c�
 <a id="labs"></a>
 ## 🧪 Escolha seu LAB
 
-São **quatro temas independentes**, com objetivos e instruções próprios. Esta ordem facilita a navegação; não define uma nova ordem de palco.
+São **quatro demonstrações, cada uma com um LAB para reproduzir em casa**. Os roteiros são independentes para estudo, mas seguem o mesmo contexto de suporte fictício. Esta ordem facilita a navegação; não define novos horários de palco.
 
-| LAB | O que você vai praticar | Abrir o material |
+| Demonstração | O que você vai reproduzir em casa | Abrir o LAB |
 | --- | --- | --- |
 | **Dots** | Dar contexto, limitar ações e revisar uma entrega | [Cenário e passo a passo](labs/01-dots/README.md) |
 | **Codex CLI** | Acompanhar uma mudança no terminal, inspecionar o diff e verificar testes | [LAB do CLI](labs/codex-cli/README.md) |
 | **Codex Cloud** | Revisar uma candidata com testes verdes, reproduzir a regressão e conferir uma correção remota | [LAB do Cloud](labs/codex-cloud/README.md) |
-| **Decisions API** | Inspecionar uma decisão tipada, corrigir o relato e confirmar o encaminhamento | [LAB Decisions](labs/02-decisions-typescript/README.md) |
+| **Decisions API** | Conversar por voz, corrigir o relato e revisar o ticket; com alternativa simulada e exercícios de contrato | [LAB Decisions](labs/02-decisions-typescript/README.md) |
 
 CLI e Cloud usam o mesmo [contrato de encaminhamento fictício](exercises/ticket-router/README.md), com pontos de partida diferentes: implementação a partir do starter no CLI e revisão de uma candidata defeituosa no Cloud. A experiência de voz para voz faz parte de **Decisions API**. A [arquitetura proposta](docs/arquitetura-decisions.md) descreve o fluxo e suas etapas pendentes.
 
@@ -229,15 +234,22 @@ O [roteiro](docs/guia-apresentadora.md) reúne preparação, objetivos, falas-ch
 Use a [programação](docs/programacao.md) para os detalhes do encontro e as [referências](docs/referencias.md) para aprofundamento técnico.
 
 <a id="checklist"></a>
-## 🎒 Checklist para o encontro
+## 🎒 Checklist para acompanhar e reproduzir
+
+### No encontro
 
 - [ ] Confirmei minha inscrição.
-- [ ] Escolhi os LABS e li seus requisitos.
-- [ ] Node.js, npm e Git respondem no terminal.
+- [ ] Salvei o material para reproduzir as demonstrações depois.
+- [ ] Sei que Glaucia conduz as demos; não preciso instalar nem executar os LABS junto com a apresentação.
+
+### Em casa, quando for praticar
+
+- [ ] Escolhi um LAB e li seus requisitos.
+- [ ] Para os LABS de código: Node.js, npm e Git respondem no terminal.
 - [ ] Clonei a branch indicada e executei os testes offline.
-- [ ] Se vou usar a demo Alô, TI, instalei as dependências e abri a interface.
-- [ ] Conferi meu acesso ao produto necessário.
-- [ ] Separei notebook e carregador.
+- [ ] Se vou abrir a Alô, TI, instalei as dependências e conferi o modo Simulado.
+- [ ] Conferi meu acesso ao produto necessário e os limites de uso aplicáveis.
+- [ ] Se optar por voz real, autorizei meu orçamento de teste e segui a configuração segura.
 - [ ] Usarei somente dados fictícios ou públicos.
 
 <a id="estrutura"></a>

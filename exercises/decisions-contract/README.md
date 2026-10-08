@@ -35,8 +35,8 @@ O valor `source: openai` usado internamente pertence ao contrato do adaptador. N
 
 Copie `incerto.json` pelo editor para `minha-resposta.json`, sem alterar o original.
 
-1. Mude somente `contexto.probability` de 0.4 para 0.96. Preveja a equipe e execute o script com o novo caminho
-2. Agora reduza `equipe.confidence` para 0.5. Preveja novamente: a equipe deve voltar a `human`
+1. Na resposta com `name: "contexto"`, mude somente `probability` de 0.4 para 0.96. Preveja a equipe e execute o script com o novo caminho
+2. Na resposta com `name: "equipe"`, reduza `confidence` para 0.5. Preveja novamente: a equipe deve voltar a `human`
 3. Troque o score por 1.75. O valor fracionário deve ser preservado; não remova o bloqueio humano
 4. Duplique uma resposta no array `answers`. O contrato deve recusar o conjunto
 
