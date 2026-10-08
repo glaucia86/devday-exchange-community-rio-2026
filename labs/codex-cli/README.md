@@ -1,77 +1,32 @@
-# LAB · Codex CLI: uma mudança pequena, verificada no terminal
+# LAB · Codex CLI: voz no terminal e uma correção curta
 
-[Início](../../README.md) · [Exercício](../../exercises/ticket-router/README.md) · [Guia da apresentadora](../../docs/guia-apresentadora.md)
+[Início](../../README.md) · [Guia da apresentadora](../../docs/guia-apresentadora.md#codex-cli) · [Roteiro de palco](../../docs/roteiro-de-palco.md)
 
-## Objetivo
+Bloco de **2–3 minutos** no palco. Em casa, a mesma sequência cabe numa tarde. O encaminhador de chamados não entra neste bloco: ele continua no [LAB Cloud](../codex-cloud/README.md).
 
-Implementar uma mudança com Codex no terminal e verificar o resultado com testes que ficam fora da pasta editada pelo agente. Você vai ampliar um encaminhador fictício de relatos.
+No evento, Glaucia opera o terminal e o público acompanha. Este LAB é para repetir depois, no seu computador.
 
-**Para fazer em casa:** reproduza a demonstração de CLI do [guia da apresentadora](../../docs/guia-apresentadora.md#codex-cli), com o mesmo starter, pedido e verificador. No evento, Glaucia opera o terminal e o público acompanha.
+## O que entra no palco
 
-**Sua entrega:** `router.mjs`, novos testes e um diff que você consegue explicar. Estimativa de estudo em casa: 15–20 minutos, além da preparação do ambiente; duração não medida.
+Três coisas, nesta ordem: o modelo e a permissão certos, a voz dentro do terminal, e o centro de agentes enquanto uma correção pequena da Alô, TI acontece. A correção é real e curta. O caso `FAILED` em [service-desk.ts](../../apps/decisions/src/domain/service-desk.ts) grava o aviso `A análise falhou. Seu relato continua aqui; tente novamente.` e não acrescenta essa frase à conversa. [getSpokenReply](../../apps/decisions/src/domain/spoken-reply.ts) devolve vazio quando o status é `error`, e o [teste](../../apps/decisions/tests/spoken-reply.test.mts) trava esse silêncio mesmo com uma mensagem da assistente na revisão atual. Na tela, a frase fica no aviso lateral.
 
-**Validação:** starter, solução e verificação independente são executáveis localmente. A interação autenticada com Codex CLI ainda precisa de ensaio. O código do exercício não chama APIs; usar o agente requer conexão, autenticação e o acesso/consumo da sua conta.
+Se essa frase já estiver na conversa no commit que você clonou, pare. Outra alteração pode ter tratado o caso. Não invente um segundo bug para o palco continuar.
 
-## Antes do primeiro comando
+## Recursos do DevDay, como estão na CLI 0.161.0
 
-**Rota essencial:** preparar a cópia → conferir a falha → pedir a mudança → executar os testes → ler o diff. O desafio de outra grafia, ao final, é opcional.
+Consulta em 8 de outubro de 2026. O recap de 29 de setembro de 2026 diz que a CLI passa a começar e conduzir tarefas por voz, ganha a visão `/agents`, melhora a edição de prompt, a retomada de sessão e as worktrees, e deixa o terminal mais legível em sessões longas. Fonte: [DevDay 2026 Recap](https://openai.com/index/devday-2026-recap/).
 
-- **CLI** significa interface de linha de comando: você conversa com o agente dentro do terminal
-- **Starter** é o ponto de partida, deliberadamente incompleto
-- **Teste** compara a saída de uma função com o resultado esperado; **regressão** é um comportamento que deixou de funcionar
-- **Diff** mostra o que mudou entre duas versões
-- `routeTicket(text)` recebe o texto de um relato e retorna o nome de uma categoria; não cria tickets reais
+| No recap | Na CLI `0.161.0` | Fonte |
+| --- | --- | --- |
+| Voz para começar e conduzir a tarefa | `/voice` liga ou desliga. `/voice settings` escolhe a voz. Com a conversa aberta, o rodapé coberto pelos testes mostra `/voice stop` e o mute. O snapshot usa Ctrl+X para mute; o código escreve `/voice mute` quando não há atalho desenhado. A release 0.156.0 descreve um atalho F8 configurável para a conversa de voz. No código da 0.161.0 o campo correspondente se chama `toggle_voice`. No ensaio, use a tecla que o rodapé **desta** instalação mostrar. | [slash_command.rs da tag 0.161.0](https://github.com/openai/codex/blob/rust-v0.161.0/codex-rs/tui/src/slash_command.rs), [snapshot do rodapé](https://github.com/openai/codex/blob/rust-v0.161.0/codex-rs/tui/src/chatwidget/realtime/snapshots/codex_tui__chatwidget__realtime__tests__recording_controls_tests__voice_footer_renders_the_main_conversation_states.snap), [keymap da tag 0.161.0](https://github.com/openai/codex/blob/rust-v0.161.0/codex-rs/config/src/tui_keymap.rs), [release 0.156.0](https://github.com/openai/codex/releases/tag/rust-v0.156.0) |
+| Visão `/agents` | `/agents` abre o agent command center. `/subagents` troca de subagente da sessão. | O mesmo `slash_command.rs` e o recap |
+| Worktree, retomada, tela cheia | `/worktree` abre a conversa numa worktree nova. `/resume` retoma um chat. `/tui` escolhe o modo da próxima abertura; a 0.156.0 descreve a UI em tela cheia. Estes três ficam de fora dos 3 minutos. | `slash_command.rs` e a [release 0.156.0](https://github.com/openai/codex/releases/tag/rust-v0.156.0) |
 
-Você precisa de Node.js 24.21.0 ou posterior, Git, uma conexão para usar Codex e uma conta com acesso. A preparação compartilhada explica como abrir o terminal e conferir versões. Não precisa usar uma conta corporativa nem conectar dados de trabalho.
+A página [Slash commands](https://developers.openai.com/codex/cli/slash-commands), lida em 8 de outubro de 2026, ainda lista `/agent` no singular e não lista `/voice` nem `/agents`. O [changelog publicado](https://developers.openai.com/codex/changelog) dessa consulta para no CLI 0.145.0 e registra a remoção antiga do `/realtime` experimental. A versão fixada do encontro é a 0.161.0, cujo código e release notes têm voz e `/agents`. No ensaio, abra `/` e confira se `/voice` e `/agents` aparecem. Se não aparecerem, não improvise o comando: use o pedido digitado e a gravação rotulada. A alternativa documentada nessa página de changelog é a voz do app desktop do ChatGPT, em Chat, Work e Codex. Isso não é voz dentro do terminal.
 
-## 1. Prepare uma cópia de trabalho
+A 0.155.0, de 17 de setembro de 2026, introduziu `/voice` experimental, ligado em `/experimental`. A 0.156.0, de 22 de setembro de 2026, ligou as conversas de voz por padrão. Fonte: [release 0.155.0](https://github.com/openai/codex/releases/tag/rust-v0.155.0) e [release 0.156.0](https://github.com/openai/codex/releases/tag/rust-v0.156.0).
 
-Siga [Prepare seu ambiente](../../README.md#preparacao) para instalar Node.js 24.21.0 ou posterior, verificar Git e clonar o material. Abra o terminal na pasta `devday-exchange-community-rio-2026`.
-
-Execute uma vez. Este comando de Node funciona no PowerShell, macOS e Linux e recusa sobrescrever uma cópia existente:
-
-```sh
-node -e "require('node:fs').cpSync('exercises/ticket-router/starter','../rio-codex-cli',{recursive:true,errorOnExist:true,force:false})"
-cd ../rio-codex-cli
-node --test router.test.mjs
-```
-
-**Esperado:** três testes aprovados. Você está em `rio-codex-cli`, uma pasta separada do material original. `../` no comando significa voltar uma pasta antes de criar a cópia; por isso ela fica ao lado do repositório.
-
-Confira onde está e quais arquivos copiou:
-
-```sh
-node -p "process.cwd()"
-node -e "console.log(require('node:fs').readdirSync('.').sort().join(' | '))"
-```
-
-O caminho termina em `rio-codex-cli`. A lista deve ser `AGENTS.md | README.md | router.mjs | router.test.mjs`. `AGENTS.md` diz ao agente como executar os testes dentro do sandbox. `README.md` explica o desafio, `router.mjs` contém a função e `router.test.mjs` contém os testes iniciais. Se faltar um, volte à cópia antes de continuar.
-
-Agora execute a verificação do desafio, ainda nessa pasta:
-
-```sh
-node ../devday-exchange-community-rio-2026/exercises/ticket-router/verify.mjs router.mjs
-```
-
-**Esperado antes da mudança:** `ACCEPTANCE {"total":18,"passed":8,"failed":10}` e código de saída 1. Aqui, falhar é parte do exercício: os três testes iniciais não cobrem os requisitos novos. Erro de arquivo ausente ou de sintaxe não conta como esse resultado.
-
-No palco, mostre a falha da frase **A senha falhou e a conexão caiu**. O verificador diz `esperado revisao_humana; recebido acessos`. A outra frase com duas equipes, **O aplicativo falhou e a rede caiu**, já passa neste starter: ele só reconhece a palavra senha e, sem ela, devolve `revisao_humana` por acaso. Não use essa segunda frase para ilustrar a ambiguidade.
-
-Grave esse ponto de partida no Git da cópia. Assim o Codex reconhece a pasta como repositório, o `git diff` mostra só a mudança do exercício e o modo não interativo não pede `--skip-git-repo-check`:
-
-```sh
-git init -b main
-git config user.name "Exercicio"
-git config user.email "exercicio@example.invalid"
-git add AGENTS.md README.md router.mjs router.test.mjs
-git commit -m "Ponto de partida do exercício"
-```
-
-Esses `git config` valem só para esta cópia; não alteram o Git do restante do computador. `git status` deve ficar limpo. O pedido ao agente continua proibindo commit e push: este commit é a foto de antes da mudança.
-
-## 2. Entre no Codex
-
-Se o CLI ainda não estiver instalado, o [guia oficial](https://learn.chatgpt.com/docs/codex/cli) oferece instaladores por sistema. Com npm, uma opção é:
+## Versão, modelo e permissão
 
 ```sh
 npm install -g @openai/codex@0.161.0
@@ -80,103 +35,83 @@ codex login
 codex login status
 ```
 
-`codex --version` deve mostrar `codex-cli 0.161.0`. Essa é a versão fixada para o encontro. Uma atualização posterior pode mudar a interface no dia do palco.
+`codex --version` mostra `codex-cli 0.161.0`. O login do encontro é o do ChatGPT no navegador. Este bloco não pede chave de API. Autenticação: [documentação oficial](https://learn.chatgpt.com/docs/auth).
 
-No PowerShell, use `npm.cmd` se `npm.ps1` for bloqueado. Se instalou via npm e `codex.ps1` também for bloqueado, use `codex.cmd` nos quatro comandos e ao abrir o CLI, ou use o Prompt de Comando. Não altere a política de execução do sistema para acompanhar o LAB. Conclua o login no navegador com sua própria conta; não cole credenciais na conversa. Login com ChatGPT e autenticação por chave são modalidades diferentes. Este LAB não pede chave de API. Veja [autenticação](https://learn.chatgpt.com/docs/auth).
+No PowerShell, use `npm.cmd` e `codex.cmd` se a política bloquear os scripts `.ps1`. Não mude a política de execução do sistema.
 
-Depois do login, `codex login status` deve confirmar uma sessão autenticada. A redação varia conforme a modalidade. Se ainda informar que não está autenticado, conclua o fluxo no navegador e confira novamente antes de abrir o agente.
-
-Na pasta `rio-codex-cli`, execute `codex` e espere aparecer a interface do agente. Digite `/status` dentro dela para conferir a sessão e `/permissions` para revisar permissões. Esses comandos com barra pertencem ao Codex; não são comandos do PowerShell ou bash. Não desative proteções para destravar o exercício.
-
-Se o Codex pedir para confiar na pasta, confira se o caminho é a cópia `rio-codex-cli` que você acabou de criar. A confiança é desta pasta de exercício, não de outro projeto.
-
-`codex exec` é a alternativa não interativa, na mesma versão `codex-cli 0.161.0`. Na pasta da cópia, ele recebe o mesmo pedido da etapa 3 entre aspas. Como a pasta já é um repositório, não use `--skip-git-repo-check`. Sem o `git init` acima, o `codex exec` recusa a pasta e o modo interativo pede para confiar nela.
-
-## 3. Peça a mudança
-
-Com o Codex aberto, cole o pedido completo no campo da conversa do agente e envie. Este bloco é texto para o agente, não um comando para o terminal:
-
-```text
-Leia AGENTS.md, README.md, router.mjs e router.test.mjs desta pasta.
-Amplie routeTicket(text) para ignorar maiúsculas e acentos.
-Palavras inteiras senha/login/permissão retornam acessos;
-conexão/Wi-Fi/rede retornam infraestrutura;
-erro 500/aplicativo retornam aplicacoes.
-Nenhuma categoria ou mais de uma categoria retorna revisao_humana.
-Duas palavras da mesma categoria continuam sendo uma categoria.
-Entrada ausente ou não textual retorna revisao_humana sem erro.
-
-Primeiro acrescente testes e execute-os com
-node --test --test-isolation=none router.test.mjs
-para mostrar qual teste falhou. Sem --test-isolation=none, o sandbox
-pode imprimir só o resumo do arquivo (tests 1 / fail 1).
-Depois faça a menor implementação que passa a suíte inteira.
-Não instale dependências, acesse serviços externos, altere outras pastas,
-faça commit ou push. Não altere o verificador do material original.
-Ao terminar, mostre os arquivos alterados, comandos, resultados e limites.
-```
-
-O limite de rede acima se refere às ações no projeto; o agente não funciona offline. Revise cada pedido de aprovação e autorize apenas o escopo entendido.
-
-## 4. Confira você mesma ou você mesmo
-
-Depois da resposta do agente, saia do CLI com Ctrl+C e rode:
+Abra o agente já no modelo e na permissão do palco, a partir de `apps/decisions`:
 
 ```sh
-node --test router.test.mjs
-node ../devday-exchange-community-rio-2026/exercises/ticket-router/verify.mjs router.mjs
+codex -m gpt-6-luna -s workspace-write -a on-request
 ```
 
-**Esperado:** a suíte expandida passa. A quantidade de testes escritos pelo agente pode variar, mas não pode diminuir nem omitir os requisitos. O verificador independente deve terminar exatamente com:
+- `-m gpt-6-luna` é o slug `gpt-6-luna` do catálogo da tag 0.161.0. A descrição nessa tag é a de um modelo rápido e mais barato, para tarefas mais simples. O padrão dessa versão é `gpt-6.1-sol`. Fonte: [models.json da tag](https://github.com/openai/codex/blob/rust-v0.161.0/codex-rs/models-manager/models.json) e a [release 0.161.0](https://github.com/openai/codex/releases/tag/rust-v0.161.0). O catálogo dessa tag não contém `gpt-5.4-mini`. O hotfix da 0.156.0 passa a recomendar GPT-6 Luna no aviso de limite de taxa: [PR 47405](https://github.com/openai/codex/pull/47405).
+- `-s workspace-write` e `-a on-request` são o par documentado para trabalho local com escrita na pasta e pergunta antes de sair dela. Fonte: [referência da CLI](https://developers.openai.com/codex/cli/reference) e [aprovações](https://developers.openai.com/codex/agent-approvals-security.md).
+- `codex exec` começa em sandbox somente leitura. Para editar, o comando leva `-s workspace-write`. Fonte: [modo não interativo](https://developers.openai.com/codex/noninteractive.md). A voz deste bloco é da TUI; `codex exec` não a substitui.
+
+## Véspera, fora do relógio do palco
+
+1. Confirme `codex login status` sem projetar a conta.
+2. Se aparecer `Trust this folder?`, com `1. Trust and continue` e `2. Back to Agent Command Center`, confira o caminho e escolha 1 só se for este repositório. O `git init` não tira essa tela: ela apareceu em 8 de outubro de 2026 na 0.161.0 mesmo depois do commit inicial. A documentação oficial fala num pedido de confiança ao abrir a pasta: [aprovações](https://developers.openai.com/codex/agent-approvals-security.md). Faça isso antes do projetor.
+3. Dentro do agente, peça só isto: `Execute node --version e pare. Não edite arquivos.` O esperado é `v24.21.0` ou posterior, o mesmo piso de `.nvmrc`. Se vier outra versão, o agente está num login shell com outro PATH. Saia com `/quit` e abra de novo com `-c allow_login_shell=false`. A chave `allow_login_shell` está na [configuração avançada](https://developers.openai.com/codex/config-advanced). O flag `-c` está na [referência](https://developers.openai.com/codex/cli/reference).
+4. Ligue `/voice`, diga uma frase, ouça o retorno e encerre com `/voice stop`. Confira o microfone no dispositivo que a sala vai ouvir. A 0.161.0 também escolhe microfone, alto-falante e canal em `/voice settings`. Fonte: [release 0.161.0](https://github.com/openai/codex/releases/tag/rust-v0.161.0).
+5. Deixe uma gravação do ensaio que passou, fora do repositório. O nome leva a palavra `GRAVAÇÃO` e a data. Sem essa gravação, o plano B é dizer que o passo não rodou.
+
+Para sair, use `/quit` ou `/exit`. Fonte: `slash_command.rs` da tag 0.161.0. No ensaio de 8 de outubro, um Ctrl+C sozinho não encerrou a TUI.
+
+## Roteiro de 2–3 minutos
+
+Deixe a Alô, TI aberta em http://127.0.0.1:3000, aba **Simulado**, e o Codex já aberto no comando da seção anterior. A instalação e o login ficam fora deste relógio.
+
+| Tempo | Comando | Tela esperada | Plano B, rotulado GRAVAÇÃO |
+| --- | --- | --- | --- |
+| 0:00–0:20 | No navegador: **Por trás da decisão**, marque **Simular falha na próxima análise**, **Analisar relato** | O aviso lateral diz `A análise falhou. Seu relato continua aqui; tente novamente.` A conversa não ganha essa frase. | Diga “isto é gravação” e mostre o ensaio dessa tela. |
+| 0:20–0:40 | No Codex, `/status` | Modelo `gpt-6-luna`, escrita no workspace. A conta não aparece na projeção. | Gravação do `/status` do ensaio, com a conta coberta. |
+| 0:40–1:10 | `/voice` e fale o pedido abaixo. Quando a legenda fechar o pedido, `/voice stop`. | Rodapé de voz (`listening` ou `speaking`) e a legenda do que foi dito. | Digite o mesmo pedido. Se a voz não abrir, diga isso e use a gravação do ensaio em que `/voice` funcionou. |
+| 1:10–1:40 | `/agents` | O agent command center lista a tarefa. Fale os outros nomes uma vez: `/worktree`, `/resume`, `/tui`. Não os execute. | Gravação do centro de agentes. |
+| 1:40–2:20 | Quando a tarefa terminar, `/diff`. Fora do Codex, na pasta `apps/decisions`: `node --test tests/spoken-reply.test.mts tests/service-desk.test.mts` | Diff curto nos dois arquivos de domínio e no teste. A suíte desses arquivos passa. | Se passar de 2:00 sem diff, corte para a gravação. Diga que não é ao vivo. |
+| 2:20–2:50 | Recarregue a Alô, TI e repita a falha simulada | A mesma frase entra na conversa. | Gravação desse reload. |
+
+Pedido falado, numa frase:
 
 ```text
-ACCEPTANCE {"total":18,"passed":18,"failed":0}
+A falha simulada da Alô, TI fica só no aviso do lado. Coloque essa mesma frase na conversa, como mensagem da assistente, e deixe a voz local falá-la uma vez, sem repetir uma sugestão antiga. Mexa só em src/domain/service-desk.ts, src/domain/spoken-reply.ts e tests/spoken-reply.test.mts. Não instale nada e não faça commit.
 ```
 
-`passed` conta casos aprovados; `failed` conta falhas. Com falhas, o comando termina com código 1. Sem falhas, termina com 0. No PowerShell, `$LASTEXITCODE` mostra o código do último comando; no macOS/Linux, use `echo $?` imediatamente depois. O agente dizer “testado” não substitui a execução.
+O diff esperado descreve três mudanças: o caso `FAILED` passa a anexar a frase que já está no aviso; `getSpokenReply` aceita o status `error` quando a última mensagem é da assistente nesta revisão; o teste continua mudo para uma sugestão antiga e passa a exigir uma fala para a frase nova. Se o agente editar outro arquivo, peça para reverter essa parte e pare.
 
-Abra `router.mjs` no editor. Se quiser apenas ler pelo terminal, sem instalar um editor:
+Saia com `/quit` antes de rodar o `node --test`.
+
+## Leve para casa
+
+Uma tarde, com Node.js 24.21.0 ou posterior e o login ChatGPT. Não use chave de API neste exercício: no ensaio de 8 de outubro de 2026, o padrão `gpt-6.1-sol` passou do TPM de uma chave pequena (pedido de 14640 tokens contra limite de 10000), e `gpt-6-luna` nessa mesma chave tinha teto de 50 requisições por dia, compartilhado com a Alô, TI ao vivo. Esses números são daquela organização, não um teto publicado da OpenAI.
+
+1. Siga [Prepare seu ambiente](../../README.md#preparacao) e entre na pasta `apps/decisions` deste repositório.
+2. Instale a CLI 0.161.0, entre com `codex login` e confira `codex login status`.
+3. Abra com `codex -m gpt-6-luna -s workspace-write -a on-request`.
+4. Resolva a confiança da pasta e o `node --version` dentro do agente, como na véspera.
+5. Envie o pedido da tabela. Pode ser por `/voice` ou digitado. Os dois usam o mesmo texto.
+6. Rode os dois arquivos de teste citados e leia o `git diff`.
+7. Suba a Alô, TI com `npm start` só se quiser ver a frase na conversa. O mock não chama a API.
+
+`codex exec` só entra se a TUI não abrir. Na pasta `apps/decisions`:
 
 ```sh
-node -e "console.log(require('node:fs').readFileSync('router.mjs','utf8'))"
+codex exec -m gpt-6-luna -s workspace-write "A falha simulada da Alô, TI fica só no aviso do lado. Coloque essa mesma frase na conversa, como mensagem da assistente, e deixe a voz local falá-la uma vez, sem repetir uma sugestão antiga. Mexa só em src/domain/service-desk.ts, src/domain/spoken-reply.ts e tests/spoken-reply.test.mts. Não instale nada e não faça commit."
 ```
 
-Procure três partes: normalização do texto, detecção das categorias e decisão de encaminhar ou pedir revisão. Para comparar com o início:
+Sem `-s workspace-write`, o exec permanece somente leitura e não edita. Esse caminho não tem `/voice`.
 
-```sh
-git diff
-git status
-```
+### Problemas
 
-Se o diff abrir um visualizador com `(END)` no rodapé, pressione `q` para voltar ao terminal. O diff usa `-` para linhas antigas e `+` para novas. Um diff vazio com `git status` limpo pode significar que o agente commitou mesmo com o pedido em contrário: `git log --oneline` e `git show` mostram esse commit. Não faça push.
+- **`codex` não encontrado:** reabra o terminal e confira `codex --version`. A versão do encontro é `codex-cli 0.161.0`.
+- **Tela pedindo para trocar de modelo:** o slug do palco é `gpt-6-luna`. O catálogo da 0.161.0 não inclui `gpt-5.4-mini`.
+- **`Trust this folder?`:** confira o caminho e confie só neste repositório. A tela pode aparecer com a pasta já versionada.
+- **`node --version` dentro do agente abaixo de v24.21.0:** abra de novo com `-c allow_login_shell=false` ou coloque o Node 24 no PATH do login shell. O `node --version` do terminal, sozinho, não basta.
+- **`/voice` ausente no menu:** a instalação não é a 0.161.0, ou a build não tem o runtime de voz. Digite o pedido. Não invente outro comando de voz.
+- **Limite de taxa:** pare e volte no dia seguinte, ou use outra conta ChatGPT. Não cole chave no terminal.
+- **O agente commitou:** `git log --oneline` mostra o commit. Não faça push. O pedido pedia para não commitar.
 
-**Critério de conclusão:** normalização explicável, nenhuma dependência nova, ambiguidade enviada para revisão humana e testes cobrindo o comportamento. Em especial, “senha e login” é uma equipe; “senha e conexão” são duas. Só depois compare com a [solução de referência](../../exercises/ticket-router/solution/router.mjs).
+## O encaminhador saiu deste bloco
 
-## Problemas e reset
-
-- **`codex` não encontrado:** reabra o terminal após instalar e confira `codex --version`. A versão do encontro é `codex-cli 0.161.0`, instalada com `npm install -g @openai/codex@0.161.0`
-- **`codex exec` pede `--skip-git-repo-check` ou o modo interativo pede para confiar na pasta:** a cópia não é um repositório. Rode o `git init` e o commit da etapa 1 nesta pasta, não no material do evento
-- **O agente diz que um teste falhou, mas não mostra qual:** no sandbox, `node --test router.test.mjs` pode resumir o arquivo inteiro como `tests 1 / fail 1`. Peça `node --test --test-isolation=none router.test.mjs`
-- **`rate limit exceeded` ou `Request too large` no modelo padrão, em conta nova:** entre com ChatGPT, como este LAB recomenda, ou use um modelo menor, por exemplo `codex -m gpt-5.4-mini`. Não cole a chave na conversa
-- **Falha de login ou acesso:** use o editor e os mesmos testes; registre que o produto Codex não foi ensaiado
-- **`ARQUIVO_INVALIDO` no verificador:** confira o diretório atual e o nome `router.mjs`; isso não é uma falha esperada do desafio
-- **Os testes do agente passam, mas o verificador falha:** leia o caso que falhou e peça um teste de regressão antes da correção
-- **A pasta já existe:** preserve a tentativa. Repita a cópia com outro nome, como `rio-codex-cli-2`, e ajuste o `cd`
-
-### Se um caso continuar falhando
-
-Volte ao Codex na mesma pasta. Copie somente o nome do caso e a diferença entre esperado/recebido, e peça:
-
-```text
-A verificação independente ainda falhou neste caso: [cole aqui a falha].
-Reproduza com um teste de regressão, explique a causa e faça a menor
-correção. Não altere o verificador. Rode a suíte inteira novamente.
-```
-
-Troque o trecho entre colchetes pela saída real. Depois, volte à etapa 4 e confira por conta própria. Não cole credenciais, informações do seu computador ou logs de projetos pessoais.
-
-## Depois do encontro, se quiser aprofundar
-
-Adicione seu próprio caso antes de mudar o código: “Wi Fi”, no lugar de “Wi-Fi”. Decida explicitamente se faz parte do contrato; o exercício atual não promete tratar todas as grafias. Compare uma ampliação deliberada de escopo com um bug dos requisitos existentes.
-
-No [LAB Cloud](../codex-cloud/README.md), você vai revisar uma candidata que passa seus testes, mas ainda encaminha relatos ambíguos incorretamente.
+O exercício longo do encaminhador não entra neste bloco. O contrato, o starter e a candidata continuam no [LAB Cloud](../codex-cloud/README.md) e em [exercises/ticket-router](../../exercises/ticket-router/README.md).

@@ -53,6 +53,7 @@ function main() {
   ];
   for (const files of suites) run(process.execPath, ['--test', ...files], root);
   run(process.execPath, ['scripts/check-workshop-examples.mjs'], root);
+  run(process.execPath, ['scripts/check-cli-stage.mjs'], root);
   run(npm, ['run', 'build'], decisions);
   console.log(`
 Build pronta para o palco.
@@ -66,6 +67,11 @@ Se for usar o Codex CLI:
   ${npm} install -g @openai/codex@0.161.0
   codex --version
   codex login status
+  Na pasta apps/decisions:
+  codex -m gpt-6-luna -s workspace-write -a on-request
+  Se aparecer Trust this folder?, confira o caminho antes de aceitar.
+  Dentro do agente, peça node --version e espere v24.21.0 ou posterior.
+  Se vier outra versão, saia com /quit e reabra com -c allow_login_shell=false.
 `);
 }
 

@@ -94,11 +94,11 @@ São **quatro demonstrações, cada uma com um LAB para reproduzir em casa**. Os
 | Demonstração | O que você vai reproduzir em casa | Abrir o LAB |
 | --- | --- | --- |
 | **Dots** | Dar contexto, limitar ações e revisar uma entrega | [Cenário e passo a passo](labs/01-dots/README.md) |
-| **Codex CLI** | Acompanhar uma mudança no terminal, inspecionar o diff e verificar testes | [LAB do CLI](labs/codex-cli/README.md) |
+| **Codex CLI** | Falar uma correção curta no terminal, ver a tarefa em `/agents` e conferir o diff | [LAB do CLI](labs/codex-cli/README.md) |
 | **Codex Cloud** | Revisar uma candidata com testes verdes, reproduzir a regressão e conferir uma correção remota | [LAB do Cloud](labs/codex-cloud/README.md) |
 | **Decisions API** | Conversar por voz, corrigir o relato e revisar o ticket; com alternativa simulada e exercícios de contrato | [LAB Decisions](labs/02-decisions-typescript/README.md) |
 
-CLI e Cloud usam o mesmo [contrato de encaminhamento fictício](exercises/ticket-router/README.md), com pontos de partida diferentes: implementação a partir do starter no CLI e revisão de uma candidata defeituosa no Cloud. A experiência de voz para voz faz parte de **Decisions API**. A [arquitetura proposta](docs/arquitetura-decisions.md) descreve o fluxo e suas etapas pendentes.
+O CLI mostra a voz no terminal e uma correção curta na Alô, TI. O Cloud usa o [contrato de encaminhamento fictício](exercises/ticket-router/README.md), na revisão de uma candidata defeituosa. A experiência de voz para voz faz parte de **Decisions API**. A [arquitetura proposta](docs/arquitetura-decisions.md) descreve o fluxo e suas etapas pendentes.
 
 <a id="preparacao"></a>
 ## 🧰 Prepare seu ambiente
@@ -310,7 +310,7 @@ Use a [programação](docs/programacao.md) para os detalhes do encontro e as [re
 - [ ] Escolhi um LAB e li seus requisitos.
 - [ ] Para os LABS de código: Node.js 24.21.0 ou posterior, npm e Git respondem no terminal.
 - [ ] Para ensaiar a Alô, TI: `node scripts/prepare-stage.mjs` e, em seguida, `npm start` em `apps/decisions`.
-- [ ] Se o ensaio incluir o Codex CLI: `codex --version` mostra `codex-cli 0.161.0` e `codex login status` confirma a sessão.
+- [ ] Se o ensaio incluir o Codex CLI: `codex --version` mostra `codex-cli 0.161.0`, `codex login status` confirma a sessão, a abertura usa `-m gpt-6-luna -s workspace-write`, a pasta foi confiada antes do projetor e, dentro do agente, `node --version` mostra v24.21 ou posterior.
 - [ ] Clonei a branch indicada e executei os testes offline.
 - [ ] Se vou abrir a Alô, TI, instalei as dependências e conferi o modo Simulado.
 - [ ] Conferi meu acesso ao produto necessário e os limites de uso aplicáveis.
@@ -323,7 +323,7 @@ Use a [programação](docs/programacao.md) para os detalhes do encontro e as [re
 | Caminho | Conteúdo |
 | --- | --- |
 | [labs/01-dots/](labs/01-dots/) | Contexto, cenário e prática com Dots |
-| [labs/codex-cli/](labs/codex-cli/) | Exercício acompanhado pelo terminal |
+| [labs/codex-cli/](labs/codex-cli/) | Voz no terminal, `/agents` e correção curta da Alô, TI |
 | [labs/codex-cloud/](labs/codex-cloud/) | Delegação remota e revisão |
 | [labs/02-decisions-typescript/](labs/02-decisions-typescript/) | Decisões tipadas e revisão humana |
 | [exercises/ticket-router/](exercises/ticket-router/) | Starter, solução e testes |

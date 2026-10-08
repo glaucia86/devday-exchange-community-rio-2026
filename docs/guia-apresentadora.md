@@ -15,11 +15,11 @@ O fio condutor é o suporte fictício da Aurora. A pergunta que liga os blocos �
 | Demonstração conduzida por Glaucia | O que aparece no palco | O que a pessoa reproduz em casa |
 | --- | --- | --- |
 | [Dots](#dots) | Resumo dos três relatos, correção de A-102 e revisão dos fatos | [Mesmo cenário e pedidos](../labs/01-dots/README.md) |
-| [Codex CLI](#codex-cli) | Starter → testes vermelhos → alteração → 18 critérios → diff | [Mesmos arquivos, prompt e verificador](../labs/codex-cli/README.md) |
+| [Codex CLI](#codex-cli) | Voz no terminal, visão `/agents` e uma correção curta da Alô, TI | [Mesmos comandos e o mesmo pedido](../labs/codex-cli/README.md) |
 | [Codex Cloud](#codex-cloud) | Candidata preparada → regressão → tarefa remota → revisão | [Mesma candidata, contrato e tarefa](../labs/codex-cloud/README.md) |
 | [Decisions API](#decisions-api) | Conversa de voz para voz, correção, revisão e ticket simulado | [Mesmos relatos e sequência de voz](../labs/02-decisions-typescript/README.md), com alternativa simulada identificada |
 
-CLI e Cloud compartilham o contrato de encaminhamento. A candidata do Cloud é uma cópia com defeito intencional para estudar revisão; não a apresente como um resultado produzido pela execução anterior do CLI.
+O CLI mostra a voz no terminal e uma correção curta na Alô, TI. O Cloud continua no contrato de encaminhamento. A candidata do Cloud é uma cópia com defeito intencional para estudar revisão; não a apresente como um resultado produzido pela execução anterior do CLI.
 
 **Pendente antes de considerar as quatro demos prontas:** ensaiar Dots, CLI e Cloud nas contas reais e Decisions com API, microfone e áudio reais. Testes offline e uma página publicada não comprovam essas experiências. Consulte o [registro de validação](validacao.md).
 
@@ -27,7 +27,7 @@ CLI e Cloud compartilham o contrato de encaminhamento. A candidata do Cloud é u
 
 - Conferir programação e local no Luma
 - Node.js 24.21.0 ou posterior, como em `.nvmrc`. Na véspera, rode `node scripts/prepare-stage.mjs` e deixe `npm start` pronto em `apps/decisions`
-- Se o Codex CLI entrar no ensaio: `npm install -g @openai/codex@0.161.0`, `codex --version` mostra `codex-cli 0.161.0` e `codex login status` confirma a sessão, sem projetar a conta
+- Se o Codex CLI entrar no ensaio: `npm install -g @openai/codex@0.161.0`, `codex --version` mostra `codex-cli 0.161.0` e `codex login status` confirma a sessão, sem projetar a conta. A abertura do palco é `codex -m gpt-6-luna -s workspace-write -a on-request`, na pasta `apps/decisions`. Antes do projetor, confie a pasta se aparecer `Trust this folder?` e, dentro do agente, peça `node --version`: o esperado é v24.21.0 ou posterior. Se vier outra versão, saia com `/quit` e reabra com `-c allow_login_shell=false`.
 - Preparar uma cópia limpa do material e uma cópia separada para cada demonstração; manter soluções de referência para contingência
 - Conferir acesso e login de Dots e Codex sem expor dados pessoais na projeção
 - Preparar e publicar o ambiente Cloud do exercício antes do palco; manter uma tarefa de ensaio concluída somente se ela realmente tiver sido executada
@@ -82,28 +82,26 @@ Mostre o índice. Apresente o contexto: relatos de suporte fictícios que precis
 
 ## Codex CLI
 
-**Estimativa de palco: 8–10 minutos.** [Reprodução em casa](../labs/codex-cli/README.md)
+**Estimativa de palco: 2–3 minutos.** [Reprodução em casa](../labs/codex-cli/README.md)
 
-**Deixar pronto:** CLI autenticado, terminal na cópia `rio-codex-cli`, editor e verificador fora da pasta editada pelo agente. Instalação e login já devem ter sido ensaiados.
+O encaminhador não entra neste bloco. Ele continua no Cloud. Aqui a plateia vê a voz dentro do terminal, a visão `/agents` e uma correção curta na Alô, TI. Comandos, fontes e o texto falado estão no LAB. A versão fixada continua `codex-cli 0.161.0`. O modelo do palco é `gpt-6-luna`, com `-s workspace-write`.
 
-1. **Mostrar a linha de base.** Execute `node --test router.test.mjs`: três testes aprovados.
-   - Fala: “A linha de base está verde, mas ainda não cobre a mudança.”
-2. **Mostrar o trabalho que falta.** Execute `node ../devday-exchange-community-rio-2026/exercises/ticket-router/verify.mjs router.mjs`.
-   - Esperado: 8/18, com dez falhas. Mostre a caixa alta e a frase **A senha falhou e a conexão caiu**: o verificador recebe `acessos` e o contrato pede `revisao_humana`. A frase **O aplicativo falhou e a rede caiu** já passa no starter; não use essa linha para mostrar a ambiguidade.
-3. **Delegar no terminal.** Abra `codex` e envie o bloco completo do LAB. Acompanhe a inclusão dos testes antes da implementação.
-   - Fala: “Quero ver a falha reproduzida antes de aceitar a correção.”
-4. **Conferir fora da resposta do agente.** Rode novamente a suíte e o verificador.
-   - Esperado: testes ampliados verdes e 18/18 na aceitação independente.
-5. **Ler o diff.** Use o comando do LAB e destaque normalização, categorias e retorno para revisão humana.
-   - Fala: “‘Senha e login’ é uma categoria. ‘Senha e conexão’ exige revisão.”
+**Deixar pronto, fora deste relógio:** login ChatGPT já conferido, `Trust this folder?` já respondido para este repositório, `node --version` dentro do agente em v24.21.0 ou posterior (se vier outra versão, reabra com `-c allow_login_shell=false`), microfone ensaiado com `/voice` e `/voice stop`, Alô, TI em http://127.0.0.1:3000 na aba **Simulado**, e uma gravação do ensaio que passou. Cada plano B abaixo é essa gravação: diga “isto é gravação” antes de dar play. Sem gravação, diga que o passo não rodou.
 
-**Transição:** “No Cloud, vou revisar uma entrega preparada para esse mesmo contrato. Ela tem testes verdes, mas esconde uma regressão.”
+| Tempo | Ação | Fala | Tela | Plano B GRAVAÇÃO |
+| --- | --- | --- | --- | --- |
+| 0:00–0:20 | **Por trás da decisão**, marque **Simular falha na próxima análise** e clique **Analisar relato** | “A falha está no aviso do lado. A conversa não a repete.” | Aviso `A análise falhou. Seu relato continua aqui; tente novamente.` | Gravação dessa tela. |
+| 0:20–0:40 | No Codex já aberto com `codex -m gpt-6-luna -s workspace-write -a on-request`, digite `/status` | “O modelo desta versão, por padrão, é o GPT-6.1 Sol. No palco eu fixo o Luna: no catálogo da 0.161.0 ele é o modelo rápido e mais barato, para tarefas mais simples.” | `gpt-6-luna` e escrita no workspace. A conta fica fora da projeção. | Gravação do `/status`, com a conta coberta. |
+| 0:40–1:10 | `/voice`, fale o pedido do LAB e encerre com `/voice stop` | “Eu começo a tarefa falando, no mesmo terminal.” | Rodapé de voz e a legenda da frase. | Digite o pedido. Se `/voice` não existir nesta instalação, diga isso e use a gravação. |
+| 1:10–1:40 | `/agents`, enquanto a tarefa anda | “Esta é a visão nova: as tarefas do terminal num lugar só. Worktree, retomada e a tela cheia ficam para casa.” | O agent command center lista a tarefa. | Gravação do `/agents`. |
+| 1:40–2:20 | `/diff` e, depois de `/quit`, `node --test tests/spoken-reply.test.mts tests/service-desk.test.mts` em `apps/decisions` | “O diff cabe numa tela. O teste é a evidência, não a frase do agente.” | Diff curto e suíte desses arquivos aprovada. Se passar de 2:00, corte. | Gravação do diff e do teste. Não chame de ao vivo. |
+| 2:20–2:50 | Recarregue a Alô, TI e repita a falha simulada | “A mesma frase agora entra na conversa.” | A frase aparece na transcrição. | Gravação do reload. |
 
-**Reset:** preserve a tentativa; abra outra cópia do starter. A cópia do próximo ensaio deve começar em 8/18, não numa solução já pronta.
+**Transição:** “No Cloud, a revisão muda de lugar. O encaminhador continua lá.”
 
-**Plano B no palco:** execute a solução e os 18 critérios, identificando-a como referência pronta. Não diga que o CLI gerou a mudança se a interação falhou ou não foi executada.
+**Reset:** se o diff for só `service-desk.ts`, `spoken-reply.ts` e `spoken-reply.test.mts`, descarte esses três arquivos e não faça push. A Alô, TI volta à falha simulada, com a frase fora da conversa.
 
-**Ponto de parada:** problema de login, permissões não compreendidas ou mudança fora do escopo. O agente usa conexão e acesso da conta; o código do exercício não chama APIs. A cópia precisa do `git init` do LAB: sem ele, `codex exec` pede `--skip-git-repo-check` e o modo interativo pede para confiar na pasta. Se o sandbox só mostrar `tests 1 / fail 1`, peça `node --test --test-isolation=none router.test.mjs`. Se uma conta nova responder `rate limit exceeded` no modelo padrão, entre com ChatGPT ou use `codex -m gpt-5.4-mini`. A versão do encontro continua `codex-cli 0.161.0`.
+**Ponto de parada:** login, microfone, `/voice` ausente no menu, ou diff fora de `service-desk.ts`, `spoken-reply.ts` e `spoken-reply.test.mts`. A versão do encontro continua `codex-cli 0.161.0`. O catálogo dessa versão não inclui `gpt-5.4-mini`. `codex exec` só edita com `-s workspace-write`; ele não substitui a voz da TUI. `Trust this folder?` pode aparecer mesmo com a pasta já versionada: resolva antes do projetor.
 
 ## Codex Cloud
 

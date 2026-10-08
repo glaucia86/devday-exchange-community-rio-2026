@@ -4,7 +4,7 @@
 
 Este caminho foi preservado para quem já tinha o link. **Codex CLI e Codex Cloud são dois LABS independentes**:
 
-- [Codex CLI: uma mudança pequena, verificada no terminal](../codex-cli/README.md)
+- [Codex CLI: voz no terminal e uma correção curta](../codex-cli/README.md)
 - [Codex Cloud: delegar e revisar uma tarefa remota](../codex-cloud/README.md)
 
-Os dois usam o [exercício fictício de encaminhamento](../../exercises/ticket-router/README.md), com objetivos e instruções próprios. A voz de ida e volta pertence ao [LAB Decisions API](../02-decisions-typescript/README.md); não acrescenta outro tema ao encontro.
+O CLI é um bloco curto: recursos novos do terminal e voz dentro do Codex. O Cloud continua no [exercício de encaminhamento](../../exercises/ticket-router/README.md). A voz para voz da Alô, TI pertence ao [LAB Decisions API](../02-decisions-typescript/README.md).
