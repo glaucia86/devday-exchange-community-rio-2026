@@ -223,7 +223,7 @@ cd apps/decisions
 npm start
 ```
 
-O script confere o Node, executa `npm ci --ignore-scripts`, os 57 testes, a aceitação do encaminhador e `npm run build`. Ele imprime o endereço local. Se preferir os comandos separados, ainda em `apps/decisions`:
+O script confere o Node, executa `npm ci --ignore-scripts`, os 71 testes, a aceitação do encaminhador e `npm run build`. Ele imprime o endereço local. Se preferir os comandos separados, ainda em `apps/decisions`:
 
 ```sh
 npm ci --ignore-scripts
@@ -260,7 +260,8 @@ node scripts/check-doc-links.mjs
 node --test scripts/check-dots-guide.test.mjs
 ```
 
-O conjunto contém **57 testes**: 3 do starter, 8 da solução, 5 da candidata de revisão, 5 do exercício de contrato e 36 da Alô, TI. Além deles, a verificação pedagógica executa 18 casos de aceitação em cada versão do encaminhador: starter com 10 falhas esperadas, candidata com 2 e solução sem falhas. Consulte a CI do commit atual para o resultado. Testes verdes da candidata não significam que ela já está correta. O `scripts/check-dots-guide.test.mjs` confere o texto do LAB de Dots e não entra nessa contagem.
+O conjunto contém **71 testes**: 3 do starter, 8 da solução, 5 da candidata de revisão, 5 do exercício de contrato e 50 da Alô, TI. Além deles, a verificação pedagógica executa 18 casos de aceitação em cada versão do encaminhador: starter com 10 falhas esperadas, candidata com 2 e solução sem falhas. Consulte a CI do commit atual para o resultado. Testes verdes da candidata não significam que ela já está correta.
+O `scripts/check-dots-guide.test.mjs` confere o texto do LAB de Dots e não entra nessa contagem.
 
 Dentro de **`apps/decisions`**, após instalar as dependências:
 
@@ -282,7 +283,7 @@ A [execução de referência](https://github.com/glaucia86/devday-exchange-commu
 | Área | Situação |
 | --- | --- |
 | Quatro LABS e guia da apresentadora | Disponíveis |
-| Encaminhador e Alô, TI | 57 testes e aceitação red/green; resultado por commit no Actions |
+| Encaminhador e Alô, TI | 71 testes e aceitação red/green; resultado por commit no Actions |
 | TypeScript e build Next.js | Aprovados na execução de referência |
 | Interface mock em Chromium | Revisão, correção, reset e tratamento de erro verificados |
 | Capturas desktop e celular | Inspecionadas |
@@ -369,4 +370,3 @@ Documentação e código originais sob a [licença MIT](LICENSE). Marcas e mater
 </p>
 <p><a href="#topo">↑ Voltar ao topo</a></p>
 </div>
-

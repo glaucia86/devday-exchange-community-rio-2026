@@ -29,7 +29,7 @@ A integração ampliou o conjunto unitário para **46 testes**. Os 26 testes ant
 
 Ambiente: Ubuntu 24.04, Node.js 24.21.0. Os manifests resolvidos na terceira execução foram preservados para instalação com npm ci. Consulte também a execução correspondente ao HEAD da branch; uma aprovação de um SHA anterior não valida alterações posteriores.
 
-O teste de navegador cobre: cenário, bloqueio antes da revisão humana, correção, alteração de título, criação do ticket, ambiguidade, reset durante análise, texto livre, falha/nova tentativa, ausência de overflow horizontal e erros não capturados. A regressão de carregamento tardio de voz é simulada; a nova execução no HEAD deve confirmar seu resultado.
+O teste de navegador cobre: cenário, bloqueio antes da revisão humana, edição do relato, correção ensaiada, alteração de título, criação do ticket, pista para recomeçar, ambiguidade, texto livre no simulado, reset durante análise, falha/nova tentativa, ausência de overflow horizontal e erros não capturados. A regressão de carregamento tardio de voz é simulada; a nova execução no HEAD deve confirmar seu resultado.
 
 ## Como repetir
 
@@ -82,7 +82,7 @@ Execução local desta revisão, no computador cloud, com Node.js 24.19.0:
 - Cinco testes do exercício TypeScript de contrato: resposta completa, contexto insuficiente, recusa, equipe inválida e arquivo ausente
 - CLI disponível no ambiente: `codex-cli 0.159.2`; ajuda e sintaxe de login consultadas, sem autenticar ou executar uma tarefa de modelo
 
-O conjunto passou a ter 56 testes, contando os cinco testes deliberadamente incompletos da candidata e os cinco do exercício de contrato. A aceitação independente acrescenta 18 verificações para cada versão do encaminhador. A CI executa tanto o verde quanto as falhas didáticas esperadas.
+O conjunto passou a ter 71 testes, contando os cinco testes deliberadamente incompletos da candidata e os cinco do exercício de contrato. A aceitação independente acrescenta 18 verificações para cada versão do encaminhador. A CI executa tanto o verde quanto as falhas didáticas esperadas.
 
 Isso comprova os exercícios locais e seus critérios. Não comprova que esta revisão concluiu Dots, a interação autenticada do CLI ou uma tarefa Codex Cloud. CLI, Cloud, microfone, áudio audível e APIs reais continuam pendentes. O walkthrough público confirma a navegação e o conteúdo que estava publicado; alterações de um PR só chegam ao site após integração e deploy autorizados.
 
