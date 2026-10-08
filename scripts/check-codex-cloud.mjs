@@ -59,17 +59,38 @@ export function cloudGuideProblems(files) {
   return problems;
 }
 
+const networkTest = 'correção da rede não reaproveita';
+
+function summaryCount(text, label) {
+  const matches = [...text.matchAll(new RegExp(`(?:#|\\u2139)\\s+${label}\\s+(\\d+)\\b`, 'g'))];
+  return matches.length ? Number(matches.at(-1)[1]) : null;
+}
+
+function failingTestNames(text) {
+  const names = [];
+  for (const match of text.matchAll(/^not ok \d+ - (.+)$/gm)) names.push(match[1].trim());
+  for (const match of text.matchAll(/^\u2716 (.+)$/gm)) {
+    const name = match[1].replace(/\s+\([\d.]+ms\)$/, '').trim();
+    if (name === 'failing tests:') continue;
+    names.push(name);
+  }
+  return [...new Set(names)];
+}
+
 export function bugStillReproduces(result) {
   const text = `${result.stdout ?? ''}${result.stderr ?? ''}`;
   if (result.status === 0) return { ok: false, reason: 'o teste do LAB passou; o defeito da rede não está mais no produto' };
-  if (!text.includes('# fail 1') || !text.includes('# pass 3')) {
+  if (/Cannot find module|SyntaxError|ERR_UNKNOWN_FILE_EXTENSION/.test(text) && !text.includes(networkTest)) {
+    return { ok: false, reason: 'o teste quebrou ao carregar, em vez de falhar na explicação' };
+  }
+  if (summaryCount(text, 'fail') !== 1 || summaryCount(text, 'pass') !== 3) {
     return { ok: false, reason: 'a falha deixou de ser exatamente o teste da correção da rede' };
   }
-  if (!text.includes('not ok') || !text.includes('correção da rede não reaproveita')) {
+  const names = failingTestNames(text);
+  if (names.length !== 1 || !names[0].includes(networkTest)) {
     return { ok: false, reason: 'não encontrei a asserção da correção da rede' };
   }
   if (!text.includes('qual serviço falhou')) return { ok: false, reason: 'a saída não mostra a explicação de serviço desconhecido' };
-  if (/Cannot find module|SyntaxError/.test(text)) return { ok: false, reason: 'o teste quebrou ao carregar, em vez de falhar na explicação' };
   return { ok: true, reason: 'defeito da rede ainda reproduzido' };
 }
 

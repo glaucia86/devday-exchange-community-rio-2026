@@ -2,7 +2,13 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
-const testArgs = ['--test', 'labs/codex-cloud/bug-rede.test.mts'];
+// Node 24 defaults to the spec reporter even when stdout is a pipe.
+// TAP keeps the summary stable for the checker on Node 22 and 24.
+const testArgs = ['--test', '--test-reporter=tap', 'labs/codex-cloud/bug-rede.test.mts'];
+
+export function bugTestArgs(features = process.features) {
+  return [...typeStripArgs(features), ...testArgs];
+}
 
 export function typeStripArgs(features = process.features) {
   return features?.typescript ? [] : ['--experimental-strip-types'];
