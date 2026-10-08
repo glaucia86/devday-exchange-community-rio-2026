@@ -102,6 +102,27 @@ CLI e Cloud usam o mesmo [contrato de encaminhamento fictício](exercises/ticket
 <a id="preparacao"></a>
 ## 🧰 Prepare seu ambiente
 
+
+### Se esta é sua primeira vez com terminal
+
+Você não precisa ter assistido à apresentação. Comece aqui e depois siga um LAB por vez.
+
+- **Terminal:** janela em que você digita comandos. No Windows, abra o PowerShell ou Prompt de Comando pelo menu Iniciar; no macOS ou Linux, abra o aplicativo Terminal
+- **Pasta atual:** lugar em que o terminal está trabalhando. `cd nome-da-pasta` entra em uma pasta; `cd ..` volta um nível
+- **Repositório:** a pasta deste projeto, com código, textos e histórico. **Clonar** baixa uma cópia para seu computador
+- **Raiz do repositório:** a pasta principal `devday-exchange-community-rio-2026`, antes de entrar em `apps`, `labs` ou `exercises`
+- **Node.js:** executa os exemplos JavaScript/TypeScript. **npm:** instala os pacotes que a interface precisa. **Git:** obtém o projeto e compara alterações
+
+Nos blocos marcados como comandos, copie uma linha, cole no terminal e pressione Enter. Aguarde o resultado antes da próxima. Nos blocos **texto para enviar**, cole na conversa do produto indicado, não no terminal. As saídas esperadas são exemplos do que ler; não são comandos para copiar.
+
+### Instale apenas o que faltar
+
+1. Execute os três comandos da tabela abaixo. Se uma ferramenta responder com sua versão, ela já está disponível.
+2. Se aparecer “comando não encontrado” ou “não é reconhecido”, abra o link oficial da ferramenta, selecione seu sistema e instale. Para Node.js, escolha uma versão LTS compatível com **22.18 ou posterior**.
+3. Feche e abra o terminal de novo, então repita a verificação. Não prossiga com uma versão de Node menor que 22.18.
+4. Editor e navegador são locais à sua escolha. Não é preciso instalar uma extensão de IA no editor.
+
+
 | Ferramenta | Requisito | Para que serve |
 | --- | --- | --- |
 | [Node.js](https://nodejs.org/en/download) | **22.18 ou posterior** | Executar os testes e a aplicação |
@@ -118,6 +139,8 @@ npm --version
 git --version
 ```
 
+Como ler a saída: `node --version` começa com `v`, como `v24.19.0`; `npm --version` traz números; `git --version` começa com `git version`. O `v24.19.0` foi observado no ensaio cloud deste material. Sua versão pode diferir se respeitar o mínimo indicado.
+
 Os testes offline e o mock não exigem conta OpenAI nem chave de API. Instalar dependências requer acesso ao registro npm. O acesso aos produtos dos LABS deve ser preparado separadamente.
 
 ### Obtenha o projeto antes de escolher um LAB de código
@@ -130,9 +153,36 @@ cd devday-exchange-community-rio-2026
 node --test exercises/ticket-router/starter/router.test.mjs
 ```
 
+Para conferir a pasta atual em qualquer um desses sistemas:
+
+```sh
+node -p "process.cwd()"
+```
+
+O caminho exibido deve terminar em `devday-exchange-community-rio-2026`. Se terminar em `apps/decisions`, use `cd ../..` para voltar à raiz. Se abriu outro terminal, ele pode ter começado em uma pasta diferente; confira de novo.
+
+No final do teste inicial, procure esta contagem. O desenho dos símbolos e os tempos variam:
+
+```text
+tests 3
+pass 3
+fail 0
+```
+
 **Confira:** o terminal está na pasta `devday-exchange-community-rio-2026` e os três testes passam. Quando um LAB disser “na raiz do repositório”, é esta pasta. Se `node` ou `git` não existir, instale pela fonte oficial da tabela e reabra o terminal.
 
 Se já tiver uma cópia, não clone por cima nem descarte alterações. Confira `git status --short`; atualize somente quando souber o que está preservando. O material publicado fica em `main`.
+
+**Se não conseguiu chegar até aqui:**
+
+| O que apareceu | O que fazer |
+| --- | --- |
+| A pasta de destino já existe | Não clone por cima. Abra a cópia existente ou escolha outra pasta para um clone novo |
+| `Cannot find module` | Confira `node -p "process.cwd()"` e o caminho do comando. Não crie um arquivo vazio para esconder o erro |
+| Falha de download/conexão | Confira a conexão e tente o mesmo comando novamente; não mude configurações de segurança para contornar o problema |
+| Terminal mostra `>` e parece esperar mais texto | Pode faltar fechar uma aspa. Cancele com Ctrl+C e cole novamente a linha inteira do guia |
+
+O site do evento é um portal de leitura. **A Alô, TI só aparece em `127.0.0.1` depois que você inicia a aplicação no seu computador**. `127.0.0.1` significa “esta máquina”; o servidor da demo não é o site público do evento.
 
 Os exercícios de código não precisam de `npm install`. A instalação com `npm ci --ignore-scripts` é necessária apenas para abrir a interface Alô, TI, conforme [Execute a demo](#executar). Os LABS de CLI e Cloud explicam separadamente o login e a preparação do produto.
 

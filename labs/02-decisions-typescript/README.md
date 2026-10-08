@@ -12,31 +12,65 @@ Reproduzir a demonstração de voz para voz da Alô, TI: relatar uma falha, ouvi
 
 **Estado atual:** a demonstração principal planejada é voz para voz real, e ainda exige ensaio com API e áudio antes do palco. Os adaptadores estão implementados e desativados por padrão. Domínio, contratos, build e fluxo mock têm testes; microfone, WebRTC e respostas da API são simulados na CI. A alternativa offline não exige chave nem sessão paga, mas não comprova uma conversa real.
 
+## Escolha seu caminho antes de instalar
+
+Você não precisa ter visto a apresentação para seguir este roteiro.
+
+| Seu ponto de partida | Caminho neste LAB | O que poderá afirmar ao terminar |
+| --- | --- | --- |
+| Tenho acesso à API, orçamento autorizado e posso configurar o segredo localmente | Preparação + conversa de voz para voz | Reproduzi a conversa real, se fala, áudio, análise e encerramento funcionarem |
+| Quero começar sem chave nem gasto de API | Preparação + alternativa simulada | Reproduzi o fluxo com dados e respostas fixos, sem testar o modelo |
+| Não posso instalar os pacotes da interface | Node + aprofundamento de contrato | Executei as verificações locais, sem testar a interface ou a voz |
+
+A demonstração principal é a primeira linha. As outras permitem avançar com segurança, mas não são equivalentes a voz real. A edição de fixtures no final é opcional em todos os caminhos.
+
+### Se estes termos são novos
+
+- **API:** interface pela qual a aplicação pede um resultado a um serviço. Aqui, uma chamada real sai do seu servidor local para a OpenAI
+- **Mock/fixture:** resposta preparada antecipadamente para testar o fluxo sem chamar um modelo
+- **Transcrição:** texto do que foi falado. Ver texto não prova que houve saída de áudio
+- **Contrato:** regras sobre campos, tipos e valores aceitos em uma resposta
+- **Rascunho:** informação ainda não confirmada; **ticket simulado:** registro apenas na memória desta demo
+
 ## 1. Prepare e confira a aplicação sem custo de API
 
-Siga [Prepare seu ambiente](../../README.md#preparacao) e [Execute Alô, TI](../../README.md#executar). Na raiz do repositório, confira primeiro:
+Siga somente [Prepare seu ambiente](../../README.md#preparacao) até clonar o projeto e conferir o Node. A instalação e o início da Alô, TI estão completos abaixo; não execute outro roteiro de inicialização ao mesmo tempo. Na raiz do repositório, confira primeiro:
 
 ```sh
 node --test apps/decisions/tests/*.test.mts
 ```
 
-**Esperado:** 35 testes aprovados no conjunto atual da aplicação. O teste de handshake usa somente loopback, sem chave real ou internet.
+**Esperado:** no fim da saída, `tests 35`, `pass 35`, `fail 0`. O teste de handshake usa somente loopback, isto é, comunicação interna na própria máquina, sem chave real ou internet. Se o comando falhar por caminho ou versão do Node, corrija a preparação antes de seguir.
 
-Para a interface, em um terminal separado:
+Agora use o terminal que está confirmado na raiz do repositório. Execute uma linha por vez para entrar na pasta da aplicação, instalar e iniciar:
 
 ```sh
 cd apps/decisions
 npm ci --ignore-scripts
-npm run dev
+npm run build
+npm start
 ```
 
-Abra http://127.0.0.1:3000. Mantenha o terminal aberto. A instalação inicial baixa pacotes. A preparação no modo Simulado usa fixtures locais; a conversa real da próxima seção requer API. No PowerShell, use `npm.cmd` se necessário.
+O que cada comando faz:
+
+- `cd apps/decisions` entra na aplicação Alô, TI
+- `npm ci --ignore-scripts` instala as versões registradas no projeto; espere terminar e devolver o cursor
+- `npm run build` prepara a versão que o servidor vai abrir; aguarde a conclusão sem erros
+- `npm start` inicia essa versão e continua ocupando o terminal. Isso é esperado; não feche a janela
+
+Quando o terminal mostrar que o servidor está pronto, abra http://127.0.0.1:3000 no navegador. Se ele indicar outra porta, use a URL informada. A página deve ter o título **Alô, TI** e os modos **Simulado** e **OpenAI ao vivo**. Você não deve ver apenas o portal de documentação.
+
+**Checkpoint:** a aplicação abriu em uma URL local. Se o navegador disser que não consegue conectar, confira se o terminal ainda está executando `npm start` e se o endereço/porta são os mesmos.
+
+Para parar uma tentativa sua, volte a esse terminal e use Ctrl+C. Para iniciar novamente, estando em `apps/decisions`, repita `npm start`. Não use comandos para encerrar processos desconhecidos. A instalação inicial baixa pacotes. A preparação no modo Simulado usa fixtures locais; a conversa real da próxima seção requer API. No PowerShell, use `npm.cmd` se necessário.
 
 ## 2. Reproduza a conversa de voz para voz
 
 Este é o fluxo principal da demonstração. **Faça somente depois de preparar e autorizar seu próprio uso de API com custo**, conforme o [guia de ativação local](../../docs/integracao-live.md). Se não tiver acesso ou não quiser usar API, vá direto à alternativa simulada na próxima seção e registre essa diferença.
 
 ### Antes de iniciar
+
+O guia de ativação inclui a criação de `.env.local`, um arquivo local de configuração que não vai para o Git. Há dois valores diferentes: a **chave OpenAI** fica somente no servidor; o **código local da demo** é o que você informa no campo da interface. Não troque um pelo outro.
 
 - Confirme acesso aos modelos e um orçamento de ensaio na sua conta; não basta possuir uma chave
 - Siga o guia local para configurar o segredo no servidor e habilitar o modo ao vivo. Não cole a chave na interface, no chat ou em capturas
@@ -53,6 +87,13 @@ Este é o fluxo principal da demonstração. **Faça somente depois de preparar 
 6. Revise título, relato e equipe. Marque **Revisei este relato ao vivo e a equipe.** e clique **Confirmar ticket simulado ao vivo**. **Esperado:** `DEMO-0001`, sem envio a sistemas externos. Confira também a resposta falada; o texto exato pode variar.
 7. Clique **Encerrar conversa**. Espere **Conversa encerrada. Microfone liberado.** e confira o consumo na plataforma. Se a finalização não for confirmada, não abra sessões em sequência; siga o diagnóstico do guia local.
 
+Se o botão de início estiver desabilitado, verifique estes itens nessa ordem, sem clicar repetidamente:
+
+1. O servidor informa que o modo ao vivo está habilitado? Se não, confira a configuração no guia local e reinicie seu servidor
+2. O campo contém o código local correto, com pelo menos 32 caracteres? Não use a chave OpenAI nesse campo
+3. Você marcou o consentimento depois de autorizar o envio e o custo?
+4. Uma tentativa anterior ainda está conectando ou encerrando? Espere esse estado terminar; não inicie outra sessão sobre ela
+
 **Critério de conclusão da voz:** você falou e ouviu uma resposta real, conferiu a correção, revisou o ticket e confirmou o encerramento. Transcrição sem áudio não basta para afirmar que voz para voz funcionou. Não compare os números produzidos pelo modelo com os números fixos do mock.
 
 Para repetir, confirme o encerramento e só então comece outra sessão autorizada. Ao terminar o estudo, desative `MESA_LIVE_ENABLED` e reinicie ou encerre o servidor conforme o guia local.
@@ -64,6 +105,9 @@ Para repetir, confirme o encerramento e só então comece outra sessão autoriza
 Esta alternativa usa os mesmos relatos e checkpoints, com respostas fixas. Serve para preparar o ambiente, entender o estado da aplicação ou seguir estudando sem acesso à API. Registre “modo simulado”; ela não substitui o ensaio da demonstração de voz real.
 
 ### A. Observe uma decisão e tente agir cedo demais
+
+Na parte superior da aplicação, selecione **Simulado**. Se vinha da conversa real, cumpra primeiro o encerramento acima. A partir daqui, os resultados são fixos e não há captura de microfone.
+
 
 1. Confira o selo **Simulado** e clique **Explorar cenário**. O cenário inicial é **Acesso ao portal**. Nenhum microfone é capturado.
 2. Clique **Analisar relato**. A equipe sugerida será **Acessos e identidade**; o ticket permanece rascunho.
@@ -91,7 +135,10 @@ Texto livre não é interpretado pelo mock: ao editar o relato fora dos cenário
 
 ## Aprofundamento em casa: inspecione o contrato sem chamar a API
 
-Volte a um terminal na raiz do repositório. Abra:
+Se deixou o servidor rodando, abra outra janela de terminal para os comandos abaixo. Entre na pasta do projeto e confira `node -p "process.cwd()"`: o caminho deve terminar em `devday-exchange-community-rio-2026`. No terminal que estiver em `apps/decisions` e livre, `cd ../..` volta à raiz. Não cole comandos na janela ainda ocupada pelo servidor.
+
+Os links abaixo abrem os mesmos arquivos no GitHub para leitura, sem precisar de editor:
+
 
 - [`service-desk.ts`](../../apps/decisions/src/domain/service-desk.ts): cenários, estado e confirmação humana
 - [`live-contract.ts`](../../apps/decisions/src/domain/live-contract.ts): `buildDecisionRequest`, as três perguntas e `parseDecision`
@@ -110,6 +157,10 @@ node exercises/decisions-contract/inspect.mts exercises/decisions-contract/fixtu
 | `incerto.json` | `team: human`; criação bloqueada mesmo depois da revisão |
 | `recusado.json` | `CONTRATO_REJEITADO` e código de saída 1; nenhuma sugestão aceita |
 
+A resposta completa também lista `predicate:contexto`, `choice:equipe` e `score:impacto`. `false` significa não permitido/não ocorrido; `true` significa permitido/ocorrido. No resultado, `ticketCreated` continua `false`: o script testa a permissão, mas não executa a criação.
+
+`CONTRATO_REJEITADO` no terceiro comando é a falha esperada da fixture de recusa. Já `ARQUIVO_INVALIDO` significa que nem foi possível ler o JSON; nesse caso confira o caminho. Você pode seguir para o próximo comando após a recusa esperada.
+
 Todas imprimem ou deixam claro o uso de fixture. O script não cria um ticket, abre microfone nem chama API. Ele usa as funções de contrato e estado da aplicação.
 
 **Agora explique:**
@@ -125,6 +176,16 @@ A fixture completa está fora da ordem das perguntas. Ela continua válida porqu
 Anote o modo usado: voz real, interface simulada ou somente contrato offline. No fluxo escolhido, confira a correção e o bloqueio antes da revisão. Se fizer o aprofundamento, distinga as três fixtures. Complete: “Uma resposta bem formada pode pedir revisão humana quando…”. A resposta deve mencionar contexto/confiança, não só erros de JSON.
 
 ## Problemas e reset
+
+| Sintoma | Confira primeiro | Próximo passo seguro |
+| --- | --- | --- |
+| `npm` ou `node` não é reconhecido | Instalação e terminal reaberto | Volte à preparação; não tente editar código para resolver isso |
+| Instalação de pacotes falhou | Conexão e versão do Node | Repita a instalação após resolver a causa; não aplique `npm audit fix --force` para acompanhar o LAB |
+| Botão Iniciar está cinza | Modo habilitado, código local e consentimento | Use o checklist da conversa real; não exponha o segredo em busca de ajuda |
+| Microfone negado | Permissão desta página no navegador e no sistema | Libere apenas se quiser fazer o ensaio; caso contrário siga o modo simulado |
+| Transcrição aparece, mas não ouço voz | Volume, saída de áudio e controle **Áudio da conversa OpenAI** | Tente a reprodução pelo controle da página; se continuar mudo, registre a limitação e encerre |
+| Resposta sugere outra equipe | Transcrição e correção mais recente | Revise o dado; não confirme uma sugestão errada para obter um ticket |
+| Finalização da sessão não confirmada | Aviso após Encerrar conversa | Verifique sessão e consumo; não reinicie em sequência nem trate trocar de aba como encerramento |
 
 - **35 testes falham por sintaxe TypeScript:** confira Node.js 22.18+ e o diretório atual
 - **`ARQUIVO_INVALIDO`:** confira caminho e sintaxe JSON; não é a recusa esperada

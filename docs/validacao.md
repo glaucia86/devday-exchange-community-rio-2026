@@ -99,3 +99,8 @@ Para conferir o patch atual, use a [CI dos LABS](https://github.com/glaucia86/de
 No evento, Glaucia conduz as quatro demonstrações e o público acompanha. Os quatro LABS são para reproduzir essas mesmas demonstrações em casa depois; não haverá execução coletiva durante a apresentação. Tempos do guia da apresentadora são estimativas de palco/ensaio; tempos dos LABS são de estudo em casa, fora da grade oficial.
 
 Decisions mantém voz para voz real como demonstração principal planejada, condicionada ao ensaio real ainda pendente. Mock e fixtures continuam identificados como preparação, alternativa e aprofundamento. Documentar o roteiro principal não comprova que ele foi executado.
+
+
+### Autonomia de quem estuda em casa
+
+Os guias incluem abertura do terminal, conceitos básicos, verificação de versões, pasta atual, preparação de cópias, distinção entre comandos e mensagens ao agente, saídas esperadas e recuperação de erros. O caminho essencial fica separado do aprofundamento opcional. A cópia Cloud com os dois comandos de Node e os quatro arquivos foi repetida em uma pasta temporária: cinco testes verdes, aceitação 16/18 e recusa de sobrescrita confirmadas. Navegação de conta e upload no GitHub seguem fontes oficiais, mas não foram ensaiados com login nesta revisão.

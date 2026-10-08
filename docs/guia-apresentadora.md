@@ -107,7 +107,7 @@ Mostre o índice. Apresente o contexto: relatos de suporte fictícios que precis
 
 **Deixar pronto:** repositório fictício com os quatro arquivos do LAB, ambiente publicado e uma tarefa nova na candidata original. Confirme o repositório selecionado antes de projetar.
 
-1. **Mostrar a candidata.** Execute `node --test router.test.mjs` e `node verify.mjs router.mjs` no ambiente preparado.
+1. **Mostrar a candidata.** Abra o relatório de preparação com a execução de `node --test router.test.mjs` e `node verify.mjs router.mjs`. Se precisar repetir, peça esses comandos na conversa do ambiente, como no LAB; não presuma que o terminal local está operando a máquina remota.
    - Esperado: cinco testes verdes, mas 16/18 na aceitação.
    - Fala: “Esta cópia foi preparada com um erro: ela retorna na primeira equipe encontrada.”
 2. **Enviar a tarefa remota.** Use exatamente o pedido do LAB, com regressões antes do fix e proibição de alterar o verificador.
