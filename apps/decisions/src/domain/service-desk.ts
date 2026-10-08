@@ -65,6 +65,11 @@ function commitDraft(state:DeskState):DeskState {
   if(last?.role==='user') return {...state,draftDirty:false,messages:state.messages.slice(0,-1).concat({...last,text,revision:state.revision})};
   return {...state,draftDirty:false,messages:append(state,'user',text)};
 }
+/** Replaces the current report with text the person supplied. This is the edit path, not the canned stage correction. */
+export function recordReportEdit(state:DeskState,value:string):DeskState {
+  const edited=deskReducer(state,{type:'EDIT',value});
+  return edited===state?state:commitDraft(edited);
+}
 export function canCreate(state:DeskState):boolean {
   return state.status==='review' && state.reviewed && state.analysis!==null &&
     state.team!=='human' && state.title.trim().length>0 && state.draftText.trim().length>0 && state.ticket===null;

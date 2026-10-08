@@ -38,7 +38,7 @@ export const VOICE_TOOLS = [
     texto: { type: 'string', description: 'Relato completo, em português, somente com o problema descrito.' },
     titulo: { type: 'string', description: 'Título curto do relato. Vazio se ainda não houver um.' },
   }, ['texto', 'titulo']),
-  tool('corrigir_relato', 'Substitui o relato pelo texto completo já corrigido. Use quando a pessoa corrigir um fato. Invalida análise e confirmação anteriores. Não cria ticket.', {
+  tool('corrigir_relato', 'Substitui o relato pelo texto completo que a pessoa acabou de corrigir. É uma edição desse texto, não o exemplo pronto do palco. Invalida análise e confirmação anteriores. Não cria ticket.', {
     texto: { type: 'string', description: 'Relato completo depois da correção, não apenas o trecho novo.' },
   }, ['texto']),
   tool('analisar', 'Pede a análise Decisions do relato já registrado. Não escolhe a equipe por conta própria e não cria ticket.', {}, []),

@@ -128,7 +128,7 @@ A pergunta de contexto pede se o relato atual diz qual serviço falhou, o que ac
 | Função | O que a mesa faz |
 | --- | --- |
 | `registrar_relato` | Grava `texto` e `titulo` como evidência. Não cria ticket. |
-| `corrigir_relato` | Substitui o relato pelo texto completo já corrigido e invalida a análise. |
+| `corrigir_relato` | Edita o relato com o texto completo que a pessoa corrigiu e invalida a análise. Não insere o exemplo pronto do palco. |
 | `analisar` | Chama Decisions no servidor. Enquanto espera, a aplicação pede “Analisando o relato”. |
 | `confirmar_ticket` | Cria `DEMO-0001` só se `confirmacao_explicita` for o booleano `true` e a revisão permitir. |
 | `recomecar` | Limpa a conversa na tela. O histórico local de demonstração permanece. |

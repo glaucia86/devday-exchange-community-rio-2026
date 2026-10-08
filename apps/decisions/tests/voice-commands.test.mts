@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createDesk, deskReducer, mockDecision } from '../src/domain/service-desk.ts';
+import { createDesk, deskReducer, mockDecision, SCENARIOS } from '../src/domain/service-desk.ts';
 import { demoHistory, monitoringInsight, planInsightSpeech } from '../src/domain/monitoring.ts';
 import { applyVoiceCommand, rehearseVoiceScript, syntheticToolEvent } from '../src/domain/voice-commands.ts';
 import { parseLiveEvent } from '../src/domain/live-contract.ts';
@@ -33,10 +33,18 @@ test('corrigir_relato replaces the report and drops a stale analysis', () => {
   const effect = applyVoiceCommand(state, { name: 'corrigir_relato', arguments: JSON.stringify({ texto: correction }) });
   assert.equal(effect.ok, true);
   assert.equal(effect.state.draftText, correction);
+  assert.equal(effect.state.messages.filter(message => message.role === 'user').at(-1)?.text, correction);
+  assert.notEqual(effect.state.draftText, SCENARIOS.access.correction);
+  assert.equal(deskReducer(state, { type: 'CORRECT' }).draftText, SCENARIOS.access.correction);
   assert.equal(effect.state.analysis, null);
   assert.equal(effect.state.reviewed, false);
   assert.equal(effect.state.ticket, null);
   assert.ok(effect.state.revision > old.revision);
+  const analyzed = deskReducer(effect.state, { type: 'ANALYZE' });
+  assert.equal(analyzed.status, 'analyzing');
+  assert.equal(analyzed.draftText, correction);
+  assert.equal(analyzed.corrected, false);
+  assert.equal(analyzed.messages.filter(message => message.role === 'user').at(-1)?.text, correction);
   assert.deepEqual(deskReducer(effect.state, { type: 'RESOLVED', ...old, result: { source: 'openai', team: 'access', probability: .9, confidence: .9, score: 1, explanation: 'Atrasada.' } }), effect.state);
 });
 

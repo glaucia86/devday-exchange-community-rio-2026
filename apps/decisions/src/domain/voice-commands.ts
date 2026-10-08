@@ -1,4 +1,4 @@
-import { canCreate, createDesk, deskReducer, TEAMS, type DeskState } from './service-desk.ts';
+import { canCreate, createDesk, deskReducer, recordReportEdit, TEAMS, type DeskState } from './service-desk.ts';
 
 export const VOICE_COMMANDS = ['registrar_relato', 'corrigir_relato', 'analisar', 'confirmar_ticket', 'recomecar'] as const;
 export type VoiceCommandName = (typeof VOICE_COMMANDS)[number];
@@ -73,11 +73,15 @@ export function applyVoiceCommand(state: DeskState, call: { name: string; argume
     if (state.ticket) return done(state, command, false, 'Já existe um ticket nesta conversa. Diga recomeçar para abrir outro fluxo.');
     const text = textArgument(args);
     if (!text) return done(state, command, false, 'O relato veio vazio ou longo demais. Nada foi alterado.');
+    if (command === 'corrigir_relato') {
+      const next = recordReportEdit(state, text);
+      if (next === state) return done(state, command, false, 'O relato já estava com esse texto. Nada foi alterado.');
+      return done(next, command, true, 'Relato corrigido. A análise anterior perdeu a validade.');
+    }
     let next = deskReducer(state, { type: 'EDIT', value: text });
     const title = typeof args.titulo === 'string' ? args.titulo.trim().slice(0, 200) : '';
-    if (command === 'registrar_relato') next = deskReducer(next, { type: 'TITLE', value: title || text.slice(0, 80) });
-    const summary = command === 'registrar_relato' ? 'Relato registrado na mesa.' : 'Relato corrigido. A análise anterior perdeu a validade.';
-    return done(next, command, true, summary);
+    next = deskReducer(next, { type: 'TITLE', value: title || text.slice(0, 80) });
+    return done(next, command, true, 'Relato registrado na mesa.');
   }
   if (command === 'analisar') {
     if (state.ticket) return done(state, command, false, 'O ticket desta conversa já existe. A análise não foi refeita.');
