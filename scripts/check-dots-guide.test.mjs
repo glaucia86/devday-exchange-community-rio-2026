@@ -112,7 +112,7 @@ test('o horário opcional é recorrente, com fuso e término', async () => {
   assert.match(lab, /ainda hoje/);
   assert.match(bloco, /todos os dias/);
   assert.match(bloco, /horário de Brasília/);
-  assert.match(bloco, /depois da terceira\s+execução/);
+  assert.match(bloco, /terminando em 10 de outubro de 2026/);
   assert.match(bloco, /Confirme o horário, o fuso e a data de término/);
   assert.doesNotMatch(bloco, /uma vez/);
   assert.doesNotMatch(bloco, /só no próximo dia útil/);
