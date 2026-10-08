@@ -11,7 +11,7 @@ node --test router.test.mjs
 node verify.mjs router.mjs
 ```
 
-O segundo comando requer `verify.mjs`, copiado da pasta pai deste material. Na cópia do LAB Cloud, ele fica ao lado de `router.mjs`.
+O segundo comando requer `verify.mjs`, copiado da pasta pai deste material. Numa pasta só com estes arquivos, ele fica ao lado de `router.mjs`.
 
 Resultado inicial: cinco testes locais aprovados; aceitação independente com 16 aprovados e duas falhas. Código de saída 1 é esperado somente para essas duas falhas, não para arquivo ausente ou erro de sintaxe.
 

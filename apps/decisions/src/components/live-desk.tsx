@@ -4,7 +4,9 @@ import { Mic, MicOff, ShieldCheck, Sparkles, LoaderCircle, ArrowRight } from 'lu
 import { canCreate, createDesk, deskReducer, TEAMS, type DeskEvent, type DeskState, type Team } from '../domain/service-desk';
 import { type LiveEvent, type TranscriptLine } from '../domain/live-contract';
 import { interfaceContext, applyVoiceCommand, type CommandLogEntry, type VoiceEffect } from '../domain/voice-commands';
-import { planInsightSpeech } from '../domain/monitoring';
+import { beginConfirmationWatch, confirmationInFlight, idleActivity, idleConfirmation, noteActivity, noteAssistantAudible, planInsightSpeech, type ActivityClock, type ConfirmationWatch } from '../domain/monitoring';
+import { planCancelledAnalysis, planEditedAnalysisTurn } from '../domain/live-turn';
+import { watchAssistantAudio } from '../client/assistant-audio';
 import { LiveBrowser } from '../client/live-browser';
 import MonitoringNote from './monitoring-note';
 
@@ -31,24 +33,38 @@ export default function LiveDesk(){
  const seenCalls=useRef(new Set<string>());
  const delegations=useRef(new Set<string>());
  const generation=useRef(0);
- const lastUserAt=useRef(0);
- const lastAssistantAt=useRef(0);
+ const activity=useRef<ActivityClock>(idleActivity());
+ const confirmationWatch=useRef<ConfirmationWatch>(idleConfirmation());
+ const assistantAudible=useRef(false);
+ const audioCtx=useRef<AudioContext|null>(null);
  const insightSaid=useRef('');
  const insightTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
  function commit(next:DeskState){current.current=next;if(mounted.current)setState(next);}
  function apply(event:DeskEvent){commit(deskReducer(current.current,event));}
  function pushLog(effect:VoiceEffect,id:string){setLog(prev=>[{id,name:effect.command,ok:effect.ok,summary:effect.summary},...prev].slice(0,12));}
- function abandonInflight(reason:string){
+ function stamp(kind:'user_speech'|'assistant_audio_end'|'tool_output',at=Date.now()){activity.current=noteActivity(activity.current,kind,at);}
+ function resetSpeechClock(){activity.current=idleActivity();confirmationWatch.current=idleConfirmation();assistantAudible.current=false;}
+ function releaseInflight(){
   const job=inflight.current;inflight.current=null;
   pending.current?.abort();pending.current=null;
-  if(job)live.current?.submitToolOutput(job.callId,JSON.stringify({ok:false,comando:'analisar',erro:'resultado_descartado',resumo:reason,ticket:null}),false);
   if(current.current.status==='analyzing')apply({type:'FAILED',session:current.current.session,revision:current.current.revision});
+  return job;
+ }
+ function abandonInflight(reason:string){
+  const job=releaseInflight();
+  if(!job)return;
+  stamp('tool_output');
+  live.current?.sendTurn(planCancelledAnalysis(job.callId,reason));
  }
  function invalidate(value:string){
-  abandonInflight('O relato foi editado. A análise anterior foi descartada.');
+  const job=releaseInflight();
   apply({type:'EDIT',value});
-  live.current?.send(interfaceContext(current.current),null,true);
+  const events=planEditedAnalysisTurn({callId:job?.callId??null,reason:'O relato foi editado. A análise anterior foi descartada.',context:interfaceContext(current.current)});
+  if(events.some(event=>event.type==='response.item.create'))stamp('tool_output');
+  live.current?.sendTurn(events);
  }
+ function blockedInsight(){return confirmationInFlight(confirmationWatch.current,assistantAudible.current,activity.current.assistantAudioEndedAt);}
+ function beginSpokenConfirmation(){confirmationWatch.current=beginConfirmationWatch(Date.now(),assistantAudible.current);}
  function armInsight(text:string){
   if(!text||insightSaid.current===text)return;
   const epoch=generation.current;
@@ -56,7 +72,7 @@ export default function LiveDesk(){
    if(insightTimer.current)clearTimeout(insightTimer.current);
    insightTimer.current=setTimeout(()=>{
     if(!mounted.current||epoch!==generation.current||insightSaid.current===text)return;
-    const plan=planInsightSpeech({insight:text,alreadySaid:insightSaid.current===text,sessionActive:!!live.current?.active,userQuietMs:Date.now()-lastUserAt.current,assistantQuietMs:Date.now()-lastAssistantAt.current,requiredQuietMs:QUIET_MS});
+    const plan=planInsightSpeech({insight:text,alreadySaid:insightSaid.current===text,sessionActive:!!live.current?.active,now:Date.now(),activity:activity.current,confirmationInFlight:blockedInsight(),requiredQuietMs:QUIET_MS});
     if(plan==='wait'){tick();return;}
     if(plan!=='speak')return;
     insightSaid.current=text;
@@ -69,8 +85,20 @@ export default function LiveDesk(){
   mounted.current=true;
   const abort=new AbortController();
   fetch('/api/live',{signal:abort.signal}).then(r=>r.json()).then(data=>{if(mounted.current)setEnabled(data.enabled===true);}).catch(()=>{if(mounted.current)setEnabled(false);});
-  return()=>{mounted.current=false;generation.current++;abort.abort();pending.current?.abort();if(insightTimer.current)clearTimeout(insightTimer.current);void live.current?.stop();};
+  return()=>{mounted.current=false;generation.current++;abort.abort();pending.current?.abort();if(insightTimer.current)clearTimeout(insightTimer.current);void audioCtx.current?.close();void live.current?.stop();};
  },[]);
+ useEffect(()=>{
+  const element=audio.current,context=audioCtx.current;
+  if(connection!=='active'||!element||!context)return;
+  return watchAssistantAudio(element,context,next=>{
+   if(next===assistantAudible.current)return;
+   const at=Date.now();
+   const noted=noteAssistantAudible(confirmationWatch.current,next,at);
+   confirmationWatch.current=noted.watch;
+   assistantAudible.current=next;
+   if(noted.audioEndedAt)stamp('assistant_audio_end',noted.audioEndedAt);
+  });
+ },[connection]);
  async function analyze(callId:string|null){
   const client=live.current,snapshot=current.current,epoch=generation.current;
   if(!client?.active||snapshot.status!=='analyzing'||!snapshot.draftText.trim()||snapshot.ticket)return;
@@ -83,13 +111,13 @@ export default function LiveDesk(){
    if(controller.signal.aborted||epoch!==generation.current||current.current.session!==snapshot.session||current.current.revision!==snapshot.revision||result.sessionId!==client.id||result.revision!==snapshot.revision)return;
    apply({type:'RESOLVED',session:snapshot.session,revision:snapshot.revision,result:result.result});
    const explanation=current.current.analysis?.explanation??'Análise concluída. Nenhum ticket foi criado.';
-   if(callId)client.submitToolOutput(callId,JSON.stringify({ok:true,comando:'analisar',resumo:explanation,ticket:null,equipe:current.current.analysis?.team??null}));
+   if(callId){stamp('tool_output');client.submitToolOutput(callId,JSON.stringify({ok:true,comando:'analisar',resumo:explanation,ticket:null,equipe:current.current.analysis?.team??null}));}
    else client.send(explanation,null,false);
   }catch(e){
    if(controller.signal.aborted||epoch!==generation.current)return;
    apply({type:'FAILED',session:snapshot.session,revision:snapshot.revision});
    setFailure(e instanceof Error?e.message:'A análise falhou.');
-   if(callId)client.submitToolOutput(callId,JSON.stringify({ok:false,comando:'analisar',erro:'analise_falhou',resumo:'A análise falhou. Nenhum ticket foi criado.',ticket:null}));
+   if(callId){stamp('tool_output');client.submitToolOutput(callId,JSON.stringify({ok:false,comando:'analisar',erro:'analise_falhou',resumo:'A análise falhou. Nenhum ticket foi criado.',ticket:null}));}
    else client.send('A análise falhou. Nenhuma sugestão ou ticket foi confirmado.',null,false);
   }finally{if(pending.current===controller)pending.current=null;if(callId&&inflight.current?.callId===callId)inflight.current=null;}
  }
@@ -100,14 +128,15 @@ export default function LiveDesk(){
   const interrupts=event.name==='registrar_relato'||event.name==='corrigir_relato'||event.name==='recomecar';
   if(interrupts)abandonInflight('O relato mudou durante a análise. Nenhum ticket foi criado.');
   const effect=applyVoiceCommand(current.current,{name:event.name,arguments:event.arguments});
-  if(effect.command==='recomecar'){insightSaid.current='';if(insightTimer.current)clearTimeout(insightTimer.current);}
+  if(effect.command==='recomecar'){insightSaid.current='';if(insightTimer.current)clearTimeout(insightTimer.current);resetSpeechClock();}
   commit(effect.state);
   if(mounted.current&&epoch===generation.current)pushLog(effect,event.callId);
   const client=live.current;
   client?.send(interfaceContext(effect.state),null,true);
   if(effect.followup==='analyze'){void analyze(event.callId);return;}
+  stamp('tool_output');
   client?.submitToolOutput(event.callId,effect.output,!inflight.current);
-  if(effect.announceInsight&&effect.state.insight&&epoch===generation.current)armInsight(effect.state.insight.text);
+  if(effect.announceInsight&&effect.state.insight&&epoch===generation.current){beginSpokenConfirmation();armInsight(effect.state.insight.text);}
  }
  function eventReceived(event:LiveEvent,epoch:number){
   if(!mounted.current||epoch!==generation.current)return;
@@ -115,7 +144,7 @@ export default function LiveDesk(){
   if(event.type==='session.usage.updated'||event.type==='session.closed'){if(event.usage)setSeconds(event.usage.seconds);return;}
   if(event.type==='session.input_transcript.delta'||event.type==='session.output_transcript.delta'){
    const role=event.type==='session.input_transcript.delta'?'user':'assistant';
-   if(role==='user')lastUserAt.current=Date.now();else lastAssistantAt.current=Date.now();
+   if(role==='user')stamp('user_speech');
    const next=transcript.current.map(line=>({...line}));
    if(next.at(-1)?.role===role)next[next.length-1].text+=event.delta;else next.push({role,text:event.delta});
    if(next.reduce((sum,line)=>sum+line.text.length,0)>8000){setNotice('Limite de transcrição atingido. Encerrando.');void stop();return;}
@@ -133,11 +162,13 @@ export default function LiveDesk(){
  }
  async function start(){
   if(connection!=='idle'||!enabled||!consent||token.length<32||!audio.current)return;
+  if(!audioCtx.current||audioCtx.current.state==='closed')audioCtx.current=new AudioContext();
+  void audioCtx.current.resume();
   setConnection('connecting');setFailure('');setNotice('Solicitando acesso ao microfone…');
   const epoch=++generation.current;
   if(insightTimer.current)clearTimeout(insightTimer.current);
   insightSaid.current='';
-  apply({type:'RESET'});transcript.current=[];setLines([]);setLog([]);delegations.current.clear();seenCalls.current.clear();inflight.current=null;setSeconds(0);
+  apply({type:'RESET'});transcript.current=[];setLines([]);setLog([]);delegations.current.clear();seenCalls.current.clear();inflight.current=null;resetSpeechClock();setSeconds(0);
   const client=new LiveBrowser({token,audio:audio.current,onEvent:event=>eventReceived(event,epoch),
    onNotice:text=>{if(mounted.current&&epoch===generation.current)setNotice(text);},
    onEnded:()=>{if(mounted.current&&epoch===generation.current){setConnection('idle');pending.current?.abort();pending.current=null;inflight.current=null;}}});
@@ -154,7 +185,7 @@ export default function LiveDesk(){
   apply({type:'CREATE'});
   const ticket=current.current.ticket,insight=current.current.insight;
   if(ticket)live.current?.send('A pessoa confirmou na tela. Ticket '+ticket.id+' criado apenas nesta demo, para '+TEAMS[ticket.team]+'. Nenhum sistema externo recebeu um ticket. Não anuncie o monitoramento; a aplicação fala isso em seguida.',null,false);
-  if(insight)armInsight(insight.text);
+  if(insight){beginSpokenConfirmation();armInsight(insight.text);}
  }
  function analyzeFromButton(){
   if(connection!=='active'||!current.current.draftText.trim()||current.current.ticket||current.current.status==='analyzing')return;

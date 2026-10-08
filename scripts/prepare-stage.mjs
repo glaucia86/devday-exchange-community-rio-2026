@@ -65,6 +65,7 @@ function main() {
   ];
   for (const files of suites) run(process.execPath, ['--test', ...files], root);
   run(process.execPath, ['scripts/check-workshop-examples.mjs'], root);
+  run(process.execPath, ['scripts/check-cli-stage.mjs'], root);
   run(npm, ['run', 'build'], decisions);
   console.log(`
 Build pronta para o palco.
@@ -72,12 +73,18 @@ Na pasta apps/decisions, execute:
   ${npm} start
 Abra http://127.0.0.1:3000
 
-Use esta build no encontro. npm run dev reescreve next-env.d.ts; esse arquivo é gerado e não entra no Git.
+Use esta build no encontro, com ${npm} start, para a Alô, TI da camada que sempre funciona e para o Decisions. npm run dev reescreve next-env.d.ts; esse arquivo é gerado e não entra no Git.
+O bloco do Codex CLI edita o fonte. Antes desse relógio, pare este processo e, na pasta apps/decisions, execute ${npm} run dev. Ao terminar o bloco, volte a ${npm} start. A build deste script não inclui a edição do agente.
 Antes de Dots, Codex ou voz, confira o ensaio em docs/roteiro-de-palco.md.
 Se for usar o Codex CLI:
   ${npm} install -g @openai/codex@0.161.0
   codex --version
   codex login status
+  Na pasta apps/decisions:
+  codex -m gpt-6-luna -s workspace-write -a on-request
+  Se aparecer Trust this folder?, confira o caminho antes de aceitar.
+  Dentro do agente, peça node --version e espere v24.21.0, a versão recomendada em .nvmrc.
+  Se vier outra versão, saia com /quit e reabra com -c allow_login_shell=false.
 `);
 }
 

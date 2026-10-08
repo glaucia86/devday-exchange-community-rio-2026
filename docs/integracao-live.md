@@ -139,7 +139,7 @@ Nome fora dessa lista, argumento inválido ou confirmação em string não mudam
 
 Depois que o ticket simulado existe, a mesa calcula uma frase a partir dos registros da semana daquela equipe. Infraestrutura e Aplicações internas já têm dois registros marcados como demonstração, então o primeiro ticket deste ensaio em qualquer uma dessas equipes produz “terceiro problema”. Acessos e identidade tem um, então produz “segundo”. A frase diz que são registros de demonstração. Nenhum painel externo é consultado.
 
-A frase aparece na tela na hora, com ou sem microfone. A fala usa `session.commentary.append` com `delegation_id` null, uma vez por fluxo, e só depois de 900 ms sem fala da pessoa e sem fala da assistente. Assim ela não cobre quem ainda está falando. `recomeçar` apaga a frase da tela e não a repete.
+A frase aparece na tela na hora, com ou sem microfone. A fala usa `session.commentary.append` com `delegation_id` null, uma vez por fluxo. Ela espera o áudio da confirmação terminar e, depois disso, 900 ms desde a última atividade real: fala da pessoa, fim do áudio da assistente ou resultado de ferramenta. Assim ela não cobre a confirmação nem quem ainda está falando. `recomeçar` apaga a frase da tela e não a repete.
 
 ## Ensaio de cada comando, sem chave
 

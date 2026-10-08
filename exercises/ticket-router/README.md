@@ -1,6 +1,6 @@
 # Exercício compartilhado: encaminhar relatos fictícios
 
-O LAB CLI parte de uma função mínima. O LAB Cloud começa com uma candidata que parece pronta, mas contém um erro. Ambos praticam o mesmo contrato de revisão de código. O projeto não chama Decisions nem qualquer API.
+O LAB CLI parte de uma função mínima e revisa esta candidata no próprio material. O [LAB Cloud](../../labs/codex-cloud/README.md) não usa esta pasta: a tarefa dele é um ajuste na Alô, TI. Este exercício não chama Decisions nem qualquer API.
 
 ## Antes de executar
 
@@ -9,7 +9,7 @@ Precisa de Node.js de 24.12.0 a 24.21.0 e do material [clonado](../../README.md#
 | Pasta | Papel | Testes da pasta | Aceitação independente |
 | --- | --- | --- | --- |
 | `starter` | Início do LAB CLI | 3 passam | 8 passam, 10 falham |
-| `review-candidate` | Entrega para revisar no LAB Cloud | 5 passam | 16 passam, 2 falham |
+| `review-candidate` | Candidata para a revisão local do encaminhador | 5 passam | 16 passam, 2 falham |
 | `solution` | Referência, consultar depois da tentativa | 8 passam | 18 passam |
 
 ## Contrato do desafio
@@ -49,6 +49,6 @@ Esperado: oito testes da solução e 18 casos de aceitação aprovados. Explique
 
 ## Reset seguro
 
-Trabalhe em uma cópia. Para recomeçar, use outra pasta e preserve sua tentativa anterior. Os LABS trazem comandos e caminhos específicos para [CLI](../../labs/codex-cli/README.md) e [Cloud](../../labs/codex-cloud/README.md).
+Trabalhe em uma cópia. Para recomeçar, use outra pasta e preserve sua tentativa anterior. Os comandos deste exercício estão no [LAB CLI](../../labs/codex-cli/README.md). O [LAB Cloud](../../labs/codex-cloud/README.md) tem outro roteiro, na Alô, TI.
 
 Para quem mantém o material, `node scripts/check-workshop-examples.mjs` confirma as falhas didáticas do starter e da candidata, além do resultado verde da solução. Um arquivo ausente ou erro de sintaxe não é aceito como a etapa vermelha.

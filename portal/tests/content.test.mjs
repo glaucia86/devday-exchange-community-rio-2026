@@ -57,7 +57,7 @@ test('source changes are reflected and required sections cannot silently disappe
       await cp(resolve(repoRoot, path), resolve(folder, path), { recursive: true });
     }
     const source = resolve(folder, 'labs/01-dots/README.md');
-    await writeFile(source, (await readFile(source, 'utf8')).replace('Transformar uma intenção', 'Alteração canônica comprovada: transformar uma intenção'));
+    await writeFile(source, (await readFile(source, 'utf8')).replace('Atribuir uma responsabilidade contínua', 'Alteração canônica comprovada: atribuir uma responsabilidade contínua'));
     const output = await loadPortalContent({ repoRoot: folder, basePath });
     assert.match(output.pages.find(p => p.route === 'labs/dots/').markdown, /Alteração canônica comprovada/);
     const readme = resolve(folder, 'README.md');
