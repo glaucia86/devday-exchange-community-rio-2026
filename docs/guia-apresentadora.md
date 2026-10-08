@@ -16,10 +16,10 @@ O fio condutor é o suporte fictício da Aurora. A pergunta que liga os blocos �
 | --- | --- | --- |
 | [Dots](#dots) | Resumo dos três relatos, correção de A-102 e revisão dos fatos | [Mesmo cenário e pedidos](../labs/01-dots/README.md) |
 | [Codex CLI](#codex-cli) | Starter → testes vermelhos → alteração → 18 critérios → diff | [Mesmos arquivos, prompt e verificador](../labs/codex-cli/README.md) |
-| [Codex Cloud](#codex-cloud) | Candidata preparada → regressão → tarefa remota → revisão | [Mesma candidata, contrato e tarefa](../labs/codex-cloud/README.md) |
+| [Codex Cloud](#codex-cloud) | Ambiente pronto → diff da Alô, TI → teto de 3 minutos → plano B gravado | [Mesmo repositório, defeito e pedido](../labs/codex-cloud/README.md) |
 | [Decisions API](#decisions-api) | Conversa de voz para voz, correção, revisão e ticket simulado | [Mesmos relatos e sequência de voz](../labs/02-decisions-typescript/README.md), com alternativa simulada identificada |
 
-CLI e Cloud compartilham o contrato de encaminhamento. A candidata do Cloud é uma cópia com defeito intencional para estudar revisão; não a apresente como um resultado produzido pela execução anterior do CLI.
+O CLI pratica o contrato de encaminhamento. O Cloud revisa um ajuste na Alô, TI, no repositório do evento. Não apresente esse ajuste como resultado da execução anterior do CLI.
 
 **Pendente antes de considerar as quatro demos prontas:** ensaiar Dots, CLI e Cloud nas contas reais e Decisions com API, microfone e áudio reais. Testes offline e uma página publicada não comprovam essas experiências. Consulte o [registro de validação](validacao.md).
 
@@ -30,7 +30,7 @@ CLI e Cloud compartilham o contrato de encaminhamento. A candidata do Cloud é u
 - Se o Codex CLI entrar no ensaio: `npm install -g @openai/codex@0.161.0`, `codex --version` mostra `codex-cli 0.161.0` e `codex login status` confirma a sessão, sem projetar a conta
 - Preparar uma cópia limpa do material e uma cópia separada para cada demonstração; manter soluções de referência para contingência
 - Conferir acesso e login de Dots e Codex sem expor dados pessoais na projeção
-- Preparar e publicar o ambiente Cloud do exercício antes do palco; manter uma tarefa de ensaio concluída somente se ela realmente tiver sido executada
+- Publicar o ambiente Cloud em `glaucia86/devday-exchange-community-rio-2026` antes do palco, conferir que `bug-rede.test.mts` ainda falha, enviar a tarefa antes do bloco e deixar o plano B gravado com a data na tela
 - Ensaiar fonte/zoom, teclado e troca de janelas no projetor; fechar notificações e projetos de trabalho
 - Para voz: configurar segredo somente no servidor local, aprovar orçamento, confirmar acesso aos modelos e ouvir a saída no dispositivo que será usado
 - Não projetar `.env.local`, chave, tokens ou configurações da conta
@@ -97,7 +97,7 @@ Mostre o índice. Apresente o contexto: relatos de suporte fictícios que precis
 5. **Ler o diff.** Use o comando do LAB e destaque normalização, categorias e retorno para revisão humana.
    - Fala: “‘Senha e login’ é uma categoria. ‘Senha e conexão’ exige revisão.”
 
-**Transição:** “No Cloud, vou revisar uma entrega preparada para esse mesmo contrato. Ela tem testes verdes, mas esconde uma regressão.”
+**Transição:** “O encaminhador fica neste terminal. No Cloud, vou revisar um ajuste pequeno na Alô, TI, no repositório que vocês levam para casa.”
 
 **Reset:** preserve a tentativa; abra outra cópia do starter. A cópia do próximo ensaio deve começar em 8/18, não numa solução já pronta.
 
@@ -107,27 +107,32 @@ Mostre o índice. Apresente o contexto: relatos de suporte fictícios que precis
 
 ## Codex Cloud
 
-**Estimativa de palco: 8–10 minutos, com ambiente previamente preparado.** [Reprodução em casa](../labs/codex-cloud/README.md)
+**Estimativa de palco: 6–8 minutos, com ambiente publicado e tarefa já enviada.** O relógio da evidência ao vivo é de **3 minutos**. [Reprodução em casa](../labs/codex-cloud/README.md)
 
-**Deixar pronto:** repositório fictício com os quatro arquivos do LAB, ambiente publicado e uma tarefa nova na candidata original. Confirme o repositório selecionado antes de projetar.
+**Deixar pronto, fora do projetor:**
 
-1. **Mostrar a candidata.** Abra o relatório de preparação com a execução de `node --test router.test.mjs` e `node verify.mjs router.mjs`. Se precisar repetir, peça esses comandos na conversa do ambiente, como no LAB; não presuma que o terminal local está operando a máquina remota.
-   - Esperado: cinco testes verdes, mas 16/18 na aceitação.
-   - Fala: “Esta cópia foi preparada com um erro: ela retorna na primeira equipe encontrada.”
-2. **Enviar a tarefa remota.** Use exatamente o pedido do LAB, com regressões antes do fix e proibição de alterar o verificador.
-   - Fala: “Mudei onde o trabalho acontece. O contrato e a responsabilidade de revisar continuam explícitos.”
-3. **Acompanhar o estado real.** Mostre execução, falha ou conclusão conforme ocorrer. Não use a mensagem final como substituto dos logs.
-4. **Revisar a entrega.** Confira diff, novos casos ambíguos, preservação de `verify.mjs` e execute as duas verificações.
-   - Esperado: 18/18 e uma explicação de por que duas palavras da mesma categoria não são ambiguidade.
-5. **Concluir a revisão.** A demonstração termina aqui, sem PR, merge ou deploy do exercício.
+- Ambiente publicado em `glaucia86/devday-exchange-community-rio-2026`, branch principal. A conta já está conectada ao GitHub como `glaucia86`. Não reconecte no palco e não mostre outros repositórios
+- `node labs/codex-cloud/run-bug-test.mjs` ainda sai com código 1, na explicação `qual serviço falhou`. Se a preparação do ambiente tiver corrigido `apps/decisions/src/domain/service-desk.ts`, restaure o arquivo e publique de novo. Não suba com o teste verde
+- Tarefa enviada antes deste bloco, com o [pedido da tarefa](../labs/codex-cloud/README.md#pedido-da-tarefa). Anote o horário no cartão. A aba já está aberta: `/codex/cloud` passou de 20 segundos em spinner no teste de 8 de outubro, e a lista de repositórios levou cerca de 10 segundos
+- Gravação no notebook, fora do Git, primeiro quadro com o letreiro **GRAVADO ANTES · não é ao vivo** e a data. A gravação mostra o mesmo pedido, o diff em `service-desk.ts` mais o teste novo, `bug-rede.test.mts` intacto e o teste passando. Sem esse arquivo, o plano B é só o teste vermelho, anunciado como tal
 
-**Transição:** “Até aqui, revisamos texto e código. Agora a entrada será uma conversa por voz, mas a confirmação da ação continua na tela.”
+Rótulos podem variar. A documentação oficial ainda diz **Work in → Cloud → Select environment → Create environment**. O teste de 8 de outubro mostrou **Cloud → Choose environment → Create environment**. Não entre em **Codex Cloud (Legacy)**.
 
-**Reset:** nova tarefa sobre a candidata original; preserve a entrega anterior. Se o ambiente partir de código já corrigido, ele não reproduz o começo desta demonstração.
+1. **Dizer o que é a tarefa.** Uma frase. O encaminhador ficou no CLI.
+   - Fala: “A rede da sala voltou. O texto da Alô, TI ainda diz que não sabemos qual serviço falhou. Vou revisar o diff, não a espera.”
+2. **Abrir a tarefa que já está rodando.** Confira o repositório `glaucia86/devday-exchange-community-rio-2026`. Não crie ambiente, não conecte GitHub e não cole o pedido de novo.
+3. **Ligar o relógio de 3 minutos** se o diff e a saída de `bug-rede.test.mts` ainda não estiverem na tela. Aos 3 minutos, corte, mesmo no meio da frase do agente.
+4. **Revisar, se o resultado chegou.** Leia o diff. Aceite só `apps/decisions/src/domain/service-desk.ts` e `apps/decisions/tests/network-followup.test.mts`. A explicação precisa dizer que a rede voltou, a equipe continua revisão humana, e `labs/codex-cloud/bug-rede.test.mts` não muda. Peça o [pedido de revisão](../labs/codex-cloud/README.md#pedido-de-revisao) só se a saída dos comandos não estiver visível.
+   - Fala: “Teste verde aqui é este arquivo passando. Eu ainda decido se o texto serve.”
+5. **Encerrar.** Sem pull request, merge ou deploy.
 
-**Plano B no palco:** se existir uma tarefa real de ensaio concluída, mostre-a identificando a data e que foi preparada antes. Caso contrário, reproduza localmente as duas falhas e compare com a solução, dizendo que a execução Cloud não aconteceu. Se a tarefa ainda estiver rodando, informe isso sem prolongar o bloco indefinidamente.
+**Transição:** “Até aqui, a revisão foi de um diff. Agora a entrada será uma conversa, e a confirmação continua na tela.”
 
-**Ponto de parada:** erro de conta, setup ou permissão não justifica conectar projetos de trabalho ou ampliar o acesso durante a apresentação.
+**Reset:** nova tarefa no ambiente que ainda falha `bug-rede.test.mts`. Guarde a entrega anterior. A documentação diz que arquivos de uma tarefa não atualizam o ambiente publicado; o risco é a preparação ter corrigido o texto antes de publicar.
+
+**Plano B no palco:** aos 3 minutos, ou se a conta, o ambiente ou a permissão falhar, abra a gravação com o letreiro **GRAVADO ANTES · não é ao vivo**. Diga a data e que a tarefa remota não terminou no tempo. Sem a gravação, rode `node labs/codex-cloud/run-bug-test.mjs`, mostre `qual serviço falhou` e diga que o Cloud não rodou. Não corrija o arquivo ao vivo e chame isso de tarefa remota. Não volte para a caça ao bug do encaminhador como se fosse esta demo.
+
+**Ponto de parada:** erro de conta, setup que já corrigiu o defeito, ou o relógio. Não conecte outros repositórios durante a apresentação.
 
 ## Decisions API
 

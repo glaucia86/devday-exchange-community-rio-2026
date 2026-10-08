@@ -49,7 +49,7 @@ Cada bloco abaixo fica de fora se o ensaio da véspera não tiver passado no not
 | --- | --- | --- |
 | **Dots** | O dots abre na conta, sem conectar aplicativos. O resumo separa fato de lacuna e a correção do A-102 muda só o que foi corrigido. | Leia o exemplo comentado do cenário e diga que o dots não foi executado. |
 | **Codex CLI** | `codex --version` mostra `codex-cli 0.161.0` e `codex login status` confirma a sessão. A frase **A senha falhou e a conexão caiu** está vermelha no starter. | Rode a solução de referência e os 18 critérios. Diga que a mudança não veio do CLI. |
-| **Codex Cloud** | O ambiente publicado ainda começa em 16/18, com a candidata original. | Faça a caça ao bug da camada 1 e diga que a tarefa remota não rodou. |
+| **Codex Cloud** | O ambiente publicado aponta para `glaucia86/devday-exchange-community-rio-2026` e `bug-rede.test.mts` ainda falha na explicação da rede. A tarefa de correção já foi enviada antes do bloco. | Aos 3 minutos sem diff e sem a saída do teste, abra o plano B com o letreiro GRAVADO ANTES · não é ao vivo. |
 | **Voz** | No notebook do projetor: fala reconhecida, resposta audível na sala, correção refletida na equipe, sessão encerrada e consumo conferido. | Fique na Alô, TI simulada. Diga que a conversa real não foi executada. |
 
 A versão do Codex fica fixa em `@openai/codex@0.161.0` para o encontro. `codex login status` entra no checklist da véspera, antes de abrir o projetor.

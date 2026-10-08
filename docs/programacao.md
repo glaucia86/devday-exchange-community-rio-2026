@@ -16,12 +16,12 @@ A abertura será dedicada a um recap do OpenAI DevDay. Glaucia conduz **quatro d
 
 - [Dots](../labs/01-dots/README.md): contexto, limites e revisão de uma entrega
 - [Codex CLI](../labs/codex-cli/README.md): tarefa de código acompanhada no terminal
-- [Codex Cloud](../labs/codex-cloud/README.md): tarefa remota e revisão da entrega
+- [Codex Cloud](../labs/codex-cloud/README.md): ajuste na Alô, TI, no repositório do evento, com teto de 3 minutos
 - [Decisions API](../labs/02-decisions-typescript/README.md): decisões tipadas e experiência de voz para voz planejada
 
 Essa enumeração não fixa a sequência ou novos horários de palco. As sugestões de duração no [guia da apresentadora](guia-apresentadora.md) são blocos de ensaio ajustáveis, não a agenda oficial.
 
-Voz faz parte do tema Decisions. CLI e Cloud podem reutilizar o mesmo exercício, mantendo explicações e instruções próprias.
+Voz faz parte do tema Decisions. O CLI usa o encaminhador. O Cloud usa um ajuste na Alô, TI, com roteiro próprio.
 
 ## Como acompanhar
 

@@ -51,6 +51,7 @@ A CI usa runners padrão do repositório público e permissões de leitura. Os p
 - Ouvir a saída real de áudio em dispositivos-alvo
 - Configurar o runtime local somente após autorização; ensaiar o adaptador com fala, transcrição, interrupção e resposta tardia reais
 - Ensaiar os LABS nos produtos Dots, Codex CLI e Codex Cloud
+- Ensaiar o roteiro novo do Codex Cloud na conta real: ambiente publicado sem corrigir a explicação da rede, revisão com teto de 3 minutos e plano B gravado com data
 - Confirmar limites de acesso e consumo antes de qualquer API real
 
 Nos próximos ensaios, registrar data, commit, ambiente, versões, comandos, resultados e limitações. Falha continua sendo falha; mock continua sendo mock.
@@ -100,7 +101,17 @@ No evento, Glaucia conduz as quatro demonstrações e o público acompanha. Os q
 
 Decisions mantém voz para voz real como demonstração principal planejada, condicionada ao ensaio real ainda pendente. Mock e fixtures continuam identificados como preparação, alternativa e aprofundamento. Documentar o roteiro principal não comprova que ele foi executado.
 
+### Codex Cloud · teste de usabilidade · 8 de outubro de 2026
+
+Conta real do ChatGPT, GitHub já conectado ao Codex como `glaucia86`. O roteiro antigo não estava pronto para o palco: pedia Node, Git, quatro comandos `node -e`, `git init`, um repositório GitHub novo e o envio de quatro arquivos pelo navegador. Quem só tinha o navegador parava ali.
+
+No mesmo dia, a interface observada foi **Cloud → Choose environment → Create environment**, com “What should we build?”, “Loading saved environments…”, “Create a cloud environment” e “Connected to GitHub as glaucia86”. A página `/codex/cloud` ficou mais de 20 segundos em spinner. A lista de repositórios levou cerca de 10 segundos em “Loading repositories…”. **Publish** e **Environment published** não apareceram, porque o ambiente não foi criado. Existe **Codex Cloud (Legacy)**; o roteiro antigo não o mencionava. A documentação oficial lida no mesmo dia ainda descreve **Work in → Cloud → Select environment**. Rótulos podem variar.
+
+O exercício antigo do encaminhador rodou no Node 20.19.2, com 5 testes da candidata e aceitação 16/18. Exigir Node.js 24.21.0 antes da tarefa Cloud era mais do que aquele JavaScript puro pedia. O requisito 24.21.0 continua no `.nvmrc`, na instalação da Alô, TI e na CI.
+
+O roteiro passou a usar o repositório do evento, ou um fork de um clique, e o defeito real de explicação em `mockDecision('network', true)`. `node scripts/check-codex-cloud.mjs` confirma que essa explicação ainda fala em serviço desconhecido e que os textos do Cloud citam o teto de 3 minutos e o plano B gravado. Isso não é ensaio da tarefa remota. O ambiente publicado, a tarefa e a gravação do plano B continuam pendentes.
+
 
 ### Autonomia de quem estuda em casa
 
-Os guias incluem abertura do terminal, conceitos básicos, verificação de versões, pasta atual, preparação de cópias, distinção entre comandos e mensagens ao agente, saídas esperadas e recuperação de erros. O caminho essencial fica separado do aprofundamento opcional. A cópia Cloud com os dois comandos de Node e os quatro arquivos foi repetida em uma pasta temporária: cinco testes verdes, aceitação 16/18 e recusa de sobrescrita confirmadas. Navegação de conta e upload no GitHub seguem fontes oficiais, mas não foram ensaiados com login nesta revisão.
+Os guias incluem abertura do terminal, conceitos básicos, verificação de versões, pasta atual, preparação de cópias, distinção entre comandos e mensagens ao agente, saídas esperadas e recuperação de erros. O caminho essencial fica separado do aprofundamento opcional. A cópia Cloud com os dois comandos de Node e os quatro arquivos foi repetida em uma pasta temporária: cinco testes verdes, aceitação 16/18 e recusa de sobrescrita confirmadas. Navegação de conta e upload no GitHub seguem fontes oficiais, mas não foram ensaiados com login nesta revisão. Esse caminho de cópia e upload deixou de ser o roteiro do Cloud; o registro abaixo explica a troca.

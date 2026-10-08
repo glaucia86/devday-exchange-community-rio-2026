@@ -95,10 +95,10 @@ São **quatro demonstrações, cada uma com um LAB para reproduzir em casa**. Os
 | --- | --- | --- |
 | **Dots** | Dar contexto, limitar ações e revisar uma entrega | [Cenário e passo a passo](labs/01-dots/README.md) |
 | **Codex CLI** | Acompanhar uma mudança no terminal, inspecionar o diff e verificar testes | [LAB do CLI](labs/codex-cli/README.md) |
-| **Codex Cloud** | Revisar uma candidata com testes verdes, reproduzir a regressão e conferir uma correção remota | [LAB do Cloud](labs/codex-cloud/README.md) |
+| **Codex Cloud** | Revisar o texto da rede na Alô, TI, no repositório do evento, e conferir o diff remoto | [LAB do Cloud](labs/codex-cloud/README.md) |
 | **Decisions API** | Conversar por voz, corrigir o relato e revisar o ticket; com alternativa simulada e exercícios de contrato | [LAB Decisions](labs/02-decisions-typescript/README.md) |
 
-CLI e Cloud usam o mesmo [contrato de encaminhamento fictício](exercises/ticket-router/README.md), com pontos de partida diferentes: implementação a partir do starter no CLI e revisão de uma candidata defeituosa no Cloud. A experiência de voz para voz faz parte de **Decisions API**. A [arquitetura proposta](docs/arquitetura-decisions.md) descreve o fluxo e suas etapas pendentes.
+O CLI pratica o [encaminhador fictício](exercises/ticket-router/README.md), a partir do starter. O Cloud revisa um ajuste real na [Alô, TI](apps/decisions/README.md), sem criar outro repositório. A experiência de voz para voz faz parte de **Decisions API**. A [arquitetura proposta](docs/arquitetura-decisions.md) descreve o fluxo e suas etapas pendentes.
 
 <a id="preparacao"></a>
 ## 🧰 Prepare seu ambiente
@@ -324,7 +324,7 @@ Use a [programação](docs/programacao.md) para os detalhes do encontro e as [re
 | --- | --- |
 | [labs/01-dots/](labs/01-dots/) | Contexto, cenário e prática com Dots |
 | [labs/codex-cli/](labs/codex-cli/) | Exercício acompanhado pelo terminal |
-| [labs/codex-cloud/](labs/codex-cloud/) | Delegação remota e revisão |
+| [labs/codex-cloud/](labs/codex-cloud/) | Ajuste remoto na Alô, TI e revisão do diff |
 | [labs/02-decisions-typescript/](labs/02-decisions-typescript/) | Decisões tipadas e revisão humana |
 | [exercises/ticket-router/](exercises/ticket-router/) | Starter, solução e testes |
 | [apps/decisions/](apps/decisions/) | Alô, TI, domínio e testes |
