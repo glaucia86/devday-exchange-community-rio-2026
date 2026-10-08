@@ -142,12 +142,15 @@ test('monitoring insight is computed from demo history and stays on screen witho
   assert.match(applications.text, /terceiro problema de Aplicações internas/);
   assert.equal(applications.demoCount, 2);
   assert.equal(applications.count, 3);
-  assert.equal(planInsightSpeech({ insight: null, alreadySaid: false, sessionActive: true, userQuietMs: 1000, assistantQuietMs: 1000, requiredQuietMs: 900 }), 'skip');
-  assert.equal(planInsightSpeech({ insight: insight.text, alreadySaid: false, sessionActive: false, userQuietMs: 5000, assistantQuietMs: 5000, requiredQuietMs: 900 }), 'skip');
-  assert.equal(planInsightSpeech({ insight: insight.text, alreadySaid: true, sessionActive: true, userQuietMs: 5000, assistantQuietMs: 5000, requiredQuietMs: 900 }), 'skip');
-  assert.equal(planInsightSpeech({ insight: insight.text, alreadySaid: false, sessionActive: true, userQuietMs: 100, assistantQuietMs: 5000, requiredQuietMs: 900 }), 'wait');
-  assert.equal(planInsightSpeech({ insight: insight.text, alreadySaid: false, sessionActive: true, userQuietMs: 5000, assistantQuietMs: 100, requiredQuietMs: 900 }), 'wait');
-  assert.equal(planInsightSpeech({ insight: insight.text, alreadySaid: false, sessionActive: true, userQuietMs: 900, assistantQuietMs: 900, requiredQuietMs: 900 }), 'speak');
+  const quietNow = 10_000;
+  const clock = (userQuietMs: number, assistantQuietMs: number) => ({ userSpeechAt: quietNow - userQuietMs, assistantAudioEndedAt: quietNow - assistantQuietMs, toolOutputAt: 0 });
+  const plan = (insightText: string | null, alreadySaid: boolean, sessionActive: boolean, userQuietMs: number, assistantQuietMs: number) => planInsightSpeech({ insight: insightText, alreadySaid, sessionActive, now: quietNow, activity: clock(userQuietMs, assistantQuietMs), confirmationInFlight: false, requiredQuietMs: 900 });
+  assert.equal(plan(null, false, true, 1000, 1000), 'skip');
+  assert.equal(plan(insight.text, false, false, 5000, 5000), 'skip');
+  assert.equal(plan(insight.text, true, true, 5000, 5000), 'skip');
+  assert.equal(plan(insight.text, false, true, 100, 5000), 'wait');
+  assert.equal(plan(insight.text, false, true, 5000, 100), 'wait');
+  assert.equal(plan(insight.text, false, true, 900, 900), 'speak');
 });
 
 test('the offline rehearsal matches the closing beat', () => {

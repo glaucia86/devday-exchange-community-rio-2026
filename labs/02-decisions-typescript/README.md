@@ -187,7 +187,7 @@ Anote o modo usado: voz real, interface simulada ou somente contrato offline. No
 | Resposta sugere outra equipe | Transcrição e correção mais recente | Revise o dado; não confirme uma sugestão errada para obter um ticket |
 | Finalização da sessão não confirmada | Aviso após Encerrar conversa | Verifique sessão e consumo; não reinicie em sequência nem trate trocar de aba como encerramento |
 
-- **50 testes falham por sintaxe TypeScript:** confira Node.js 24.21.0 ou posterior e o diretório atual
+- **52 testes falham por sintaxe TypeScript:** confira Node.js 24.21.0 ou posterior e o diretório atual
 - **`ARQUIVO_INVALIDO`:** confira caminho e sintaxe JSON; não é a recusa esperada
 - **Porta 3000 ocupada:** veja a URL do terminal ou encerre somente o servidor de uma tentativa sua; não termine processos desconhecidos
 - **Texto livre não foi analisado:** a conversa explica o motivo. Escolha um cenário ou mude para OpenAI ao vivo; não é uma falha de acesso à API

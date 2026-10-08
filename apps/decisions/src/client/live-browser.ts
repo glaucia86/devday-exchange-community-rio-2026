@@ -1,4 +1,5 @@
 import { parseLiveEvent, type LiveEvent } from '../domain/live-contract';
+import type { TurnEvent } from '../domain/live-turn';
 type Options={token:string;audio:HTMLAudioElement;onEvent:(event:LiveEvent)=>void;onNotice:(text:string)=>void;onEnded:()=>void};
 export class LiveBrowser {
  private options:Options;
@@ -74,6 +75,21 @@ export class LiveBrowser {
  submitToolOutput(callId:string,output:string,resume=true){
   const sent=this.sendEvent({type:'response.item.create',item:{type:'function_call_output',call_id:callId,output:output.slice(0,4000)}});
   if(!sent||!resume)return sent;
+  return this.sendEvent({type:'response.create'});
+ }
+ /** Sends a planned turn. A failed function result does not continue the response. */
+ sendTurn(events:TurnEvent[]){
+  let ok=true;
+  for(const event of events){
+   const sent=this.sendTurnEvent(event);
+   if(!sent)ok=false;
+   if(!sent&&event.type==='response.item.create')return false;
+  }
+  return ok;
+ }
+ private sendTurnEvent(event:TurnEvent){
+  if(event.type==='session.thinking.append')return this.send(event.content,null,true);
+  if(event.type==='response.item.create')return this.sendEvent({type:'response.item.create',item:{type:'function_call_output',call_id:event.item.call_id,output:event.item.output.slice(0,4000)}});
   return this.sendEvent({type:'response.create'});
  }
  private sendEvent(event:Record<string,unknown>){
