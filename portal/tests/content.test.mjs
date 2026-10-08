@@ -38,6 +38,7 @@ test('loads four independent labs and the complete material map', async () => {
   assert.ok(home.author.socials.some(s => s.label === 'LinkedIn'));
   assert.match(home.event.details, /24 de outubro de 2026/);
   assert.match(home.event.details, /09h00 às 14h30/);
+  assert.match(home.event.address, /Av\. Armando Lombardi, 940/);
   const prep = pages.find(p => p.route === 'prepare-se/');
   assert.match(prep.markdown, /id="preparacao"/);
   assert.match(prep.markdown, /npm --version/);

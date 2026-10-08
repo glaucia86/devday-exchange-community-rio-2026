@@ -1,6 +1,7 @@
 import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
+import { manifest } from '../scripts/content-manifest.mjs';
 const root='http://127.0.0.1:4321/devday-exchange-community-rio-2026/';
 await mkdir('test-results',{recursive:true});
 const browser=await chromium.launch();
@@ -32,6 +33,7 @@ try{
  assert.equal(await page.locator('.pagefind-ui__result-link').count(),0);
  await page.keyboard.press('Escape');
  assert.equal(await page.locator('dialog[open]').count(),0);
+ assert.equal(await search.evaluate(el=>el===document.activeElement),true);
  await page.goto(root+'prepare-se/');
  const copy=page.getByRole('button',{name:/copiar|copy/i}).first();
  await copy.click();
@@ -50,6 +52,11 @@ try{
   await page.screenshot({path:`test-results/home-mobile-${width}.png`,fullPage:true});
   await page.goto(root+'labs/dots/');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth),false);
+  const docMenu=page.getByRole('button',{name:/Menu/i}).first();
+  await docMenu.focus();await page.keyboard.press('Enter');
+  assert.equal(await docMenu.getAttribute('aria-expanded'),'true');
+  await page.keyboard.press('Escape');
+  assert.equal(await docMenu.getAttribute('aria-expanded'),'false');
   await page.screenshot({path:`test-results/lab-mobile-${width}.png`,fullPage:true});
   await page.goto(root+'apresentadora/');
   assert.equal(await page.locator('textarea:visible').count(),0);
@@ -61,6 +68,17 @@ try{
  const noJs=await browser.newPage({javaScriptEnabled:false,viewport:{width:390,height:844}});
  await noJs.goto(root);assert.equal(await noJs.locator('h1').isVisible(),true);
  await noJs.goto(root+'labs/dots/');assert.match(await noJs.locator('main').innerText(),/Passo a passo/);
+ const outage=await browser.newPage();
+ await outage.route('**/pagefind/**',route=>route.abort());
+ await outage.goto(root+'labs/dots/');
+ await outage.getByRole('button',{name:/Pesquisar|Search/i}).first().click();
+ await outage.keyboard.press('Escape');
+ assert.equal(await outage.locator('main').isVisible(),true);
+ assert.match(await outage.locator('main').innerText(),/Passo a passo/);
+ for(const route of new Set([...manifest.map(p=>p.route),'materiais/','apresentadora/'])){
+  const response=await page.goto(root+route);assert.equal(response.status(),200,route);
+  await page.reload();assert.equal(await page.locator('h1').count(),1,route);
+ }
  assert.deepEqual(errors,[]);
  console.log('Portal browser: navegação, busca, teclado, mobile e redução de movimento aprovados.');
 }finally{await browser.close();}

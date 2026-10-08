@@ -1,6 +1,6 @@
 # Portal do DevDay Exchange Rio 2026
 
-Portal Astro + Starlight em português, separado da aplicação Alô, TI. As páginas são geradas dos Markdown originais na raiz, em labs, docs e exercises. Não edite a saída transitória em src/content/docs ou src/generated.
+Portal Astro + Starlight em português, separado da aplicação Alô, TI. As páginas são geradas dos Markdown originais na raiz, em labs, docs e exercises. Não edite a saída transitória em src/content/docs ou src/generated. O wrapper limpa essa saída ao terminar check/build/dev; os arquivos publicados ficam em dist. Reinicie o servidor de desenvolvimento após editar um Markdown canônico.
 
 ## Desenvolvimento
 

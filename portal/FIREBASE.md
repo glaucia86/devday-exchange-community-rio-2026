@@ -10,7 +10,7 @@ O portal contém um shell público estático e um módulo de notas carregado no 
 
 - Dependência de runtime: `firebase` (SDK modular web).
 - Dependências de desenvolvimento: `@firebase/rules-unit-testing` e `firebase-tools` em versões compatíveis com o SDK, fixadas no lockfile.
-- Node 22 e Java 21 no GitHub Actions.
+- Node 24.21.0 e Java 21 no GitHub Actions.
 - Unidade: `node --test tests/presenter-controller.test.mjs tests/presenter-config.test.mjs tests/presenter-gateway.test.mjs` na pasta `portal`.
 - Regras: `firebase emulators:exec --only firestore --project demo-devday-presenter --config firebase/firebase.json "node --test tests/rules.test.mjs"` na pasta `portal`.
 - Browser: `node tests/presenter-browser.mjs`, com Chromium instalado pelo Playwright. O script sobe uma fixture apenas em `127.0.0.1`, usa dados fictícios, bloqueia requisições externas e não entra no build.

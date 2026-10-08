@@ -1,7 +1,7 @@
 name: Verificar portal completo
 on:
   pull_request:
-    paths: ['portal/**', 'labs/**', 'docs/**', 'exercises/**', 'README.md', 'assets/**', '.github/workflows/check-portal*.yml']
+    paths: ['portal/**', 'labs/**', 'docs/**', 'exercises/**', 'README.md', 'apps/decisions/README.md', 'assets/**', '.github/workflows/check-portal*.yml']
   workflow_dispatch:
 permissions:
   contents: read

@@ -89,7 +89,18 @@ export async function loadPortalContent({repoRoot,basePath}){
  const socials=bioNodes.filter(n=>n.tagName==='a').flatMap(n=>{const im=n.childNodes?.find(c=>c.tagName==='img'),label=im&&attr(im,'alt');return label&&label!=='Glaucia Lemos'?[{label,url:attr(n,'href')}]:[]});
  if(!photo||!name||bioParagraphs.length<2||!socials.length)throw new Error('Bio ou redes ausentes no README.md');
  const intro=htmlElements(readme.slice(0,readme.indexOf('## 📑'))),introText=intro.filter(n=>n.tagName==='p').map(nodeText);
- const titleNode=intro.find(n=>n.tagName==='h1'),slogan=introText.find(t=>t.startsWith('Dos anúncios')),details=introText.find(t=>t.includes('24 de outubro')),eventLink=intro.find(n=>n.tagName==='a'&&attr(n,'href')?.startsWith('https://luma.com/'));
+ const titleNode=intro.find(n=>n.tagName==='h1'),slogan=introText.find(t=>t.startsWith('Dos anúncios')),eventLink=intro.find(n=>n.tagName==='a'&&attr(n,'href')?.startsWith('https://luma.com/'));
+ const eventTable=section(root,'encontro').children.find(n=>n.type==='table');
+ const eventInfo=Object.fromEntries((eventTable?.children??[]).slice(1).map(row=>[toString(row.children[0]),toString(row.children[1])]));
+ const details=[eventInfo.Data,eventInfo['Horário publicado'],eventInfo.Local].filter(Boolean).join(' · ');
+ if(!eventInfo.Data||!eventInfo['Horário publicado']||!eventInfo.Local||!eventInfo.Endereço)throw new Error('Data, horário, local ou endereço ausente na tabela do encontro.');
+ const execution=section(root,'executar');
+ const overview=execution.children.filter(n=>n.type==='paragraph').map(toString);
+ const description=overview.find(text=>text.includes('service desk fictício'));
+ const notice=overview.find(text=>text.includes('fixtures e estado em memória'));
+ const steps=execution.children.find(n=>n.type==='list'&&n.ordered)?.children.map(toString);
+ if(!description||!notice||!steps?.length)throw new Error('Resumo ou passos da demo ausentes em README.md#executar.');
+ const local={title:pages.find(p=>p.sourcePath==='apps/decisions/README.md').title.split(' · ')[0],description:description.split(/(?<=[.!?])\s+/u)[0],notice,steps};
  if(!titleNode||!slogan||!details||!eventLink)throw new Error('Metadados do evento ausentes no README.md');
- return {pages,home:{event:{title:nodeText(titleNode),slogan,details,registration:attr(eventLink,'href')},labs,author:{name:nodeText(name),photo:attr(photo,'src'),role:bioParagraphs[0],bio:bioParagraphs[1],socials},materials:pages.filter(p=>p.route.startsWith('materiais/')).map(({route,title,description})=>({route,title,description})),repository:REPOSITORY}};
+ return {pages,home:{event:{title:nodeText(titleNode),slogan,details,address:eventInfo.Endereço,registration:attr(eventLink,'href')},labs,local,author:{name:nodeText(name),photo:attr(photo,'src'),role:bioParagraphs[0],bio:bioParagraphs[1],socials},materials:pages.filter(p=>p.route.startsWith('materiais/')).map(({route,title,description})=>({route,title,description})),repository:REPOSITORY}};
 }
