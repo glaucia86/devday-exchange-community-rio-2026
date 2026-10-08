@@ -129,3 +129,29 @@ test('limpeza de app também ocorre quando signOut falha', async () => {
   assert.equal(h.events.filter(([kind]) => kind === 'deleteApp').length, 1);
   await assert.rejects(h.gateway.loadNote(OWNER));
 });
+
+test('dona, outra conta e dona novamente não reutilizam o banco anterior', async () => {
+  const h = setup();
+  await h.user({ uid: OWNER });
+  await h.gateway.loadNote(OWNER);
+  const firstDb = h.events.find(([kind]) => kind === 'read')[1].db;
+  await h.user({ uid: 'test-another-user' });
+  await assert.rejects(h.gateway.loadNote(OWNER));
+  assert.equal(h.events.find(([kind]) => kind === 'terminate')[1], firstDb);
+  await h.user({ uid: OWNER });
+  await h.gateway.loadNote(OWNER);
+  const reads = h.events.filter(([kind]) => kind === 'read');
+  assert.notEqual(reads[1][1].db, firstDb);
+  assert.equal(h.events.filter(([kind]) => kind === 'firestore').length, 2);
+});
+
+test('repetição de callback Auth recebe nova instância sem cache antigo', async () => {
+  const h = setup();
+  await h.user({ uid: OWNER });
+  await h.gateway.loadNote(OWNER);
+  await h.user({ uid: OWNER });
+  await h.gateway.loadNote(OWNER);
+  const reads = h.events.filter(([kind]) => kind === 'read');
+  assert.equal(h.events.filter(([kind]) => kind === 'terminate').length, 1);
+  assert.notEqual(reads[0][1].db, reads[1][1].db);
+});

@@ -224,6 +224,22 @@ test('resposta tardia de escrita não altera a sessão encerrada', async () => {
   assert.equal(h.controller.getSnapshot().content, '');
 });
 
+test('não reabre login enquanto a sessão anterior ainda está sendo limpa', async () => {
+  const pending = deferred();
+  const h = setup({ signOut: () => pending.promise });
+  await h.controller.start();
+  await h.user(OWNER_IDENTITY);
+  const leaving = h.controller.signOut();
+  await h.user(null);
+  await h.controller.signIn();
+  assert.equal(h.calls.signIns, 0);
+  assert.equal(h.controller.getSnapshot().isBusy, true);
+  pending.resolve();
+  await leaving;
+  await h.controller.signIn();
+  assert.equal(h.calls.signIns, 1);
+});
+
 test('falha de escrita mantém o rascunho para tentar de novo sem expor erro bruto', async () => {
   const h = setup({ saveNote: async () => { throw Object.assign(new Error('SECRET_FAKE_PAYLOAD'), { code: 'unavailable' }); } });
   await h.controller.start();

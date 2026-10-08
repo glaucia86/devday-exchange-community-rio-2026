@@ -6,10 +6,10 @@
     "prepare:content": "node scripts/generate-content.mjs",
     "test": "node --test tests/content.test.mjs tests/presenter-controller.test.mjs tests/presenter-config.test.mjs tests/presenter-gateway.test.mjs",
     "test:content": "node --test tests/content.test.mjs",
-    "check": "npm run prepare:content && astro check",
-    "build": "npm run prepare:content && astro build",
+    "check": "node scripts/with-content.mjs check",
+    "build": "node scripts/with-content.mjs build",
     "preview": "astro preview --host 127.0.0.1 --port 4321",
-    "dev": "npm run prepare:content && astro dev --host 127.0.0.1",
+    "dev": "node scripts/with-content.mjs dev",
     "test:site": "node --test tests/site.test.mjs",
     "test:browser": "node tests/browser.mjs"
   },

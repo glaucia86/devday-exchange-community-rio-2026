@@ -39,6 +39,7 @@
 @media(max-width:899px){
  .event-header{height:72px;position:relative}.menu-toggle{display:block;min-height:44px;min-width:64px;border:1px solid #c8d1df;border-radius:8px;background:#fff;color:#25314a;font:inherit}
  #event-nav{display:none;position:absolute;top:71px;left:16px;right:16px;padding:16px 24px;background:#fff;border:1px solid #d9e2ef;border-radius:12px;box-shadow:0 16px 30px #10264d12;z-index:10;align-items:stretch}#event-nav.is-open{display:flex;flex-direction:column;gap:0}
+ html:not(.js) .event-header{height:auto;flex-wrap:wrap;padding-block:16px}html:not(.js) .menu-toggle{display:none}html:not(.js) #event-nav{display:flex;position:static;flex-wrap:wrap;width:100%;padding:0;border:0;box-shadow:none;gap:4px 18px}
  .event-hero{grid-template-columns:1fr;padding-top:40px;gap:30px}.event-hero h1{font-size:clamp(35px,7vw,54px);max-width:20ch}.hero-description{max-width:50ch}.event-hero picture{max-width:720px}.event-details{font-size:13px}
  .prepare-strip{align-items:flex-start;flex-direction:column;gap:12px}.lab-card{padding:24px;gap:18px}.local-section{gap:30px}.author-section{gap:24px;padding:28px;grid-template-columns:130px 1fr}.author-section img{width:130px;height:130px}
 }

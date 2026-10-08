@@ -38,6 +38,7 @@ const [eventBrand,eventPlace]=home.event.title.split(' · ');
   </main>
   <footer class="event-footer" id="seguranca"><p>Encontro organizado pela comunidade. Este material não é documentação nem produto oficial da OpenAI.</p><div><a href={home.repository+'/blob/main/LICENSE'}>Licença MIT</a><a href={home.repository+'/blob/main/THIRD_PARTY_NOTICES.md'}>Avisos de terceiros</a><a href={path('apresentadora/')}>Área da apresentadora</a><a href="#topo">Voltar ao início ↑</a></div></footer>
   <script>
+   document.documentElement.classList.add('js');
    const toggle=document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
    const nav=document.querySelector<HTMLElement>('#event-nav');
    const close=()=>{toggle?.setAttribute('aria-expanded','false');nav?.classList.remove('is-open');};

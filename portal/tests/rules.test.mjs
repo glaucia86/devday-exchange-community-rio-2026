@@ -2,7 +2,8 @@ import { after, before, beforeEach, describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { initializeTestEnvironment, assertFails, assertSucceeds } from '@firebase/rules-unit-testing';
-import { collection, collectionGroup, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
+import { initializeApp, deleteApp } from 'firebase/app';
+import { collection, collectionGroup, connectFirestoreEmulator, deleteDoc, doc, getDoc, getDocFromCache, getDocFromServer, getDocs, initializeFirestore, memoryLocalCache, serverTimestamp, setDoc, terminate, Timestamp, updateDoc } from 'firebase/firestore';
 
 const PROJECT = 'demo-devday-presenter';
 const OWNER = 'test-presenter-owner';
@@ -134,5 +135,36 @@ describe('template de proprietária configurado somente com UID fictício', { co
   test('atualizar só o texto sem renovar timestamp é negado', async () => {
     await seed();
     await assertFails(updateDoc(doc(ownerDb(), NOTE_PATH), { content: 'Outro texto fictício' }));
+  });
+
+  test('SDK real recria banco após terminate sem reaproveitar cache entre identidades', async () => {
+    await seed();
+    const app = initializeApp({ projectId: PROJECT, apiKey: 'synthetic-emulator-only' }, 'presenter-lifecycle-emulator');
+    let db;
+    function connect(uid) {
+      const instance = initializeFirestore(app, { localCache: memoryLocalCache() });
+      connectFirestoreEmulator(instance, '127.0.0.1', port, {
+        mockUserToken: { sub: uid, user_id: uid, firebase: { sign_in_provider: 'github.com' } },
+      });
+      return instance;
+    }
+    try {
+      db = connect(OWNER);
+      await assertSucceeds(getDocFromServer(doc(db, NOTE_PATH)));
+      assert.equal((await getDocFromCache(doc(db, NOTE_PATH))).exists(), true);
+      const first = db;
+      await terminate(db);
+      db = connect('test-another-user');
+      assert.notEqual(db, first);
+      await assert.rejects(getDocFromCache(doc(db, NOTE_PATH)), (error) => error.code === 'unavailable');
+      await assertFails(getDocFromServer(doc(db, NOTE_PATH)));
+      await terminate(db);
+      db = connect(OWNER);
+      assert.notEqual(db, first);
+      await assertSucceeds(getDocFromServer(doc(db, NOTE_PATH)));
+    } finally {
+      if (db) await terminate(db);
+      await deleteApp(app);
+    }
   });
 });

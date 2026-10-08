@@ -49,6 +49,9 @@ jobs:
         if: steps.build.outcome == 'success'
         continue-on-error: true
         run: npm run test:site && node --test tests/presenter-build.test.mjs
+      - name: Revalidar Markdown canônico após limpeza da geração
+        if: always()
+        run: cd .. && node scripts/check-doc-links.mjs
       - name: Preparar Chromium
         run: npx playwright install --with-deps chromium
       - name: Verificar UI privada com fixture isolada
@@ -74,6 +77,9 @@ jobs:
           path: |
             portal/test-results/*.png
             portal/dist
+      - name: Disponibilizar capturas públicas para inspeção
+        if: always()
+        run: node scripts/export-review-images.mjs
       - name: Consolidar resultados
         if: always()
         run: |
