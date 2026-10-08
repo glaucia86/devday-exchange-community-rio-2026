@@ -37,6 +37,7 @@ test('loads four independent labs and the complete material map', async () => {
   assert.match(home.author.photo, /^https:\/\/avatars\.githubusercontent\.com\//);
   assert.ok(home.author.socials.some(s => s.label === 'LinkedIn'));
   assert.match(home.event.details, /24 de outubro de 2026/);
+  assert.match(home.event.details, /09h00 às 14h30/);
   const prep = pages.find(p => p.route === 'prepare-se/');
   assert.match(prep.markdown, /id="preparacao"/);
   assert.match(prep.markdown, /npm --version/);
@@ -58,4 +59,24 @@ test('source changes are reflected and required sections cannot silently disappe
     await writeFile(readme, (await readFile(readme, 'utf8')).replace('<a id="preparacao"></a>', ''));
     await assert.rejects(loadPortalContent({ repoRoot: folder, basePath }), /preparacao/);
   } finally { await rm(folder, { recursive: true, force: true }); }
+});
+test('local demo starts with the canonical clone instructions', async () => {
+  const {pages}=await loadPortalContent({repoRoot,basePath});
+  const guide=pages.find(p=>p.route==='alo-ti/');
+  assert.match(guide.markdown,/git clone --branch main/);
+  assert.match(guide.markdown,/cd devday-exchange-community-rio-2026/);
+  assert.equal(guide.sourcePath,'README.md');
+  assert.ok(pages.some(p=>p.route==='alo-ti/referencia/'&&p.sourcePath==='apps/decisions/README.md'));
+});
+test('the consumer workflow covers the application README source', async () => {
+  const workflow=await readFile(resolve(repoRoot,'.github/workflows/check-portal.yml'),'utf8');
+  const paths=workflow.match(/paths:\s*\[([^\n]+)\]/)?.[1]??'';
+  assert.match(paths,/'apps\/decisions\/README\.md'/);
+});
+test('the home demo overview follows its canonical Markdown', async () => {
+  const {home}=await loadPortalContent({repoRoot,basePath});
+  assert.match(home.local.description,/service desk fictício/);
+  assert.match(home.local.notice,/fixtures e estado em memória/);
+  assert.equal(home.local.steps.length,5);
+  assert.match(home.local.steps.join(' '),/revisão humana/);
 });
