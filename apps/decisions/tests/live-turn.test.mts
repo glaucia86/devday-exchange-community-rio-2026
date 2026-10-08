@@ -47,3 +47,15 @@ test('monitoring insight waits while a confirmation is in flight and then speaks
   assert.equal(planInsightSpeech({ insight, alreadySaid: false, sessionActive: true, now: sent + 4_300, activity, confirmationInFlight: false, requiredQuietMs: 900 }), 'speak');
   assert.equal(planInsightSpeech({ insight, alreadySaid: true, sessionActive: true, now: sent + 8_000, activity, confirmationInFlight: false, requiredQuietMs: 900 }), 'skip');
 });
+
+test('confirmation watch completes when audio already audible at send time ends', () => {
+  const sent = 5_000;
+  let watch = beginConfirmationWatch(sent, true);
+  assert.equal(confirmationInFlight(watch, true, 0), true);
+
+  const ended = noteAssistantAudible(watch, false, sent + 1_000);
+  watch = ended.watch;
+  assert.equal(watch.heardSinceSend, true);
+  assert.equal(watch.sawSilenceAfterSend, true);
+  assert.equal(confirmationInFlight(watch, false, ended.audioEndedAt ?? 0), false);
+});

@@ -83,7 +83,7 @@ export function idleConfirmation(): ConfirmationWatch {
 
 /** A confirmation is owed until assistant audio that started after it has ended. */
 export function beginConfirmationWatch(at: number, assistantAudible: boolean): ConfirmationWatch {
-  return { sentAt: at, heardSinceSend: false, sawSilenceAfterSend: !assistantAudible };
+  return { sentAt: at, heardSinceSend: assistantAudible, sawSilenceAfterSend: !assistantAudible };
 }
 
 /** Call only when audible changes. Silence after speech records the audio end. */
