@@ -1,185 +1,162 @@
-# LAB · Codex Cloud: revisar uma entrega que parece pronta
+# LAB · Codex Cloud: o texto da rede na Alô, TI
 
-[Início](../../README.md) · [Exercício](../../exercises/ticket-router/README.md) · [Guia da apresentadora](../../docs/guia-apresentadora.md)
+[Início](../../README.md) · [Alô, TI](../../apps/decisions/README.md) · [Guia da apresentadora](../../docs/guia-apresentadora.md#codex-cloud)
 
 ## Objetivo
 
-Delegar uma correção em ambiente remoto e decidir se a entrega pode ser aceita. Você receberá uma candidata com cinco testes verdes e um defeito intencional: ela escolhe a primeira equipe encontrada, mesmo quando o relato envolve mais de uma.
+Revisar, numa tarefa remota do Codex Cloud, um ajuste pequeno e real na mesa de serviço. Quando a pessoa corrige o relato e diz que a rede da sala de reunião voltou, o mock ainda responde como se o serviço fosse desconhecido. Você decide se o diff merece ser aceito.
 
-**Para fazer em casa:** reproduza a demonstração Cloud do [guia da apresentadora](../../docs/guia-apresentadora.md#codex-cloud): mesma candidata preparada, tarefa remota e revisão. Ela continua o contexto de encaminhamento mostrado no CLI, mas usa uma cópia com defeito intencional para estudar revisão. Não é apresentada como uma falha produzida pelo CLI.
+**Para fazer em casa:** use este repositório do evento, ou um fork de um clique. Não crie um repositório novo e não suba arquivos à mão. A estimativa da primeira vez é 45–90 minutos, quase toda de espera do ambiente. Essa duração não foi medida de ponta a ponta; em 8 de outubro de 2026 a abertura de `/codex/cloud` passou de 20 segundos e a lista de repositórios levou cerca de 10 segundos. No evento, Glaucia conduz. O público acompanha.
 
-**Sua entrega:** uma tarefa concluída, um diff revisado e evidências de que a regressão foi corrigida. Estimativa de estudo em casa: 15–20 minutos, além da configuração da conta; duração não medida. Não é necessário ter feito o LAB CLI. No evento, o público apenas acompanha Glaucia.
+**Sua entrega:** uma tarefa concluída, o diff revisado e os testes. O LAB termina nessa revisão. Sem pull request, merge ou deploy.
 
-**Validação:** a candidata, suas falhas esperadas e a solução são testadas offline. Ainda não houve ensaio deste roteiro em uma conta Codex Cloud. Conta, permissões e consumo precisam ser conferidos por quem participa.
+**Validação:** o defeito é reproduzido offline por `node labs/codex-cloud/run-bug-test.mjs`. O roteiro novo ainda não foi ensaiado numa conta Codex Cloud. Conta, permissões e consumo ficam com quem executa a tarefa.
 
-## Entenda o caminho antes de começar
+## O que você precisa
 
-**Rota essencial:** conferir o defeito local → preparar seu repositório fictício → preparar o ambiente Cloud → executar a tarefa → revisar. A comparação com outra entrega, no final, é opcional.
+- Conta ChatGPT com Codex Cloud, no navegador desktop ou no app desktop
+- Conta GitHub. A de Glaucia já está conectada ao Codex como `glaucia86`
+- O repositório [glaucia86/devday-exchange-community-rio-2026](https://github.com/glaucia86/devday-exchange-community-rio-2026)
 
-Você vai usar dois lugares diferentes:
+Quem só acompanha no navegador não instala Node, Git nem pacotes. O Node.js 24.21.0 do [`.nvmrc`](../../.nvmrc) continua valendo para instalar a Alô, TI e para a CI. Ele não é a porta de entrada deste LAB. No teste de 8 de outubro, o exercício antigo em JavaScript puro rodou no Node 20.19.2; exigir 24.21.0 antes de qualquer tarefa Cloud era mais do que aquele exercício pedia.
 
-- **Seu terminal:** monta a cópia local e executa os primeiros testes
-- **ChatGPT/Codex Cloud:** prepara uma máquina remota e recebe o pedido de correção
+A reprodução local deste defeito importa TypeScript. `node labs/codex-cloud/run-bug-test.mjs` liga `--experimental-strip-types` quando o Node ainda precisa. Se esse comando falhar na sua máquina, siga pelo navegador mesmo assim.
 
-**GitHub** guarda os arquivos; **ambiente** é a configuração reutilizável da máquina remota; **tarefa** é uma execução isolada dentro dessa configuração. Publicar o ambiente prepara novas tarefas, não publica a aplicação.
+## 1. Veja o defeito antes de delegar
 
-Precisa de Node.js 24.21.0 ou posterior e Git para a preparação local, uma conta GitHub sua e uma conta ChatGPT com acesso ao Cloud. Se não tiver acesso, você ainda pode estudar a candidata localmente; não registre isso como um ensaio do produto Cloud.
+O relato corrigido do cenário `network`, em [`service-desk.ts`](../../apps/decisions/src/domain/service-desk.ts), diz: “A rede da sala de reunião voltou a funcionar. Ainda preciso verificar se o problema retorna.”
 
-## 1. Conheça o defeito antes de delegar
+`mockDecision('network', true)` cai no mesmo texto do relato incompleto: “É preciso esclarecer qual serviço falhou, quem foi afetado e se há uma alternativa antes de encaminhar.” A equipe continua `human`, e isso está certo: não há outro incidente para inventar. O erro é a explicação, que trata um acompanhamento como falta de informação. A queda original da rede, sem correção, continua em Infraestrutura.
 
-Após [clonar o material](../../README.md#preparacao), abra o terminal na raiz do repositório:
+Na raiz do clone, se quiser ver isso no seu computador:
 
 ```sh
-node --test exercises/ticket-router/review-candidate/router.test.mjs
-node exercises/ticket-router/verify.mjs exercises/ticket-router/review-candidate/router.mjs
+node labs/codex-cloud/run-bug-test.mjs
 ```
 
-**Esperado:** os cinco testes da candidata passam, mas a verificação independente mostra `ACCEPTANCE {"total":18,"passed":16,"failed":2}`. Os relatos com duas equipes falham. O primeiro caso devolve `acessos` quando deveria devolver `revisao_humana`.
+**Esperado:** três testes aprovados e um reprovado, com código de saída 1. A falha é `correção da rede não reaproveita o texto de serviço desconhecido`, e a saída mostra `qual serviço falhou`. `Cannot find module` é caminho ou Node, não o defeito.
 
-Leia os dois casos que falham:
+Quem mantém o material roda `node scripts/check-codex-cloud.mjs`. Código 0 nesse script significa que o defeito ainda existe e que este roteiro está completo. Não é um ensaio do produto Cloud.
+
+## 2. Aponte o Cloud para um repositório que já existe
+
+No palco, Glaucia usa `glaucia86/devday-exchange-community-rio-2026`. A conexão GitHub já está feita. Não há fork na hora.
+
+Em casa, abra o mesmo endereço. No seletor de repositórios do Cloud:
+
+1. Se `glaucia86/devday-exchange-community-rio-2026` aparecer, selecione só ele
+2. Se não aparecer, no GitHub clique **Fork** — um clique — e depois selecione `sua-conta/devday-exchange-community-rio-2026`
+
+Fonte do fork: [Fork a repo](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo). Não transforme o projeto em template e não crie um repositório vazio. Conceda ao Codex acesso só a esse repositório. Não envie chave, `.env` nem dados de trabalho.
+
+O teste de 8 de outubro viu a lista da conta conectada, com “Loading repositories…”, e não uma busca pública universal. Se o repositório original não entrar na lista, o fork é o caminho. Rótulos podem variar.
+
+## 3. Publique o ambiente sem corrigir o texto
+
+A [documentação oficial](https://learn.chatgpt.com/docs/environments/cloud-environments), lida em 8 de outubro de 2026, descreve: **Work in → Cloud → Select environment → Create environment**, depois **Get started**, **Publish** e **Environment published**. O mesmo fluxo está em [developers.openai.com/codex/cloud](https://developers.openai.com/codex/cloud) e na [visão geral](https://learn.chatgpt.com/docs/cloud). Há também **Settings → Codex Cloud → Environments → Create environment**. Esse caminho de Settings não foi percorrido no teste do dia.
+
+No mesmo dia, na conta real, a tela mostrou outra sequência: **Cloud → Choose environment → Create environment**. O campo da tarefa dizia “What should we build?”. “Choose environment” passou por “Loading saved environments…” e ofereceu **Create environment**. O diálogo “Create a cloud environment” mostrou “Connected to GitHub as glaucia86”. **Publish** e **Environment published** não apareceram, porque o ambiente não chegou a ser criado. Rótulos podem variar. Siga o texto que estiver na tela e trate os nomes oficiais como o mesmo passo quando o sentido for igual.
+
+Não use **Codex Cloud (Legacy)**. Ele continua para code review e para as integrações GitHub e Linear, e a documentação planeja descontinuá-lo. Guia legado: [Codex Cloud (Legacy)](https://learn.chatgpt.com/docs/environments/cloud-environment). A página de ajuda [Using Codex Cloud](https://help.openai.com/en/articles/20001545-using-codex-cloud) não abriu nesta revisão (resposta 403); o aviso de Legacy foi conferido na página de ambientes. [Acesso e autenticação](https://learn.chatgpt.com/docs/auth).
+
+`https://chatgpt.com/codex` é página de apresentação. “Go to Cloud” leva a `/codex/cloud`, que no teste ficou mais de 20 segundos em spinner antes do app. Abra o app com antecedência. Não recarregue em ciclo por causa dessa espera.
+
+<a id="pedido-de-preparacao"></a>
+
+No passo em que a documentação diz **Get started**, cole este pedido. É texto para o Codex, não comando do seu terminal:
 
 ```text
-FAIL duas equipes: acesso e rede: esperado revisao_humana; recebido acessos
-FAIL duas equipes: aplicativo e rede: esperado revisao_humana; recebido infraestrutura
-ACCEPTANCE {"total":18,"passed":16,"failed":2}
+Prepare o ambiente deste repositório, na branch principal.
+Não altere arquivos. Não corrija apps/decisions.
+Não instale pacotes além do que o próprio ambiente exigir para ler o código,
+não configure segredos e não chame APIs.
+Execute node labs/codex-cloud/run-bug-test.mjs
+Se o Node não executar TypeScript, use
+node --experimental-strip-types --test labs/codex-cloud/bug-rede.test.mts
+O resultado esperado da preparação é código de saída 1:
+três testes aprovados e falha em
+"correção da rede não reaproveita o texto de serviço desconhecido",
+com a explicação "qual serviço falhou".
+Se você tiver editado alguma coisa, restaure antes de encerrar.
+Informe a versão do Node, o repositório, o comando e a saída.
 ```
 
-Essa saída foi reproduzida com a candidata. Ela escolhe a primeira categoria e deixa de procurar a segunda. Os cinco testes próprios não continham esses relatos. Por isso, “testes verdes” e “contrato atendido” ainda não são a mesma coisa.
+**Checkpoint antes de publicar:** repositório certo, nenhum diff, teste da rede ainda vermelho nessa explicação. Se a preparação deixou o teste verde, peça a restauração do arquivo e só então salve. Publicar um ambiente já corrigido esconde a demonstração. Salvar a configuração e publicar o ambiente são passos diferentes na documentação oficial; se a sua tela usar outras palavras, confirme que uma tarefa nova ainda parte do código com o defeito.
 
-**Checkpoint:** só prossiga quando conseguir identificar essas duas falhas. `Cannot find module` é problema de caminho, não a falha esperada.
+Uma alteração feita dentro de uma tarefa não atualiza o ambiente reutilizável. A [documentação de modos](https://learn.chatgpt.com/docs/environments/modes) diz que cada tarefa tem os próprios arquivos. O risco desta demo é a preparação do ambiente, que pode “ajudar” e corrigir o texto antes do palco.
 
-## 2. Prepare um repositório só para o exercício
+## 4. Envie a tarefa
 
-### Monte uma pasta fácil de encontrar
+<a id="pedido-da-tarefa"></a>
 
-No seu terminal, ainda na raiz `devday-exchange-community-rio-2026`, execute uma linha por vez:
-
-```sh
-node -e "require('node:fs').cpSync('exercises/ticket-router/review-candidate','../rio-codex-cloud',{recursive:true,errorOnExist:true,force:false})"
-node -e "const fs=require('node:fs');fs.copyFileSync('exercises/ticket-router/verify.mjs','../rio-codex-cloud/verify.mjs',fs.constants.COPYFILE_EXCL)"
-cd ../rio-codex-cloud
-node -p "process.cwd()"
-node -e "console.log(require('node:fs').readdirSync('.').sort().join(' | '))"
-```
-
-**Esperado:** a pasta atual termina em `rio-codex-cloud`; a lista é `README.md | router.mjs | router.test.mjs | verify.mjs`. Anote o caminho completo: você vai escolher esses arquivos no navegador. Os comandos recusam sobrescrever arquivos existentes. Se a pasta já existir, preserve-a e use outro nome nos dois comandos de cópia e no `cd`.
-
-Confira a pasta isolada:
-
-```sh
-node --test router.test.mjs
-node verify.mjs router.mjs
-```
-
-O resultado continua sendo cinco testes aprovados e 16/18 na aceitação. Isso mostra que os quatro arquivos bastam para reproduzir o defeito, sem depender do restante do material.
-
-Transforme a cópia local em um repositório. No caminho offline, `git diff` mostra a correção. No caminho Cloud, você continua enviando só os quatro arquivos, não a pasta `.git`:
-
-```sh
-git init -b main
-git config user.name "Exercicio"
-git config user.email "exercicio@example.invalid"
-git add README.md router.mjs router.test.mjs verify.mjs
-git commit -m "Candidata original do exercício"
-```
-
-Esses `git config` ficam só nesta cópia.
-
-### Envie somente esses arquivos para seu GitHub
-
-1. Entre no GitHub com sua própria conta. No menu de criação do canto superior direito, escolha **New repository**
-2. Em **Owner**, confira sua conta. Use um nome como `rio-codex-cloud`; escolha a visibilidade conscientemente. Para uma prática individual, um repositório privado mantém o exercício restrito
-3. Inclua um README inicial para obter a lista de arquivos; não peça ao Copilot para gerar código. Clique **Create repository**
-4. Abra **Add file → Upload files**. Escolha os quatro arquivos de `rio-codex-cloud`, não a pasta inteira nem o repositório do evento
-5. Revise a seleção, informe uma mensagem como “Adicionar exercício fictício” e confirme a gravação na branch principal desse seu repositório de exercício. O README enviado substitui o inicial
-6. Confira na lista os quatro nomes. Abra `README.md`: o título deve ser **Candidata para revisão · encaminhador fictício**. Se os arquivos ficaram dentro de outra pasta, corrija a organização antes do Cloud
-
-Esses passos criam uma cópia sua no GitHub. Não envie chave, `.env`, dados de trabalho ou a demo inteira. Anote `sua-conta/rio-codex-cloud` para selecionar o projeto certo. Fontes: [criar repositório](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository) e [enviar arquivos](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository).
-
-## 3. Prepare e publique o ambiente
-
-O [guia oficial atual](https://learn.chatgpt.com/docs/environments/cloud-environments) descreve este caminho no ChatGPT web/desktop. Rótulos podem variar com idioma e rollout:
-
-1. Abra **Work in → Cloud → Select environment → Create environment**.
-2. Selecione o repositório fictício. Se precisar conectar GitHub, confira os repositórios e permissões solicitados antes de aceitar.
-3. Em **Get started**, peça Node.js 24.21.0 ou posterior e a execução de `node --version` e `node --test router.test.mjs`. Não há `npm install` neste projeto.
-4. Revise o relatório de preparação: Node compatível, os quatro arquivos na raiz e cinco testes aprovados.
-5. Salve, escolha **Publish** e espere **Environment published**. Aqui, publicar cria o ambiente reutilizável do Codex; não coloca uma aplicação na internet.
-6. Escolha **Start a new task** nesse ambiente.
-
-Na conversa de preparação, você pode enviar este texto. Ele é um pedido ao Codex, não um comando no seu terminal local:
+Depois de **Start a new task**, ou do equivalente na sua tela, confira o nome do ambiente e cole:
 
 ```text
-Prepare somente este repositório fictício. Confira Node.js 24.21.0 ou posterior.
-Na pasta que contém router.mjs, execute node --version,
-node --test router.test.mjs e node verify.mjs router.mjs.
-A candidata deve ter cinco testes próprios aprovados e duas falhas
-intencionais no verificador (16/18). Não corrija o código nesta preparação.
-Não instale pacotes de aplicação nem configure segredos.
-Informe a pasta usada, os quatro arquivos e os resultados.
+Na Alô, TI, mockDecision('network', true) ainda explica que é preciso
+esclarecer qual serviço falhou. O relato corrigido do cenário network
+diz que a rede da sala de reunião voltou e que a pessoa quer saber
+se o problema retorna. A equipe human está correta. Não invente outro
+incidente nem outra equipe. O acesso sem correção e a queda original
+da rede precisam continuar como estão. O relato incompleto continua
+pedindo esclarecimento do serviço.
+
+1. Execute node labs/codex-cloud/run-bug-test.mjs e mostre a falha
+   antes de editar.
+2. Acrescente um teste de regressão em
+   apps/decisions/tests/network-followup.test.mts
+   com o mesmo contrato. Esse teste novo deve falhar antes do fix.
+3. Faça a menor correção em
+   apps/decisions/src/domain/service-desk.ts
+4. Rode de novo node labs/codex-cloud/run-bug-test.mjs e
+   node --test apps/decisions/tests/*.test.mts
+5. Não altere labs/codex-cloud/bug-rede.test.mts nem o encaminhador,
+   o portal, dependências ou segredos.
+Sem push, PR, merge ou deploy.
+Ao terminar, informe a causa, o diff, os comandos e as saídas.
 ```
 
-**Checkpoint antes de Publish:** repositório correto, Node compatível, cinco testes verdes e duas falhas esperadas preservadas. Se a preparação já corrigiu a candidata, peça para recuperar a versão original antes de salvar; começar com 18/18 esconderia a demonstração.
-
-Salvar uma configuração não significa que o ambiente já foi publicado. Se a conta não oferecer esse fluxo, siga a documentação atual e a alternativa offline, sem mudar permissões às pressas. [Acesso e autenticação](https://learn.chatgpt.com/docs/auth).
-
-## 4. Envie uma tarefa delimitada
-
-Depois de **Start a new task**, confira o nome do ambiente. Cole o bloco abaixo no campo de mensagem da nova tarefa e envie. Não o cole no PowerShell ou no bash:
-
-```text
-Revise a candidata routeTicket em router.mjs deste repositório fictício.
-Ela passa os cinco testes atuais, mas relatos que combinam categorias
-não podem ser encaminhados automaticamente.
-
-Contrato: ignorar caixa e acentos; palavras inteiras senha/login/permissão
-retornam acessos; conexão/Wi-Fi/rede retornam infraestrutura;
-erro 500/aplicativo retornam aplicacoes. Nenhuma categoria ou mais de
-uma categoria retorna revisao_humana. Duas palavras da mesma categoria
-não são ambiguidade. Entrada ausente ou não textual deve ser segura.
-
-1. Execute node --test router.test.mjs e node verify.mjs router.mjs.
-2. Mostre os casos que falham e acrescente testes de regressão antes do fix.
-3. Faça a menor correção em router.mjs e execute ambas as verificações.
-4. Não altere verify.mjs nem reduza o contrato para deixar os testes verdes.
-Sem dependências, chamadas externas, push, PR, merge ou deploy.
-Ao terminar, informe causa, arquivos alterados, comandos, saídas e limites.
-```
-
-A tarefa usa o acesso/consumo do Codex; o código do exercício não chama APIs. A restrição a chamadas externas diz respeito às ações no projeto.
+A tarefa gasta a cota da conta. O código do exercício não chama a API da OpenAI.
 
 ## 5. Revise antes de aceitar
 
-Acompanhe a tarefa: pendente, executando, falha e concluída são estados diferentes. Quando terminar:
+<a id="pedido-de-revisao"></a>
 
-- Abra os arquivos alterados e os logs. Procure a falha antes da correção e os resultados depois
-- Confira que os novos testes cobrem “senha + conexão” e “aplicativo + rede”, além de preservar “senha + login”
-- Na conversa da mesma tarefa, peça a reexecução dos dois comandos usando o texto abaixo; confira os resultados das ferramentas, não só o resumo final
-- Espere `18` aprovados e `0` falhas na aceitação; confira que `verify.mjs` não foi alterado
-- Compare a lógica com a [solução de referência](../../exercises/ticket-router/solution/router.mjs) somente após sua revisão
-
-Pedido de conferência para enviar na conversa da tarefa:
+Quando a tarefa terminar, ainda na mesma conversa:
 
 ```text
-Sem modificar arquivos, execute novamente node --test router.test.mjs e
-node verify.mjs router.mjs na pasta deste exercício. Mostre as saídas e
-os códigos de saída. Mostre também o diff e confirme se verify.mjs mudou.
+Sem modificar arquivos, execute novamente
+node labs/codex-cloud/run-bug-test.mjs
+e node --test apps/decisions/tests/*.test.mts
+Mostre as saídas e os códigos de saída.
+Mostre o diff e confirme que
+labs/codex-cloud/bug-rede.test.mts não mudou.
 ```
 
-O verificador deve mostrar `ACCEPTANCE {"total":18,"passed":18,"failed":0}`. Procure, no diff, mudanças em `router.mjs` e acréscimos em `router.test.mjs`. Se houver outras mudanças, peça a justificativa antes de aceitar. Um `return` na primeira categoria ainda indicaria o defeito original.
+**Esperado:**
 
-**Critério de conclusão:** você consegue apontar o defeito original, explicar a correção e citar os testes que a comprovam. O LAB termina na revisão. Não precisa abrir PR, integrar código ou publicar uma aplicação.
+- `run-bug-test.mjs` termina com código 0
+- a explicação da correção da rede contém “voltou” e não contém “qual serviço falhou”
+- a equipe continua `human`
+- o diff fica em `apps/decisions/src/domain/service-desk.ts` e no teste novo `apps/decisions/tests/network-followup.test.mts`
+- `labs/codex-cloud/bug-rede.test.mts` sem alterações
+- a suíte já existente de `apps/decisions/tests` continua aprovada
 
-## Problemas, alternativa offline e reset
+Se aparecer outro arquivo, peça a justificativa antes de aceitar. Um texto que ainda diz “qual serviço falhou” para a rede que voltou é o defeito original.
 
-- **Repositório não aparece na seleção:** confira conta GitHub, nome do projeto e quais repositórios a conexão permite. Não amplie acesso para projetos de trabalho só para concluir o LAB
-- **Ambiente salvo, mas tarefa não inicia:** confira se chegou a **Environment published**; salvar e publicar são etapas diferentes
-- **Ambiente sem Node ou arquivos ausentes:** volte ao relatório de preparação; não confunda erro de setup com defeito da função
-- **Tarefa sem logs:** peça a execução e a saída dos dois comandos; texto afirmando “passou” não basta
-- **Verificador alterado:** restaure a cópia original do material antes de aceitar o resultado
-- **Cloud indisponível:** faça a correção em uma cópia local da candidata e rode os mesmos comandos. Isso valida o exercício, não o produto Cloud
-- **Para repetir:** inicie uma nova tarefa a partir da candidata original. Não reaproveite silenciosamente arquivos já corrigidos; preserve o resultado anterior para comparação
+**Critério de conclusão:** você aponta a explicação errada, mostra a correção e cita o teste que a comprova. Pare aqui.
 
-## Depois do encontro, se quiser aprofundar
+## No palco
 
-Revise uma segunda entrega sem olhar a solução. Escreva um parecer curto: “aceitaria”, “pediria mudanças” ou “evidência insuficiente”, com dois fatos do diff ou dos testes. Compare com a revisão que você fez no terminal no [LAB CLI](../codex-cli/README.md).
+O bloco está no [guia da apresentadora](../../docs/guia-apresentadora.md#codex-cloud). Ambiente publicado e tarefa já enviada antes de projetar. O relógio da evidência ao vivo é de **3 minutos**. Se o diff e a saída do teste não estiverem na tela, entra o plano B com o letreiro **GRAVADO ANTES · não é ao vivo**. A gravação fica no notebook do ensaio, fora do Git, e mostra este mesmo pedido, o diff curto e o teste passando. Sem a gravação, diga que a tarefa remota não rodou e mostre só o teste vermelho. Não improvise a correção e chame de Cloud.
+
+## Problemas
+
+- **Repositório ausente na lista:** confira a conta GitHub e o escopo da conexão. Faça o fork de um clique. Não amplie o acesso para outros projetos
+- **Spinner longo ou “Loading repositories…”:** no teste de 8 de outubro isso levou mais de 20 segundos e cerca de 10 segundos. Espere uma vez. Não trate a espera como falha de código
+- **Caiu em Codex Cloud (Legacy):** volte e use o fluxo atual, com o seletor de ambiente. Legacy não é esta demo
+- **Preparação corrigiu o texto:** restaure `service-desk.ts` antes de publicar. Confira o teste vermelho de novo
+- **Ambiente salvo e a tarefa não inicia:** na documentação, publicar é outro passo além de salvar. Rótulos podem variar
+- **Tarefa sem logs:** aceite a saída dos comandos, não um resumo que só diz “passou”
+- **Teste do LAB editado:** recuse a entrega. O contrato está em `bug-rede.test.mts`
+- **Cloud indisponível:** rode `node labs/codex-cloud/run-bug-test.mjs` e leia a explicação. Isso mostra o defeito; não é ensaio do produto
+- **Para repetir:** nova tarefa no ambiente que ainda falha o teste da rede. Guarde a entrega anterior. A documentação diz que a tarefa nova parte do ambiente publicado, não do diff da tarefa anterior
