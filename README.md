@@ -95,10 +95,10 @@ São **quatro demonstrações, cada uma com um LAB para reproduzir em casa**. Os
 | --- | --- | --- |
 | **Dots** | Atribuir uma responsabilidade contínua e conferir o que mudou nas issues e nos pull requests públicos | [Cenário e passo a passo](labs/01-dots/README.md) |
 | **Codex CLI** | Falar uma correção curta no terminal, ver a tarefa em `/agents` e conferir o diff | [LAB do CLI](labs/codex-cli/README.md) |
-| **Codex Cloud** | Revisar uma candidata com testes verdes, reproduzir a regressão e conferir uma correção remota | [LAB do Cloud](labs/codex-cloud/README.md) |
+| **Codex Cloud** | Corrigir uma explicação incorreta na Alô, TI e revisar o diff e os testes | [LAB do Cloud](labs/codex-cloud/README.md) |
 | **Decisions API** | Conversar por voz, corrigir o relato e revisar o ticket; com alternativa simulada e exercícios de contrato | [LAB Decisions](labs/02-decisions-typescript/README.md) |
 
-O CLI mostra a voz no terminal e uma correção curta na Alô, TI. O Cloud usa o [contrato de encaminhamento fictício](exercises/ticket-router/README.md), na revisão de uma candidata defeituosa. A experiência de voz para voz faz parte de **Decisions API**. A [arquitetura proposta](docs/arquitetura-decisions.md) descreve o fluxo e suas etapas pendentes.
+O CLI pratica o [encaminhador fictício](exercises/ticket-router/README.md). O Cloud revisa um ajuste real na [Alô, TI](apps/decisions/README.md), sem criar outro repositório. A experiência de voz para voz faz parte de **Decisions API**. A [arquitetura proposta](docs/arquitetura-decisions.md) descreve o fluxo e suas etapas pendentes.
 
 <a id="preparacao"></a>
 ## 🧰 Prepare seu ambiente
