@@ -1,6 +1,6 @@
 # Exercício offline · ler uma resposta de Decisions
 
-Este exercício usa o contrato TypeScript e o estado da Alô, TI com respostas locais. Nenhuma API, servidor ou microfone é iniciado. Precisa somente de Node.js 22.18+ e do repositório clonado.
+Este exercício usa o contrato TypeScript e o estado da Alô, TI com respostas locais. Nenhuma API, servidor ou microfone é iniciado. Precisa somente de Node.js 24.21.0 ou posterior e do repositório clonado.
 
 ## Execute e compare
 

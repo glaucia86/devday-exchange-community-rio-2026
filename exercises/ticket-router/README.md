@@ -4,7 +4,7 @@ O LAB CLI parte de uma função mínima. O LAB Cloud começa com uma candidata q
 
 ## Antes de executar
 
-Precisa de Node.js 22.18+ e do material [clonado](../../README.md#preparacao). Não há pacotes nem chaves para instalar. Todos os comandos abaixo partem da raiz do repositório.
+Precisa de Node.js 24.21.0 ou posterior e do material [clonado](../../README.md#preparacao). Não há pacotes nem chaves para instalar. Todos os comandos abaixo partem da raiz do repositório.
 
 | Pasta | Papel | Testes da pasta | Aceitação independente |
 | --- | --- | --- | --- |

@@ -60,7 +60,7 @@ O que cada comando faz:
 
 Quando o terminal mostrar que o servidor está pronto, abra http://127.0.0.1:3000 no navegador. Se ele indicar outra porta, use a URL informada. A página deve ter o título **Alô, TI** e os modos **Simulado** e **OpenAI ao vivo**. Você não deve ver apenas o portal de documentação.
 
-**Checkpoint:** a aplicação abriu em uma URL local. Se o navegador disser que não consegue conectar, confira se o terminal ainda está executando `npm start` e se o endereço/porta são os mesmos.
+**Checkpoint:** a aplicação abriu em uma URL local. Se o navegador disser que não consegue conectar, confira se o terminal ainda está executando `npm start` e se o endereço/porta são os mesmos. No palco, use **Modo palco**. `npm run dev` reescreve `next-env.d.ts` e fica fora deste roteiro. O ensaio completo, a partir da raiz, é `node scripts/prepare-stage.mjs`.
 
 Para parar uma tentativa sua, volte a esse terminal e use Ctrl+C. Para iniciar novamente, estando em `apps/decisions`, repita `npm start`. Não use comandos para encerrar processos desconhecidos. A instalação inicial baixa pacotes. A preparação no modo Simulado usa fixtures locais; a conversa real da próxima seção requer API. No PowerShell, use `npm.cmd` se necessário.
 
@@ -118,7 +118,7 @@ Na parte superior da aplicação, selecione **Simulado**. Se vinha da conversa r
 
 ### B. Corrija o relato antes de confirmar
 
-Clique **Simular uma correção**. A senha funciona; agora há erro 500 afetando todo o time.
+Clique **Corrigir o relato**. A senha funciona; agora há erro 500 afetando todo o time. Para projetar, use **Modo palco**: o texto da equipe fica maior. O seletor **Simulado** e o rodapé registram que as respostas desta aba são preparadas.
 
 **Confira:** a análise anterior perdeu a validade e a confirmação ficou bloqueada. Analise de novo; a sugestão muda para **Aplicações internas**.
 
@@ -187,7 +187,7 @@ Anote o modo usado: voz real, interface simulada ou somente contrato offline. No
 | Resposta sugere outra equipe | Transcrição e correção mais recente | Revise o dado; não confirme uma sugestão errada para obter um ticket |
 | Finalização da sessão não confirmada | Aviso após Encerrar conversa | Verifique sessão e consumo; não reinicie em sequência nem trate trocar de aba como encerramento |
 
-- **35 testes falham por sintaxe TypeScript:** confira Node.js 22.18+ e o diretório atual
+- **35 testes falham por sintaxe TypeScript:** confira Node.js 24.21.0 ou posterior e o diretório atual
 - **`ARQUIVO_INVALIDO`:** confira caminho e sintaxe JSON; não é a recusa esperada
 - **Porta 3000 ocupada:** veja a URL do terminal ou encerre somente o servidor de uma tentativa sua; não termine processos desconhecidos
 - **Texto livre não foi analisado:** recarregue um cenário; não é uma falha de acesso à API

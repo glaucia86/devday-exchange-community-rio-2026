@@ -15,7 +15,7 @@
 <a href="https://www.typescriptlang.org/"><img alt="TypeScript 5.9.3" src="https://img.shields.io/badge/TypeScript-5.9.3-3178C6?style=for-the-badge&logo=typescript&logoColor=white"></a>
 </p>
 <p>
-<a href="https://nodejs.org/en/download"><img alt="Node.js 22.18 ou posterior" src="https://img.shields.io/badge/Node.js-22.18%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"></a>
+<a href="https://nodejs.org/en/download"><img alt="Node.js 24.21 ou posterior" src="https://img.shields.io/badge/Node.js-24.21%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"></a>
 <a href="https://tailwindcss.com/docs"><img alt="Tailwind CSS 4.3.3" src="https://img.shields.io/badge/Tailwind_CSS-4.3.3-0F172A?style=for-the-badge&logo=tailwindcss&logoColor=38BDF8"></a>
 <a href="https://lucide.dev/"><img alt="Lucide 0.468.0" src="https://img.shields.io/badge/Lucide-0.468.0-F56565?style=for-the-badge&logo=lucide&logoColor=white"></a>
 <a href="https://playwright.dev/"><img alt="Playwright 1.63.0" src="https://img.shields.io/badge/Playwright-1.63.0-2EAD33?style=for-the-badge"></a>
@@ -25,7 +25,7 @@
 <a href="https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-labs.yml"><img alt="Validação dos LABS" src="https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-labs.yml/badge.svg?branch=main"></a>
 <a href="LICENSE"><img alt="Licença MIT" src="https://img.shields.io/badge/Licen%C3%A7a-MIT-0F766E?style=flat"></a>
 </p>
-<p><a href="https://luma.com/wzk8q92k">Inscreva-se</a> · <a href="#labs">Escolha seu LAB</a> · <a href="#executar">Execute a demo</a> · <a href="docs/guia-apresentadora.md">Guia da apresentadora</a> · <a href="#sobre-mim">Sobre mim</a></p>
+<p><a href="https://luma.com/wzk8q92k">Inscreva-se</a> · <a href="#labs">Escolha seu LAB</a> · <a href="#executar">Execute a demo</a> · <a href="docs/roteiro-de-palco.md">Roteiro de palco</a> · <a href="docs/guia-apresentadora.md">Guia da apresentadora</a> · <a href="#sobre-mim">Sobre mim</a></p>
 </div>
 
 ---
@@ -37,6 +37,7 @@
 - [Escolha seu LAB](#labs)
 - [Prepare seu ambiente](#preparacao)
 - [Execute a demo Alô, TI](#executar)
+- [Roteiro de palco](docs/roteiro-de-palco.md)
 - [Verifique seu ambiente](#validar)
 - [Estado do projeto](#estado)
 - [Guia da apresentadora](#apresentadora)
@@ -76,7 +77,7 @@ O fio condutor é o suporte fictício da Aurora: revisar os relatos, melhorar o 
 | Experimentar um dos temas | Os [quatro LABS](#labs), com requisitos, passos e resultados esperados |
 | Praticar uma mudança de código | O [encaminhador de chamados](exercises/ticket-router/README.md), com starter e solução |
 | Explorar uma interface interativa | A demo [Alô, TI](apps/decisions/README.md), demo fictícia do LAB Decisions |
-| Preparar a apresentação | O [guia da apresentadora](docs/guia-apresentadora.md), com falas-chave e plano B |
+| Preparar a apresentação | O [roteiro de palco](docs/roteiro-de-palco.md) e o [guia da apresentadora](docs/guia-apresentadora.md) |
 | Entender o que foi verificado | O [registro de validação](docs/validacao.md) |
 | Aprofundar os assuntos | As [referências](docs/referencias.md) |
 
@@ -118,20 +119,20 @@ Nos blocos marcados como comandos, copie uma linha, cole no terminal e pressione
 ### Instale apenas o que faltar
 
 1. Execute os três comandos da tabela abaixo. Se uma ferramenta responder com sua versão, ela já está disponível.
-2. Se aparecer “comando não encontrado” ou “não é reconhecido”, abra o link oficial da ferramenta, selecione seu sistema e instale. Para Node.js, escolha uma versão LTS compatível com **22.18 ou posterior**.
-3. Feche e abra o terminal de novo, então repita a verificação. Não prossiga com uma versão de Node menor que 22.18.
+2. Se aparecer “comando não encontrado” ou “não é reconhecido”, abra o link oficial da ferramenta, selecione seu sistema e instale. Para Node.js, use **24.21.0 ou posterior**. O arquivo [`.nvmrc`](.nvmrc) fixa `24.21.0`, a mesma versão da CI.
+3. Feche e abra o terminal de novo, então repita a verificação. Não prossiga com uma versão de Node anterior a 24.21.0. `npm ci` recusa essa instalação: os projetos usam `engine-strict`.
 4. Editor e navegador são locais à sua escolha. Não é preciso instalar uma extensão de IA no editor.
 
 
 | Ferramenta | Requisito | Para que serve |
 | --- | --- | --- |
-| [Node.js](https://nodejs.org/en/download) | **22.18 ou posterior** | Executar os testes e a aplicação |
+| [Node.js](https://nodejs.org/en/download) | **24.21.0 ou posterior** (`.nvmrc`) | Executar os testes e a aplicação |
 | npm | Incluído no Node.js | Instalar dependências pelo lockfile |
 | [Git](https://git-scm.com/install/) | Disponível no terminal | Clonar o repositório e acompanhar mudanças |
 | Editor e navegador | Seus preferidos, atualizados | Explorar arquivos e usar a demo |
 | Acesso ao produto do LAB | Confira o guia escolhido | Experimentar Dots, CLI ou Cloud |
 
-A CI foi validada com **Node.js 24.21.0**. As versões da aplicação estão em [package.json](apps/decisions/package.json) e [package-lock.json](apps/decisions/package-lock.json).
+A CI, a Alô, TI e o portal pedem **Node.js 24.21.0 ou posterior**. As versões da aplicação estão em [package.json](apps/decisions/package.json) e [package-lock.json](apps/decisions/package-lock.json).
 
 ```sh
 node --version
@@ -139,7 +140,7 @@ npm --version
 git --version
 ```
 
-Como ler a saída: `node --version` começa com `v`, como `v24.19.0`; `npm --version` traz números; `git --version` começa com `git version`. O `v24.19.0` foi observado no ensaio cloud deste material. Sua versão pode diferir se respeitar o mínimo indicado.
+Como ler a saída: `node --version` começa com `v`, como `v24.21.0`; `npm --version` traz números; `git --version` começa com `git version`. O mínimo deste material é o `v24.21.0` do arquivo `.nvmrc`. Uma versão posterior dessa linha também serve.
 
 Os testes offline e o mock não exigem conta OpenAI nem chave de API. Instalar dependências requer acesso ao registro npm. O acesso aos produtos dos LABS deve ser preparado separadamente.
 
@@ -197,7 +198,7 @@ Se o PowerShell informar que `npm.ps1` não pode ser carregado, abra o Prompt de
 <a id="executar"></a>
 ## 🚀 Execute a demo Alô, TI
 
-A demo **Alô, TI** é um service desk fictício. Você escolhe um cenário, analisa o relato, simula uma correção e revisa os campos antes de criar um ticket simulado.
+A demo **Alô, TI** é um service desk fictício. Você escolhe um cenário, analisa o relato, corrige um detalhe e revisa os campos antes de criar um ticket simulado.
 
 O fluxo padrão usa fixtures e estado em memória, sem API ou microfone. A integração ao vivo exige configuração segura e autorização de custo. Consulte o [guia Windows e os limites](docs/integracao-live.md).
 
@@ -214,18 +215,30 @@ cd devday-exchange-community-rio-2026
 
 ### Instale e inicie a interface
 
+No palco e no estudo em casa, use a build. Na raiz, o ensaio completo é:
+
 ```sh
+node scripts/prepare-stage.mjs
 cd apps/decisions
-npm ci --ignore-scripts
-npm run dev
+npm start
 ```
 
-Execute um comando por vez e deixe o terminal aberto. Acesse **http://127.0.0.1:3000** no navegador.
+O script confere o Node, executa `npm ci --ignore-scripts`, os 56 testes, a aceitação do encaminhador e `npm run build`. Ele imprime o endereço local. Se preferir os comandos separados, ainda em `apps/decisions`:
+
+```sh
+npm ci --ignore-scripts
+npm run build
+npm start
+```
+
+Execute um comando por vez e deixe o terminal do `npm start` aberto. Acesse **http://127.0.0.1:3000** no navegador.
+
+`npm run dev` fica para quem está editando a interface. Esse comando reescreve `next-env.d.ts`. O arquivo é gerado pelo Next.js, está no `.gitignore` e não deve voltar para o Git. O `npm run typecheck` chama `next typegen` antes do TypeScript, então um checkout limpo continua compilando.
 
 ### Confira seu primeiro acesso
 
 1. Escolha um cenário e analise o relato.
-2. Observe os campos sugeridos e simule uma correção.
+2. Observe os campos sugeridos e corrija o relato.
 3. Analise novamente e revise o encaminhamento.
 4. Marque a revisão humana antes de criar o ticket simulado.
 5. Use **Recomeçar** para limpar o estado e experimentar outro cenário.
@@ -235,7 +248,7 @@ Quando disponível, a interface pode ler respostas com a **voz local do disposit
 <a id="validar"></a>
 ## ✅ Verifique seu ambiente
 
-Na **raiz do repositório**, com Node.js 22.18 ou posterior:
+Na **raiz do repositório**, com Node.js 24.21.0 ou posterior:
 
 ```sh
 node --test exercises/ticket-router/starter/router.test.mjs
@@ -279,7 +292,7 @@ A [execução de referência](https://github.com/glaucia86/devday-exchange-commu
 <a id="apresentadora"></a>
 ## 🎤 Guia da apresentadora
 
-O [roteiro](docs/guia-apresentadora.md) reúne preparação, objetivos, falas-chave, ações, resultados esperados, revisão humana, reset e plano B para cada tema.
+O [roteiro de palco](docs/roteiro-de-palco.md) separa a demo que sempre funciona da camada que depende de ensaio. O [guia da apresentadora](docs/guia-apresentadora.md) reúne preparação, objetivos, falas-chave, ações, resultados esperados, revisão humana, reset e plano B para cada tema.
 
 Use a [programação](docs/programacao.md) para os detalhes do encontro e as [referências](docs/referencias.md) para aprofundamento técnico.
 
@@ -295,7 +308,9 @@ Use a [programação](docs/programacao.md) para os detalhes do encontro e as [re
 ### Em casa, quando for praticar
 
 - [ ] Escolhi um LAB e li seus requisitos.
-- [ ] Para os LABS de código: Node.js, npm e Git respondem no terminal.
+- [ ] Para os LABS de código: Node.js 24.21.0 ou posterior, npm e Git respondem no terminal.
+- [ ] Para ensaiar a Alô, TI: `node scripts/prepare-stage.mjs` e, em seguida, `npm start` em `apps/decisions`.
+- [ ] Se o ensaio incluir o Codex CLI: `codex --version` mostra `codex-cli 0.161.0` e `codex login status` confirma a sessão.
 - [ ] Clonei a branch indicada e executei os testes offline.
 - [ ] Se vou abrir a Alô, TI, instalei as dependências e conferi o modo Simulado.
 - [ ] Conferi meu acesso ao produto necessário e os limites de uso aplicáveis.
@@ -313,6 +328,7 @@ Use a [programação](docs/programacao.md) para os detalhes do encontro e as [re
 | [labs/02-decisions-typescript/](labs/02-decisions-typescript/) | Decisões tipadas e revisão humana |
 | [exercises/ticket-router/](exercises/ticket-router/) | Starter, solução e testes |
 | [apps/decisions/](apps/decisions/) | Alô, TI, domínio e testes |
+| [docs/roteiro-de-palco.md](docs/roteiro-de-palco.md) | Camada que sempre funciona e camada ao vivo |
 | [docs/guia-apresentadora.md](docs/guia-apresentadora.md) | Roteiro e plano B |
 | [docs/validacao.md](docs/validacao.md) | Evidências e próximos ensaios |
 | [docs/referencias.md](docs/referencias.md) | Fontes para continuar estudando |

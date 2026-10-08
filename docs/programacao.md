@@ -29,4 +29,4 @@ Voz faz parte do tema Decisions. CLI e Cloud podem reutilizar o mesmo exercício
 - **Durante:** acompanhe as demonstrações de Glaucia e observe a tarefa, o resultado e a verificação. Não haverá execução coletiva dos LABS
 - **Depois:** repita em casa as mesmas demonstrações usando os LABS, incluindo os cenários de falha e o reset
 
-Consulte o [estado real da validação](validacao.md) antes de depender de qualquer demonstração ao vivo.
+Consulte o [roteiro de palco](roteiro-de-palco.md) e o [estado real da validação](validacao.md) antes de depender de qualquer demonstração ao vivo.

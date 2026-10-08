@@ -32,7 +32,7 @@ O teste de navegador cobre: cenário, bloqueio antes da revisão humana, correç
 
 ## Como repetir
 
-Na raiz, com Node.js 22.18+:
+Na raiz, com Node.js 24.21.0 ou posterior:
 
 ```bash
 node --test exercises/ticket-router/starter/router.test.mjs

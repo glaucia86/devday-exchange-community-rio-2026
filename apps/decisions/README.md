@@ -16,7 +16,7 @@ O [registro de validação](../../docs/validacao.md) distingue cada estágio.
 
 ## Requisitos e versões
 
-Node.js 22.18+; CI validada com 24.21.0. As dependências diretas e transitivas estão fixadas no package.json e package-lock.json. Versões principais: Next.js 16.4.0, React 19.3.0, Tailwind CSS 4.3.3, TypeScript 5.9.3 e Lucide 0.468.0.
+Node.js 24.21.0 ou posterior, o mesmo valor de `.nvmrc` e da CI. As dependências diretas e transitivas estão fixadas no package.json e package-lock.json. Versões principais: Next.js 16.4.0, React 19.3.0, Tailwind CSS 4.3.3, TypeScript 5.9.3 e Lucide 0.468.0. `engine-strict` recusa um Node anterior na instalação.
 
 ## Testar o domínio sem instalar pacotes
 
@@ -34,12 +34,12 @@ npm ci --ignore-scripts
 npm run typecheck
 npm test
 npm run build
-npm run dev
+npm start
 ```
 
-Abra http://localhost:3000. A aplicação escuta somente em 127.0.0.1. Dependências são baixadas na instalação; depois, o mock funciona sem uma conta OpenAI. A primeira preparação exige acesso ao registro npm.
+Abra http://127.0.0.1:3000. A aplicação escuta somente em 127.0.0.1. Dependências são baixadas na instalação; depois, o mock funciona sem uma conta OpenAI. A primeira preparação exige acesso ao registro npm. No palco, **Modo palco** aumenta o texto da equipe. O rodapé deixa registrado que a aba Simulado usa respostas preparadas.
 
-Para executar a build produzida, use npm start no lugar de npm run dev. Não exponha o servidor como serviço público sem um desenho de segurança apropriado.
+`npm run dev` serve para editar a interface. Ele reescreve `next-env.d.ts`, que o Next gera e o Git ignora. O comando `npm run typecheck` roda `next typegen` antes do `tsc`, então um checkout limpo continua passando. Não exponha o servidor como serviço público sem um desenho de segurança apropriado.
 
 ## Teste de navegador
 

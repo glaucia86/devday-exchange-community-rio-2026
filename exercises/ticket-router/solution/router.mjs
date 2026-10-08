@@ -1,4 +1,4 @@
-/** Small deterministic rules for learning to review code, not an AI classifier. */
+/** Regras pequenas e determinísticas para aprender a revisar código. Não é um classificador. */
 export function routeTicket(text) {
   if(typeof text !== 'string') return 'revisao_humana';
   const normalized=text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();

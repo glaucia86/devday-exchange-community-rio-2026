@@ -13,6 +13,9 @@ try{
   assert.equal(await page.title(),'Alô, TI · DevDay Exchange Rio');
   assert.equal(await page.getByRole('link',{name:'Alô, TI, início',exact:true}).innerText(),'Alô, TI');
   assert.equal(await page.getByRole('region',{name:'Laboratório Alô, TI',exact:true}).count(),1);
+  assert.equal(await page.getByText('FIXTURE',{exact:true}).count(),0);
+  assert.equal(await page.locator('.fixture-label').count(),0);
+  await visible(page.getByText('Modo simulado: respostas preparadas'));
   await page.screenshot({path:'test-results/desktop-start.png',fullPage:true});
   await page.getByRole('button',{name:'Explorar cenário'}).click();
   assert.ok(await page.getByText('ALÔ, TI',{exact:true}).count()>0,'simulated transcript uses the current brand');
@@ -21,7 +24,9 @@ try{
   await visible(page.getByRole('heading',{name:'Acessos e identidade',exact:true}));
   await page.getByLabel('Revisei o relato e a equipe responsável.').check();
   await enabled(page.getByRole('button',{name:'Confirmar e criar ticket simulado'}),true);
-  await page.getByRole('button',{name:'Simular uma correção'}).click();
+  assert.equal(await page.getByRole('button',{name:'Simular uma correção'}).count(),0);
+  assert.equal(await page.locator('.example-badge').count(),0);
+  await page.getByRole('button',{name:'Corrigir o relato'}).click();
   await enabled(page.getByRole('button',{name:'Confirmar e criar ticket simulado'}),false);
   assert.equal(await page.getByLabel('Revisei o relato e a equipe responsável.').isChecked(),false);
   await page.getByRole('button',{name:'Analisar relato',exact:true}).click();
@@ -56,6 +61,11 @@ try{
   await page.getByLabel('Simular falha na próxima análise').uncheck();
   await page.getByRole('button',{name:'Analisar relato',exact:true}).click();
   await visible(page.getByRole('heading',{name:'Acessos e identidade',exact:true}));
+  await page.getByRole('button',{name:'Modo palco'}).click();
+  assert.equal(await page.locator('main.stage').count(),1);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true,'stage mode should not overflow the desktop viewport');
+  await page.getByRole('button',{name:'Palco ligado'}).click();
+  assert.equal(await page.locator('main.stage').count(),0);
   await page.setViewportSize({width:390,height:844});
   await page.getByRole('button',{name:'Por trás da decisão'}).click();
   await page.screenshot({path:'test-results/mobile-review.png',fullPage:true});
@@ -89,7 +99,7 @@ try{
   assert.equal(await voicePage.evaluate(()=>window.__spoken.length),1,'editing the incident must not replay its old spoken answer');
   await voicePage.close();
   assert.deepEqual(errors,[],'browser must not emit uncaught errors');
-  console.log('BROWSER_CHECKS_PASS: scenario, human gate, correction, title edit, ticket, ambiguity, reset, free text, error/retry, mobile overflow, late local voice, stale speech suppression, console.');
+  console.log('BROWSER_CHECKS_PASS: scenario, human gate, correction, title edit, ticket, ambiguity, reset, free text, error/retry, stage mode, mobile overflow, late local voice, stale speech suppression, console.');
   // Public fictional UI only. No user data or credentials are included.
   for(const file of ['desktop-start.png','desktop-ticket.png','mobile-review.png']){
     const data=(await readFile('test-results/'+file)).toString('base64');
