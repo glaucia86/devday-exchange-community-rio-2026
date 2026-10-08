@@ -68,14 +68,15 @@ A única espera medida foi de 20 a 45 segundos, em 8 de outubro de 2026, com o c
 
 - Conta de demonstração, sem o exercício antigo na conversa. Não há um item chamado “dots”: o dot aparece pelo próprio nome. No teste de 8 de outubro, o nome ficava no topo da barra lateral, abaixo de “New chat”, e abria em `https://chatgpt.com/dots/<id>`. Os rótulos podem variar. A primeira criação segue a introdução oficial; pule aplicativos e computador. Fonte: [Get started](https://learn.chatgpt.com/docs/dots/getting-started).
 - Se o dot dessa conta já tiver histórico, não reutilize. A documentação consultada fala em um dot, que pode ter várias responsabilidades, e na ação **Delete** para apagá-lo. Leia a confirmação. Faça isso só na conta de demonstração, antes do evento. Não apague um dot de trabalho. Essas páginas não descrevem um segundo dot simultâneo.
-- Primeiro bloco do [cenário](../labs/01-dots/cenario.md) já enviado e conferido contra as duas páginas públicas. Anote data, hora no horário de Brasília e o que estava aberto. Não envie o segundo bloco antes do palco: essa pergunta é a batida ao vivo.
-- Duas abas ao lado: [issues](https://github.com/glaucia86/devday-exchange-community-rio-2026/issues) e [pull requests](https://github.com/glaucia86/devday-exchange-community-rio-2026/pulls).
+- Primeiro bloco do [cenário](../labs/01-dots/cenario.md) já enviado e conferido contra as duas páginas públicas. Anote data, hora no horário de Brasília e o que estava visível, com o estado que a página mostra. Não envie o segundo bloco antes do palco: essa pergunta é a batida ao vivo.
+- Duas abas ao lado, nas listagens que incluem fechadas: [issues](https://github.com/glaucia86/devday-exchange-community-rio-2026/issues?q=is%3Aissue+is%3Aopen+OR+is%3Aissue+is%3Aclosed) e [pull requests](https://github.com/glaucia86/devday-exchange-community-rio-2026/pulls?q=is%3Apr+is%3Aopen+OR+is%3Apr+is%3Aclosed).
+- Glaucia vigia essas abas durante o bloco. Conteúdo não revisado ou inadequado corta na hora para o Plano B, sem ser lido.
 - Se o dot pedir GitHub, aplicativo ou computador, recuse. Se ele não ler as páginas sem isso, o ao vivo não está liberado.
 
 | Batida | Ação de Glaucia | Fala sugerida | Evidência na tela |
 | --- | --- | --- | --- |
 | Estado preparado | Abrir o dot pelo nome e mostrar o relatório já conferido | “Isto não é um chat novo. O dot ficou responsável por vigiar estas duas páginas.” | URL no formato `chatgpt.com/dots/…` e o relatório com horário |
-| Conferência muda | Abrir a página pública e bater um número e um título | “Eu aceito o que consigo ver na página.” | O item citado está aberto na página |
+| Conferência muda | Abrir a página pública e bater um número e um título | “Eu aceito o que consigo ver na página.” | O item citado está na página, com o estado que ela mostra |
 | Ao vivo | Enviar o segundo bloco, com Enter ou com a seta do campo | “Agora peço só o que mudou. Se nada mudou, essa também é uma resposta.” | Resposta em cerca de 45 segundos, ou passagem ao plano B |
 | Revisão | Comparar a resposta com a página | “O texto parece bom. A página é que decide.” | Só mudança real, ou “nada mudou”, sem item inventado |
 
@@ -85,7 +86,7 @@ A única espera medida foi de 20 a 45 segundos, em 8 de outubro de 2026, com o c
 
 **Reset:** não peça para “desconsiderar a rodada anterior”. As notas do dot atravessam a conversa, e encerrar a conversa não zera esse contexto. Fonte: [Tasks and memory](https://learn.chatgpt.com/docs/dots/tasks-and-memory). Para outro ensaio, use de novo uma conta sem esse histórico, longe do projetor.
 
-**Plano B · relatório preparado:** mostre o relatório conferido antes e a página pública ao lado. Diga que a consulta ao vivo não foi concluída. Não leia o relatório preparado como se fosse a resposta de agora. Não divida a plateia em duplas.
+**Plano B · relatório preparado:** mostre o relatório conferido antes e a página pública ao lado. Se o corte for por conteúdo não revisado ou inadequado, Glaucia fecha a resposta ao vivo sem lê-la e fica só nesse relatório. Diga que a consulta ao vivo não foi concluída. Não leia o relatório preparado como se fosse a resposta de agora. Não divida a plateia em duplas.
 
 **Ponto de parada:** pedido para conectar GitHub, aplicativo, computador ou e-mail, ou qualquer escrita no repositório. Não autorize no palco.
 
