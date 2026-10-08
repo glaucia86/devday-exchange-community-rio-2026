@@ -13,6 +13,19 @@
 .live-lab .panel-heading { gap: 1rem; flex-wrap: wrap; }
 .live-lab .suggestion p { overflow-wrap: anywhere; }
 @media(max-width:600px) { .live-lab > p, .live-access { margin: 1rem; } .live-lab .example-badge { white-space: normal; } }
+.command-log { margin: 0 1.5rem 1rem; border: 1px solid #d5e0cf; border-radius: 8px; background: #f7faf4; }
+.command-log .panel-heading { padding: 14px 16px 8px; }
+.command-log .panel-heading h3 { font-size: 14px; }
+.command-log > p, .command-log li span { color: #667564; font-size: 12px; }
+.command-log > p { margin: 0; padding: 0 16px 14px; }
+.command-log ol { list-style: none; margin: 0; padding: 0 16px 12px; }
+.command-log li { display: flex; gap: 8px; align-items: baseline; padding: 6px 0; border-top: 1px solid #e6eee2; }
+.command-log li span, .monitoring p, .monitoring li { overflow-wrap: anywhere; }
+.command-log code { color: var(--accent); font-weight: 700; font-size: 12px; }
+.monitoring { margin-top: 14px; text-align: left; background: #f7faf4; border: 1px dashed #b7c9b0; border-radius: 8px; padding: 12px; }
+.monitoring p { margin: 0 0 6px; }
+.monitoring ul { margin: 8px 0 0; padding-left: 1.1rem; font-size: 11px; color: #5d6d58; }
+@media(max-width:600px) { .command-log { margin: 0 1rem 1rem; } .command-log li { flex-wrap: wrap; } }
 
 .conversation:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
 main.stage { font-size: 18px; }
@@ -24,3 +37,11 @@ main.stage .suggestion h3 { font-size: 40px; letter-spacing: -1px; }
 main.stage .ticket-created h3 { font-size: 48px; }
 main.stage .primary, main.stage .text-button, main.stage .create-button, main.stage .toolbar-actions button { font-size: 16px; }
 main.stage .input-area textarea, main.stage .ticket-draft > input, main.stage .ticket-draft select { font-size: 18px; }
+.edit-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.conversation-state.attention{color:#6d4e12;font-weight:700;font-size:11px}
+.suggestion.unsupported{background:#f6f1e2;border-color:#e2d2a4}
+.suggestion.unsupported h3{color:#3f3420}
+.suggestion.unsupported p{color:#4d4330;font-size:12px}
+.message.attention{background:#f6f1e2;border:1px solid #e2d2a4;border-radius:8px;padding:12px 14px;margin:12px 0}
+.message.attention p{color:#2f3828;font-size:13px}
+.notice.attention{font-size:13px;line-height:1.55;color:#2f3828;background:#f6f1e2;border:1px solid #e2d2a4;border-radius:8px;padding:12px 14px}
