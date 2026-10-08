@@ -54,9 +54,11 @@ try{
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth),false);
   const docMenu=page.getByRole('button',{name:/Menu/i}).first();
   await docMenu.focus();await page.keyboard.press('Enter');
-  assert.equal(await docMenu.getAttribute('aria-expanded'),'true');
+  const docMenuLink=page.getByRole('link',{name:'Dots',exact:true});
+  await docMenuLink.waitFor({state:'visible'});
   await page.keyboard.press('Escape');
-  assert.equal(await docMenu.getAttribute('aria-expanded'),'false');
+  await docMenuLink.waitFor({state:'hidden'});
+  assert.equal(await docMenu.evaluate(el=>el===document.activeElement),true);
   await page.screenshot({path:`test-results/lab-mobile-${width}.png`,fullPage:true});
   await page.goto(root+'apresentadora/');
   assert.equal(await page.locator('textarea:visible').count(),0);
