@@ -8,7 +8,7 @@ A licença MIT deste repositório cobre o código e a documentação originais d
 
 OpenAI, ChatGPT, Codex, Microsoft, Ignite, .NET e nomes de outros produtos pertencem aos respectivos titulares. Sua menção identifica tecnologias e fontes de estudo; não implica patrocínio ou aprovação deste repositório.
 
-O banner fornecido para o encontro é material separado e ainda não está incluído nesta branch textual. Quando incorporado com autorização, permanecerá fora da licença MIT do código e da documentação.
+O banner fornecido para o encontro está em `assets/devday-exchange-community-banner.jpg`. A arte e as marcas permanecem fora da licença MIT do código e da documentação; sua inclusão não concede direitos adicionais.
 
 ## Referências didáticas
 

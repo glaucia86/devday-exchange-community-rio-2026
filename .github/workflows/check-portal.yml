@@ -1,0 +1,92 @@
+name: Verificar portal completo
+on:
+  pull_request:
+    paths: ['portal/**', 'labs/**', 'docs/**', 'exercises/**', 'README.md', 'apps/decisions/README.md', 'assets/**', '.github/workflows/check-portal*.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: portal-completo-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  portal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: portal
+    env:
+      ASTRO_TELEMETRY_DISABLED: '1'
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with: {persist-credentials: false}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with: {node-version: '24.21.0', cache: npm, cache-dependency-path: portal/package-lock.json}
+      - name: Instalar dependências fixadas
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Testes de conteúdo e apresentadora
+        id: unit
+        continue-on-error: true
+        run: npm test
+      - name: Regras Firestore somente no emulador
+        id: rules
+        continue-on-error: true
+        run: |
+          export JAVA_HOME="$JAVA_HOME_21_X64"
+          export PATH="$JAVA_HOME/bin:$PATH"
+          npx firebase emulators:exec --only firestore --project demo-devday-presenter --config firebase/firebase.json "node --test tests/rules.test.mjs"
+      - name: Conferir tipos
+        id: types
+        continue-on-error: true
+        run: npm run check
+      - name: Gerar HTML estático
+        id: build
+        continue-on-error: true
+        run: npm run build
+      - name: Conferir links, HTML e privacidade do build
+        id: site
+        if: steps.build.outcome == 'success'
+        continue-on-error: true
+        run: npm run test:site && node --test tests/presenter-build.test.mjs
+      - name: Revalidar Markdown canônico após limpeza da geração
+        if: always()
+        run: cd .. && node scripts/check-doc-links.mjs
+      - name: Preparar Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Verificar UI privada com fixture isolada
+        id: presenter_browser
+        continue-on-error: true
+        run: node tests/presenter-browser.mjs
+      - name: Verificar portal e capturar telas
+        id: browser
+        if: steps.build.outcome == 'success'
+        continue-on-error: true
+        run: |
+          npm run preview > /tmp/portal-preview.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:4321/devday-exchange-community-rio-2026/ > /dev/null && break; sleep 1; done
+          npm run test:browser
+      - name: Guardar somente capturas fictícias e build público
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: portal-review
+          retention-days: 7
+          path: |
+            portal/test-results/*.png
+            portal/dist
+      - name: Disponibilizar capturas públicas para inspeção
+        if: always()
+        run: node scripts/export-review-images.mjs
+      - name: Consolidar resultados
+        if: always()
+        run: |
+          test '${{ steps.unit.outcome }}' = success
+          test '${{ steps.rules.outcome }}' = success
+          test '${{ steps.types.outcome }}' = success
+          test '${{ steps.build.outcome }}' = success
+          test '${{ steps.site.outcome }}' = success
+          test '${{ steps.presenter_browser.outcome }}' = success
+          test '${{ steps.browser.outcome }}' = success

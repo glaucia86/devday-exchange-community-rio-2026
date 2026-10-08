@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deployment remains closed until a verified owner is configured.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
