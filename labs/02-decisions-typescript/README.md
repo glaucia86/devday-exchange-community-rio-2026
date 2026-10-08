@@ -40,7 +40,7 @@ Siga somente [Prepare seu ambiente](../../README.md#preparacao) até clonar o pr
 node --test apps/decisions/tests/*.test.mts
 ```
 
-**Esperado:** no fim da saída, `tests 40`, `pass 40`, `fail 0`. O teste de handshake usa somente loopback, isto é, comunicação interna na própria máquina, sem chave real ou internet. Se o comando falhar por caminho ou versão do Node, corrija a preparação antes de seguir.
+**Esperado:** no fim da saída, `tests 50`, `pass 50`, `fail 0`. O teste de handshake usa somente loopback, isto é, comunicação interna na própria máquina, sem chave real ou internet. Se o comando falhar por caminho ou versão do Node, corrija a preparação antes de seguir.
 
 Agora use o terminal que está confirmado na raiz do repositório. Execute uma linha por vez para entrar na pasta da aplicação, instalar e iniciar:
 
@@ -187,7 +187,7 @@ Anote o modo usado: voz real, interface simulada ou somente contrato offline. No
 | Resposta sugere outra equipe | Transcrição e correção mais recente | Revise o dado; não confirme uma sugestão errada para obter um ticket |
 | Finalização da sessão não confirmada | Aviso após Encerrar conversa | Verifique sessão e consumo; não reinicie em sequência nem trate trocar de aba como encerramento |
 
-- **40 testes falham por sintaxe TypeScript:** confira Node.js 24.21.0 ou posterior e o diretório atual
+- **50 testes falham por sintaxe TypeScript:** confira Node.js 24.21.0 ou posterior e o diretório atual
 - **`ARQUIVO_INVALIDO`:** confira caminho e sintaxe JSON; não é a recusa esperada
 - **Porta 3000 ocupada:** veja a URL do terminal ou encerre somente o servidor de uma tentativa sua; não termine processos desconhecidos
 - **Texto livre não foi analisado:** a conversa explica o motivo. Escolha um cenário ou mude para OpenAI ao vivo; não é uma falha de acesso à API

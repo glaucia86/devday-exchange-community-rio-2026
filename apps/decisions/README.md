@@ -63,7 +63,9 @@ A espera de 900 ms é parte do mock, não uma medida de latência de API. Probab
 
 ## OpenAI ao vivo: integração experimental
 
-A aba OpenAI ao vivo conecta microfone e áudio por WebRTC, acumula transcrições, recebe delegações, consulta Decisions no servidor e devolve sugestões ao GPT-Live. Correções invalidam a revisão anterior. Somente o clique humano cria o ticket simulado.
+A aba OpenAI ao vivo conecta microfone e áudio por WebRTC. GPT-Live pede uma função (`registrar_relato`, `corrigir_relato`, `analisar`, `confirmar_ticket`, `recomecar`); o navegador executa o mesmo redutor dos botões e devolve o resultado. A transcrição não altera o relato sozinha. `analisar` consulta Decisions no servidor. O ticket simulado só nasce com confirmação explícita, por voz ou pelo botão. Depois do ticket, a tela mostra um monitoramento calculado dos registros de demonstração da semana; com a sessão ativa, essa frase é falada uma vez por `session.commentary.append`, depois de uma pausa.
+
+Sem microfone ou sem API, a aba Simulado repete o fluxo e mostra a mesma frase na tela. O ensaio offline, sem chave, é `node scripts/replay-voice-commands.mts` nesta pasta.
 
 O live fica desativado por padrão. Abrir a aba não pede microfone nem inicia inferência. A ativação exige configuração segura, acesso aos modelos e autorização de custo. A rota aceita apenas loopback HTTP, mesma origem e um código de acesso da demo distinto da chave OpenAI.
 

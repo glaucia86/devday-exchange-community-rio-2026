@@ -1,4 +1,6 @@
 /** Deterministic teaching fixtures. No model or external service is called. */
+import { demoHistory, monitoringInsight, type HistoryEntry, type MonitoringInsight } from './monitoring.ts';
+export type { HistoryEntry, MonitoringInsight };
 export type Team = 'access' | 'applications' | 'infrastructure' | 'human';
 export type ScenarioId = 'access' | 'network' | 'ambiguous';
 export const TEAMS: Record<Team, string> = {
@@ -33,6 +35,7 @@ export type DeskState = {
   status:'ready'|'needs-analysis'|'analyzing'|'review'|'clarify'|'unsupported'|'created'|'error';
   draftText:string;title:string;team:Team;messages:Message[];analysis:Decision|null;
   reviewed:boolean;ticket:Ticket|null;notice:string;
+  history:HistoryEntry[];insight:MonitoringInsight|null;
 };
 export type DeskEvent =
  | {type:'REPLAY';scenario:ScenarioId} | {type:'CORRECT'} | {type:'EDIT';value:string}
@@ -40,7 +43,7 @@ export type DeskEvent =
  | {type:'ANALYZE'} | {type:'RESOLVED';session:number;revision:number;result:Decision}
  | {type:'FAILED';session:number;revision:number} | {type:'CREATE'} | {type:'RESET'};
 export function createDesk(session=1,mode:DeskState['mode']='mock'):DeskState {
-  return {mode,session,revision:0,reportVersion:0,draftDirty:false,scenario:'access',corrected:false,status:'ready',draftText:'',title:'',team:'human',messages:[],analysis:null,reviewed:false,ticket:null,notice:''};
+  return {mode,session,revision:0,reportVersion:0,draftDirty:false,scenario:'access',corrected:false,status:'ready',draftText:'',title:'',team:'human',messages:[],analysis:null,reviewed:false,ticket:null,notice:'',history:demoHistory(Date.now()),insight:null};
 }
 export function mockDecision(scenario:ScenarioId,corrected:boolean):Decision {
   if ((scenario==='access'||scenario==='ambiguous')&&corrected) return {
@@ -68,10 +71,10 @@ export function canCreate(state:DeskState):boolean {
 }
 export function deskReducer(state:DeskState,event:DeskEvent):DeskState {
   switch(event.type) {
-    case 'RESET': return createDesk(state.session+1,state.mode);
+    case 'RESET': return {...createDesk(state.session+1,state.mode),history:state.history};
     case 'REPLAY': {
       const scenario=SCENARIOS[event.scenario];
-      return {...createDesk(state.session+1),scenario:event.scenario,revision:1,reportVersion:1,status:'needs-analysis',draftText:scenario.text,title:scenario.title,
+      return {...createDesk(state.session+1),history:state.history,scenario:event.scenario,revision:1,reportVersion:1,status:'needs-analysis',draftText:scenario.text,title:scenario.title,
         messages:[{id:1,revision:1,role:'assistant',text:'Olá! Conte o que aconteceu e quem foi afetado. Vamos preparar um ticket juntos.'},{id:2,revision:1,role:'user',text:scenario.text}],
         notice:''};
     }
@@ -112,7 +115,9 @@ export function deskReducer(state:DeskState,event:DeskEvent):DeskState {
     case 'CREATE': {
       if(!canCreate(state)) return state;
       const ticket:Ticket={id:'DEMO-0001',title:state.title.trim(),description:state.draftText.trim(),team:state.team,revision:state.reportVersion,simulated:true};
-      return {...state,status:'created',ticket,notice:'Ticket simulado criado. Nenhum sistema externo recebeu informações.',messages:append(state,'assistant',`O ticket simulado DEMO-0001 foi criado para ${TEAMS[state.team]}.`)};
+      const at=Date.now();
+      const history=[...state.history,{id:ticket.id,team:ticket.team,at,demo:false,title:ticket.title}];
+      return {...state,status:'created',ticket,history,insight:monitoringInsight(history,{team:ticket.team,at},TEAMS[ticket.team]),notice:'Ticket simulado criado. Nenhum sistema externo recebeu informações.',messages:append(state,'assistant',`O ticket simulado DEMO-0001 foi criado para ${TEAMS[state.team]}.`)};
     }
   }
 }

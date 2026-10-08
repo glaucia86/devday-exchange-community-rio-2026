@@ -68,8 +68,17 @@ export class LiveBrowser {
   });
  }
  send(content:string,delegationId:string|null=null,quiet=false){
+  return this.sendEvent({type:quiet?'session.thinking.append':'session.commentary.append',delegation_id:delegationId,content:content.slice(0,700)});
+ }
+ /** Returns a function result, then optionally continues the delegated response. */
+ submitToolOutput(callId:string,output:string,resume=true){
+  const sent=this.sendEvent({type:'response.item.create',item:{type:'function_call_output',call_id:callId,output:output.slice(0,4000)}});
+  if(!sent||!resume)return sent;
+  return this.sendEvent({type:'response.create'});
+ }
+ private sendEvent(event:Record<string,unknown>){
   if(!this.active||this.channel?.readyState!=='open')return false;
-  this.channel.send(JSON.stringify({type:quiet?'session.thinking.append':'session.commentary.append',event_id:crypto.randomUUID(),delegation_id:delegationId,content:content.slice(0,700)}));
+  this.channel.send(JSON.stringify({...event,event_id:crypto.randomUUID()}));
   return true;
  }
  stop():Promise<boolean>{

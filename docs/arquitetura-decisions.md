@@ -26,7 +26,7 @@ As três perguntas avaliam o mesmo relato:
 - choice: acessos, aplicações internas, infraestrutura ou revisão humana?
 - score: orientação sem bloqueio, trabalho degradado com alternativa ou trabalho bloqueado sem alternativa?
 
-Probabilidade e score não autorizam uma ação. O score pode ser fracionário e não é arredondado para uma prioridade operacional. A pessoa revisa título, relato e equipe; somente um clique explícito cria o ticket simulado.
+Probabilidade e score não autorizam uma ação. O score pode ser fracionário e não é arredondado para uma prioridade operacional. A pessoa revisa título, relato e equipe. O ticket simulado só nasce com confirmação explícita, pelo botão ou pela função `confirmar_ticket` quando o argumento booleano vem verdadeiro.
 
 ## Correção e concorrência
 
@@ -38,7 +38,7 @@ Texto livre no mock entra na conversa e recebe uma resposta explícita de não i
 
 ## Integração OpenAI implementada
 
-O [guia oficial](https://developers.openai.com/api/docs/guides/decisions-voice) descreve GPT-Live com delegação client e Decisions no servidor. A aplicação reúne transcrições, associa delegações e devolve resultados atuais para serem falados.
+O [guia oficial de voz com Decisions](https://developers.openai.com/api/docs/guides/decisions-voice) usa delegação client para escolher uma ação sem parâmetros. Esta mesa usa delegação Responses: o modelo devolve uma função com o relato ou a confirmação, e o navegador executa o redutor. A Decisions continua responsável pela triagem da equipe. O monitoramento final é calculado na mesa e falado com `session.commentary.append`.
 
 Em 7/10/2026, o exemplo [WebRTC](https://developers.openai.com/api/docs/guides/voice-webrtc?api=live) usa gpt-live-1, e [Decisions](https://developers.openai.com/api/docs/guides/decisions) documenta gpt-6-luna. A disponibilidade na conta ainda não foi verificada.
 
