@@ -41,6 +41,8 @@ Preserve os fatos dos outros relatos e os limites do pedido original.
 
 Não existe uma redação única correta. Compare fatos e limites.
 
+<a id="exemplo-de-revisao"></a>
+
 ## Exemplo de revisão
 
 Antes de olhar a referência, encontre o problema nesta frase:

@@ -47,6 +47,7 @@ test('loads four independent labs and the complete material map', async () => {
   assert.match(prep.markdown, /node --test exercises\/ticket-router\/starter\/router.test.mjs/);
   assert.match(prep.markdown, /<details>/);
   assert.match(prep.markdown, /<details>[\s\S]*npm\.cmd[\s\S]*<\/details>/);
+  assert.match(pages.find(p => p.route === 'labs/dots/cenario/').markdown, /id="exemplo-de-revisao"/);
   assert.ok(pages.every(p => p.sourcePath && p.title && p.markdown));
 });
 test('source changes are reflected and required sections cannot silently disappear', async () => {
