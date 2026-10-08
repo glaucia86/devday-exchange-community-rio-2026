@@ -49,7 +49,7 @@ Cada bloco abaixo fica de fora se o ensaio da véspera não tiver passado no not
 
 | Bloco | Ensaio que libera o palco | Plano B |
 | --- | --- | --- |
-| **Dots** | O dots abre na conta, sem conectar aplicativos. O resumo separa fato de lacuna e a correção do A-102 muda só o que foi corrigido. | Leia o exemplo comentado do cenário e diga que o dots não foi executado. |
+| **Dots** | No notebook do projetor, com este cenário: o dot abre pelo nome, em `chatgpt.com/dots/<id>`, sem aplicativos e sem computador. O relatório preparado confere com as páginas públicas. A pergunta ao vivo “o que mudou” foi respondida dentro de cerca de 45 s, sem inventar item e sem pedir conexão. O ensaio de 8 de outubro de 2026 usou outro cenário e não libera este bloco. | **Plano B · relatório preparado.** Mostre o relatório conferido antes, ao lado da página pública, e diga que a consulta ao vivo não foi concluída. |
 | **Codex CLI** | `codex --version` mostra `codex-cli 0.161.0` e `codex login status` confirma a sessão. A frase **A senha falhou e a conexão caiu** está vermelha no starter. | Rode a solução de referência e os 18 critérios. Diga que a mudança não veio do CLI. |
 | **Codex Cloud** | O ambiente publicado ainda começa em 16/18, com a candidata original. | Faça a caça ao bug da camada 1 e diga que a tarefa remota não rodou. |
 | **Voz** | No notebook do projetor: os cinco comandos aparecem no log, a correção no meio da frase troca a equipe, o ticket só nasce depois de “confirma”, a frase de monitoramento sai uma vez e a sessão encerra. | Fique na Alô, TI simulada. Crie o ticket pelos botões. Aponte a frase de monitoramento na tela e diga que a conversa real não foi executada. |

@@ -10,18 +10,18 @@ Os blocos podem ser organizados conforme a programação. Os tempos abaixo são 
 
 ## Quatro demonstrações, quatro LABS em casa
 
-O fio condutor é o suporte fictício da Aurora. A pergunta que liga os blocos é: **“Que evidência me permite aceitar esta entrega?”**
+O fio condutor dos blocos de código e de voz é o suporte fictício da Aurora. Dots usa outra fonte: as issues e os pull requests públicos deste repositório. A pergunta que liga os blocos é: **“Que evidência me permite aceitar esta entrega?”**
 
 | Demonstração conduzida por Glaucia | O que aparece no palco | O que a pessoa reproduz em casa |
 | --- | --- | --- |
-| [Dots](#dots) | Resumo dos três relatos, correção de A-102 e revisão dos fatos | [Mesmo cenário e pedidos](../labs/01-dots/README.md) |
+| [Dots](#dots) | Relatório preparado das issues e dos pull requests públicos, pergunta ao vivo sobre o que mudou e revisão na página | [Mesmo cenário e pedidos](../labs/01-dots/README.md) |
 | [Codex CLI](#codex-cli) | Starter → testes vermelhos → alteração → 18 critérios → diff | [Mesmos arquivos, prompt e verificador](../labs/codex-cli/README.md) |
 | [Codex Cloud](#codex-cloud) | Candidata preparada → regressão → tarefa remota → revisão | [Mesma candidata, contrato e tarefa](../labs/codex-cloud/README.md) |
 | [Decisions API](#decisions-api) | Conversa de voz para voz, correção, revisão e ticket simulado | [Mesmos relatos e sequência de voz](../labs/02-decisions-typescript/README.md), com alternativa simulada identificada |
 
 CLI e Cloud compartilham o contrato de encaminhamento. A candidata do Cloud é uma cópia com defeito intencional para estudar revisão; não a apresente como um resultado produzido pela execução anterior do CLI.
 
-**Pendente antes de considerar as quatro demos prontas:** ensaiar Dots, CLI e Cloud nas contas reais e Decisions com API, microfone e áudio reais. Testes offline e uma página publicada não comprovam essas experiências. Consulte o [registro de validação](validacao.md).
+**Pendente antes de considerar as quatro demos prontas:** ensaiar o cenário novo de Dots no notebook do projetor (o cenário antigo rodou uma vez em 8 de outubro de 2026 e não libera este bloco), ensaiar CLI e Cloud nas contas reais e Decisions com API, microfone e áudio reais. Testes offline e uma página publicada não comprovam essas experiências. Consulte o [registro de validação](validacao.md).
 
 ## Preparação antes do encontro
 
@@ -56,29 +56,39 @@ Esperado: Node.js 24.21.0 ou posterior, 71 testes aprovados no conjunto atual e 
 
 Fala sugerida: “Vou mostrar quatro demonstrações. Vocês podem acompanhar agora e repetir cada uma em casa usando o LAB correspondente. Não precisam instalar nem executar nada durante a apresentação.”
 
-Mostre o índice. Apresente o contexto: relatos de suporte fictícios que precisam de clareza, encaminhamento e revisão. As transições abaixo mantêm esse contexto, sem pedir que a plateia abra ferramentas.
+Mostre o índice. Dots abre com uma fonte pública real. Os blocos seguintes usam relatos de suporte fictícios que precisam de clareza, encaminhamento e revisão. As transições abaixo mantêm a pergunta da evidência, sem pedir que a plateia abra ferramentas.
 
 ## Dots
 
-**Estimativa de palco: 6–8 minutos.** [Reprodução em casa](../labs/01-dots/README.md)
+**Alvo de palco: 2–3 minutos, ainda não cronometrado com este cenário.** [Reprodução em casa](../labs/01-dots/README.md) · [Cenário](../labs/01-dots/cenario.md)
 
-**Deixar pronto:** conversa com dots acessível, [cenário Aurora](../labs/01-dots/cenario.md) e checklist. Não conectar aplicativos nem computador para esta demonstração.
+A única espera medida foi de 20 a 45 segundos, em 8 de outubro de 2026, com o cenário antigo de texto colado. Esse ensaio não libera este bloco. Se a resposta ao vivo não fechar em cerca de 45 segundos, passe ao plano B para o bloco caber no alvo.
 
-| Ação de Glaucia | Fala sugerida | Evidência na tela |
-| --- | --- | --- |
-| Mostrar os três relatos | “Temos fatos e lacunas. ‘Urgente’ sozinho não mede impacto.” | A-103 não informa serviço nem impacto |
-| Enviar o primeiro bloco completo, com cenário e pedido | “Vou pedir um resumo, mantendo qualquer ação externa fora do escopo.” | Resumo com fatos e perguntas, sem ticket ou envio |
-| Comparar A-102 com o original | “Alternativa não informada não significa que não existe alternativa.” | Quatro pessoas; ausência de informação preservada |
-| Enviar o bloco de correção | “Agora são duas pessoas e há uma alternativa móvel.” | Apenas os fatos correspondentes mudam; A-103 continua incompleto |
-| Apontar o checklist e concluir a revisão | “O texto parece bom. Minha aceitação depende destes fatos.” | Limites respeitados e nenhuma prioridade inventada |
+**Deixar pronto, longe do projetor:**
 
-**Transição:** “Agora vamos transformar regras explícitas de encaminhamento em código e verificar o resultado.”
+- Conta de demonstração, sem o exercício antigo na conversa. Não há um item chamado “dots”: o dot aparece pelo próprio nome. No teste de 8 de outubro, o nome ficava no topo da barra lateral, abaixo de “New chat”, e abria em `https://chatgpt.com/dots/<id>`. Os rótulos podem variar. A primeira criação segue a introdução oficial; pule aplicativos e computador. Fonte: [Get started](https://learn.chatgpt.com/docs/dots/getting-started).
+- Se o dot dessa conta já tiver histórico, não reutilize. A documentação consultada fala em um dot, que pode ter várias responsabilidades, e na ação **Delete** para apagá-lo. Leia a confirmação. Faça isso só na conta de demonstração, antes do evento. Não apague um dot de trabalho. Essas páginas não descrevem um segundo dot simultâneo.
+- Primeiro bloco do [cenário](../labs/01-dots/cenario.md) já enviado e conferido contra as duas páginas públicas. Anote data, hora no horário de Brasília e o que estava visível, com o estado que a página mostra. Não envie o segundo bloco antes do palco: essa pergunta é a batida ao vivo.
+- Duas abas ao lado, nas listagens que incluem fechadas: [issues](https://github.com/glaucia86/devday-exchange-community-rio-2026/issues?q=is%3Aissue+is%3Aopen+OR+is%3Aissue+is%3Aclosed) e [pull requests](https://github.com/glaucia86/devday-exchange-community-rio-2026/pulls?q=is%3Apr+is%3Aopen+OR+is%3Apr+is%3Aclosed).
+- Glaucia vigia essas abas durante o bloco. Conteúdo não revisado ou inadequado corta na hora para o Plano B, sem ser lido.
+- Se o dot pedir GitHub, aplicativo ou computador, recuse. Se ele não ler as páginas sem isso, o ao vivo não está liberado.
 
-**Reset:** reenviar os relatos originais como nova rodada, pedindo para desconsiderar as correções anteriores. Conferir os fatos; não presumir limpeza de memória.
+| Batida | Ação de Glaucia | Fala sugerida | Evidência na tela |
+| --- | --- | --- | --- |
+| Estado preparado | Abrir o dot pelo nome e mostrar o relatório já conferido | “Isto não é um chat novo. O dot ficou responsável por vigiar estas duas páginas.” | URL no formato `chatgpt.com/dots/…` e o relatório com horário |
+| Conferência muda | Abrir a página pública e bater um número e um título | “Eu aceito o que consigo ver na página.” | O item citado está na página, com o estado que ela mostra |
+| Ao vivo | Enviar o segundo bloco, com Enter ou com a seta do campo | “Agora peço só o que mudou. Se nada mudou, essa também é uma resposta.” | Resposta em cerca de 45 segundos, ou passagem ao plano B |
+| Revisão | Comparar a resposta com a página | “O texto parece bom. A página é que decide.” | Só mudança real, ou “nada mudou”, sem item inventado |
 
-**Plano B no palco:** Glaucia mostra o exemplo comentado do cenário e faz a revisão na tela, dizendo que dots não foi executado. Não dividir a plateia em duplas ou iniciar uma atividade paralela.
+**Transição:** “O que eu revisei foi uma mudança observável numa fonte pública. No próximo bloco, a evidência passa a ser teste e diff.”
 
-**Ponto de parada:** pedido de acesso privado ou ação externa fora do roteiro. Não autorizar para salvar a demonstração.
+**Leve para casa:** o [LAB](../labs/01-dots/README.md) cabe numa tarde. Quem já acompanha um repositório público ou uma página de status troca as URLs e repete a mesma responsabilidade.
+
+**Reset:** não peça para “desconsiderar a rodada anterior”. As notas do dot atravessam a conversa, e encerrar a conversa não zera esse contexto. Fonte: [Tasks and memory](https://learn.chatgpt.com/docs/dots/tasks-and-memory). Para outro ensaio, use de novo uma conta sem esse histórico, longe do projetor.
+
+**Plano B · relatório preparado:** mostre o relatório conferido antes e a página pública ao lado. Se o corte for por conteúdo não revisado ou inadequado, Glaucia fecha a resposta ao vivo sem lê-la e fica só nesse relatório. Diga que a consulta ao vivo não foi concluída. Não leia o relatório preparado como se fosse a resposta de agora. Não divida a plateia em duplas.
+
+**Ponto de parada:** pedido para conectar GitHub, aplicativo, computador ou e-mail, ou qualquer escrita no repositório. Não autorize no palco.
 
 ## Codex CLI
 
