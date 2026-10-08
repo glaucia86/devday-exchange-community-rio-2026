@@ -14,13 +14,8 @@ O fio condutor dos blocos de código e de voz é o suporte fictício da Aurora. 
 
 | Demonstração conduzida por Glaucia | O que aparece no palco | O que a pessoa reproduz em casa |
 | --- | --- | --- |
-<<<<<<< HEAD
-| [Dots](#dots) | Resumo dos três relatos, correção de A-102 e revisão dos fatos | [Mesmo cenário e pedidos](../labs/01-dots/README.md) |
-| [Codex CLI](#codex-cli) | Voz no terminal, visão `/agents` e uma correção curta da Alô, TI | [Mesmos comandos e o mesmo pedido](../labs/codex-cli/README.md) |
-=======
 | [Dots](#dots) | Relatório preparado das issues e dos pull requests públicos, pergunta ao vivo sobre o que mudou e revisão na página | [Mesmo cenário e pedidos](../labs/01-dots/README.md) |
-| [Codex CLI](#codex-cli) | Starter → testes vermelhos → alteração → 18 critérios → diff | [Mesmos arquivos, prompt e verificador](../labs/codex-cli/README.md) |
->>>>>>> origin/main
+| [Codex CLI](#codex-cli) | Voz no terminal, visão `/agents` e uma correção curta da Alô, TI | [Mesmos comandos e o mesmo pedido](../labs/codex-cli/README.md) |
 | [Codex Cloud](#codex-cloud) | Candidata preparada → regressão → tarefa remota → revisão | [Mesma candidata, contrato e tarefa](../labs/codex-cloud/README.md) |
 | [Decisions API](#decisions-api) | Conversa de voz para voz, correção, revisão e ticket simulado | [Mesmos relatos e sequência de voz](../labs/02-decisions-typescript/README.md), com alternativa simulada identificada |
 

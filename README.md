@@ -93,13 +93,8 @@ São **quatro demonstrações, cada uma com um LAB para reproduzir em casa**. Os
 
 | Demonstração | O que você vai reproduzir em casa | Abrir o LAB |
 | --- | --- | --- |
-<<<<<<< HEAD
-| **Dots** | Dar contexto, limitar ações e revisar uma entrega | [Cenário e passo a passo](labs/01-dots/README.md) |
-| **Codex CLI** | Falar uma correção curta no terminal, ver a tarefa em `/agents` e conferir o diff | [LAB do CLI](labs/codex-cli/README.md) |
-=======
 | **Dots** | Atribuir uma responsabilidade contínua e conferir o que mudou nas issues e nos pull requests públicos | [Cenário e passo a passo](labs/01-dots/README.md) |
-| **Codex CLI** | Acompanhar uma mudança no terminal, inspecionar o diff e verificar testes | [LAB do CLI](labs/codex-cli/README.md) |
->>>>>>> origin/main
+| **Codex CLI** | Falar uma correção curta no terminal, ver a tarefa em `/agents` e conferir o diff | [LAB do CLI](labs/codex-cli/README.md) |
 | **Codex Cloud** | Revisar uma candidata com testes verdes, reproduzir a regressão e conferir uma correção remota | [LAB do Cloud](labs/codex-cloud/README.md) |
 | **Decisions API** | Conversar por voz, corrigir o relato e revisar o ticket; com alternativa simulada e exercícios de contrato | [LAB Decisions](labs/02-decisions-typescript/README.md) |
 
@@ -265,12 +260,8 @@ node scripts/check-doc-links.mjs
 node --test scripts/check-dots-guide.test.mjs
 ```
 
-<<<<<<< HEAD
-O conjunto contém **72 testes**: 3 do starter, 8 da solução, 5 da candidata de revisão, 5 do exercício de contrato e 51 da Alô, TI. Além deles, a verificação pedagógica executa 18 casos de aceitação em cada versão do encaminhador: starter com 10 falhas esperadas, candidata com 2 e solução sem falhas. Consulte a CI do commit atual para o resultado. Testes verdes da candidata não significam que ela já está correta.
-=======
-O conjunto contém **71 testes**: 3 do starter, 8 da solução, 5 da candidata de revisão, 5 do exercício de contrato e 50 da Alô, TI. Além deles, a verificação pedagógica executa 18 casos de aceitação em cada versão do encaminhador: starter com 10 falhas esperadas, candidata com 2 e solução sem falhas. Consulte a CI do commit atual para o resultado. Testes verdes da candidata não significam que ela já está correta.
 O `scripts/check-dots-guide.test.mjs` confere o texto do LAB de Dots e não entra nessa contagem.
->>>>>>> origin/main
+O conjunto contém **72 testes**: 3 do starter, 8 da solução, 5 da candidata de revisão, 5 do exercício de contrato e 51 da Alô, TI. Além deles, a verificação pedagógica executa 18 casos de aceitação em cada versão do encaminhador: starter com 10 falhas esperadas, candidata com 2 e solução sem falhas. Consulte a CI do commit atual para o resultado. Testes verdes da candidata não significam que ela já está correta.
 
 Dentro de **`apps/decisions`**, após instalar as dependências:
 
@@ -334,13 +325,8 @@ Use a [programação](docs/programacao.md) para os detalhes do encontro e as [re
 
 | Caminho | Conteúdo |
 | --- | --- |
-<<<<<<< HEAD
-| [labs/01-dots/](labs/01-dots/) | Contexto, cenário e prática com Dots |
-| [labs/codex-cli/](labs/codex-cli/) | Voz no terminal, `/agents` e correção curta da Alô, TI |
-=======
 | [labs/01-dots/](labs/01-dots/) | Responsabilidade contínua com Dots, sobre issues e pull requests públicos |
-| [labs/codex-cli/](labs/codex-cli/) | Exercício acompanhado pelo terminal |
->>>>>>> origin/main
+| [labs/codex-cli/](labs/codex-cli/) | Voz no terminal, `/agents` e correção curta da Alô, TI |
 | [labs/codex-cloud/](labs/codex-cloud/) | Delegação remota e revisão |
 | [labs/02-decisions-typescript/](labs/02-decisions-typescript/) | Decisões tipadas e revisão humana |
 | [exercises/ticket-router/](exercises/ticket-router/) | Starter, solução e testes |

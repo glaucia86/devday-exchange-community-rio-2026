@@ -14,13 +14,8 @@ Confira inscrição, aprovação e eventuais mudanças na [página do evento no 
 
 A abertura será dedicada a um recap do OpenAI DevDay. Glaucia conduz **quatro demonstrações**, enquanto o público acompanha. Cada uma tem um LAB correspondente para reproduzir em casa depois:
 
-<<<<<<< HEAD
-- [Dots](../labs/01-dots/README.md): contexto, limites e revisão de uma entrega
-- [Codex CLI](../labs/codex-cli/README.md): voz no terminal (`/voice`), visão `/agents` e uma correção curta da Alô, TI
-=======
 - [Dots](../labs/01-dots/README.md): responsabilidade contínua sobre issues e pull requests públicos
-- [Codex CLI](../labs/codex-cli/README.md): tarefa de código acompanhada no terminal
->>>>>>> origin/main
+- [Codex CLI](../labs/codex-cli/README.md): voz no terminal (`/voice`), visão `/agents` e uma correção curta da Alô, TI
 - [Codex Cloud](../labs/codex-cloud/README.md): tarefa remota e revisão da entrega
 - [Decisions API](../labs/02-decisions-typescript/README.md): decisões tipadas e experiência de voz para voz planejada
 
