@@ -81,7 +81,7 @@ export async function loadPortalContent({repoRoot,basePath}){
   const description=bodySummary(tree);tree.children=tree.children.filter(n=>n!==h1);
   if(entry.anchor)tree.children.unshift({type:'html',value:`<a id="${entry.anchor}"></a>`});
   const markdown=processor.stringify(transform(tree,entry.sourcePath,defaultManifest,basePath));
-  pages.push({...entry,title,description,markdown});if(entry.lab)labs.push({title:entry.lab,description,route:entry.route});
+  pages.push({...entry,title,description,markdown});if(entry.lab)labs.push({title:entry.lab,description:description.split(/(?<=[.!?])\s+/u)[0],route:entry.route});
  }
  const bioNodes=htmlElements(processor.stringify(section(root,'sobre-mim')));
  const photo=bioNodes.find(n=>n.tagName==='img'&&attr(n,'alt')==='Glaucia Lemos'),name=bioNodes.find(n=>n.tagName==='h3');

@@ -22,6 +22,7 @@ export function createPresenterController({ config, gateway, onChange = () => {}
   let generation = 0;
   let loginOperation = 0;
   let loginPending = false;
+  let logoutPending = false;
   let started = false;
   let destroyed = false;
   let unsubscribe = () => {};
@@ -43,6 +44,10 @@ export function createPresenterController({ config, gateway, onChange = () => {}
   }
   async function receiveIdentity(user) {
     if (destroyed) return;
+    if (logoutPending) {
+      clear({ status: 'signed-out', isBusy: true, signedIn: false });
+      return;
+    }
     const current = ++generation;
     identity = user;
     clear({ status: 'signed-out', isBusy: false, signedIn: Boolean(user) });
@@ -73,7 +78,7 @@ export function createPresenterController({ config, gateway, onChange = () => {}
     identity = null;
     loginOperation += 1;
     loginPending = false;
-    clear({ status: 'signed-out', isBusy: false, signedIn: false, error: friendlyError(error, 'login') });
+    clear({ status: 'signed-out', isBusy: logoutPending, signedIn: false, error: friendlyError(error, 'login') });
   }
 
   return {
@@ -87,7 +92,7 @@ export function createPresenterController({ config, gateway, onChange = () => {}
       catch (error) { receiveAuthError(error); }
     },
     async signIn() {
-      if (!enabled || destroyed || loginPending || state.signedIn || state.isBusy) return;
+      if (!enabled || destroyed || loginPending || logoutPending || state.signedIn || state.isBusy) return;
       const current = ++loginOperation;
       loginPending = true;
       change({ status: 'authenticating', isBusy: true, error: '' });
@@ -131,17 +136,21 @@ export function createPresenterController({ config, gateway, onChange = () => {}
       }
     },
     async signOut() {
-      if (!enabled || destroyed) return;
+      if (!enabled || destroyed || logoutPending) return;
+      logoutPending = true;
       generation += 1;
       loginOperation += 1;
       loginPending = false;
       identity = null;
       clear({ status: 'signed-out', isBusy: true, signedIn: false });
+      let errorMessage = '';
       try {
         await gateway.signOut();
-        if (!destroyed) change({ status: 'signed-out', isBusy: false });
       } catch (error) {
-        if (!destroyed) change({ status: 'signed-out', isBusy: false, error: friendlyError(error, 'signOut') });
+        errorMessage = friendlyError(error, 'signOut');
+      } finally {
+        logoutPending = false;
+        if (!destroyed) change({ status: 'signed-out', isBusy: false, error: errorMessage });
       }
     },
     destroy() {

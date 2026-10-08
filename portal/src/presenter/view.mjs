@@ -49,7 +49,7 @@ export function mountPresenter(root, { config, gateway }) {
     save.disabled = !ready || !state.dirty || state.isBusy || state.content.length > MAX_NOTE_LENGTH;
     save.textContent = state.saveStatus === 'saving' ? 'Salvando…' : 'Salvar notas';
     logout.hidden = !state.signedIn;
-    logout.textContent = state.dirty ? 'Sair e descartar alterações' : 'Sair e limpar esta tela';
+    logout.textContent = state.dirty && !state.isBusy ? 'Sair e descartar alterações' : 'Sair e limpar esta tela';
     status.textContent = statusText(state);
     error.textContent = state.error;
     error.hidden = !state.error;

@@ -5,7 +5,7 @@ const root='http://127.0.0.1:4321/devday-exchange-community-rio-2026/';
 await mkdir('test-results',{recursive:true});
 const browser=await chromium.launch();
 try{
- const page=await browser.newPage({viewport:{width:1440,height:1000}});
+ const page=await browser.newPage({viewport:{width:1440,height:1000},permissions:['clipboard-read','clipboard-write']});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(root);await page.waitForLoadState('networkidle');
  assert.equal(await page.locator('h1').count(),1);
@@ -13,10 +13,13 @@ try{
  const skip=page.getByRole('link',{name:/Pular para o conteúdo/i});
  await skip.press('Enter');
  assert.equal(await page.evaluate(()=>document.activeElement?.id),'main-content');
+ await page.evaluate(()=>document.activeElement?.blur());
  assert.ok(await page.locator('a[href$="/labs/dots/"]').count());
  await page.screenshot({path:'test-results/home-desktop.png',fullPage:true});
  await page.goto(root+'labs/dots/');await page.reload();
  assert.match(await page.locator('h1').innerText(),/Dots/);
+ const activeLink=page.locator('a[aria-current="page"]').first();
+ assert.equal(await activeLink.evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)');
  await page.screenshot({path:'test-results/lab-desktop.png',fullPage:true});
  const search=page.getByRole('button',{name:/Pesquisar|Search/i}).first();
  await search.click();
@@ -32,6 +35,7 @@ try{
  await page.goto(root+'prepare-se/');
  const copy=page.getByRole('button',{name:/copiar|copy/i}).first();
  await copy.click();
+ assert.match(await page.evaluate(()=>navigator.clipboard.readText()),/node|npm|git/);
  await page.goto(root+'apresentadora/');
  assert.equal(await page.locator('textarea:visible').count(),0);
  assert.match(await page.locator('main').innerText(),/configura|indisponível|preparação/i);
@@ -47,6 +51,10 @@ try{
   await page.goto(root+'labs/dots/');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth),false);
   await page.screenshot({path:`test-results/lab-mobile-${width}.png`,fullPage:true});
+  await page.goto(root+'apresentadora/');
+  assert.equal(await page.locator('textarea:visible').count(),0);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth),false);
+  await page.screenshot({path:`test-results/apresentadora-fechada-mobile-${width}.png`,fullPage:true});
  }
  await page.emulateMedia({reducedMotion:'reduce'});await page.goto(root);
  assert.equal(await page.locator('h1').evaluate(el=>getComputedStyle(el).animationName),'none');
