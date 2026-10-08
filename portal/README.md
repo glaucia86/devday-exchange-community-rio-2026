@@ -38,4 +38,4 @@ Em outro terminal, na mesma pasta, execute npm run test:browser. O workflow pró
 
 ## Publicação
 
-Esta entrega produz apenas um artefato estático para revisão. Não contém job de deploy. A ativação de GitHub Pages, o merge, o Firebase real e o login OAuth ficam para aprovação posterior.
+O workflow publish-portal.yml executa a validação completa e publica somente dist no GitHub Pages após alterações em main, ou por execução manual na branch main. A verificação posterior confirma o commit publicado, links profundos, assets, busca e área privada fechada. A publicação mantém PUBLIC_PRESENTER_ENABLED=false. Firebase real, OAuth e regras privadas continuam separados e pendentes de configuração autorizada.

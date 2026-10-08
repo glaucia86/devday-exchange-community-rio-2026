@@ -3,6 +3,7 @@ on:
   pull_request:
     paths: ['portal/**', 'labs/**', 'docs/**', 'exercises/**', 'README.md', 'apps/decisions/README.md', 'assets/**', '.github/workflows/check-portal*.yml']
   workflow_dispatch:
+  workflow_call:
 permissions:
   contents: read
 concurrency:
@@ -18,6 +19,7 @@ jobs:
     env:
       ASTRO_TELEMETRY_DISABLED: '1'
       CI: 'true'
+      PUBLIC_PRESENTER_ENABLED: 'false'
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with: {persist-credentials: false}

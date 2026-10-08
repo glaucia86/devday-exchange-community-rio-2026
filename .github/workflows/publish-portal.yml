@@ -1,0 +1,78 @@
+name: Publicar portal no GitHub Pages
+on:
+  push:
+    branches: [main]
+    paths: ['portal/**', 'labs/**', 'docs/**', 'exercises/**', 'README.md', 'apps/decisions/README.md', 'assets/**', '.github/workflows/check-portal.yml', '.github/workflows/publish-portal.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: github-pages-portal
+  cancel-in-progress: false
+jobs:
+  validate:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/check-portal.yml
+    permissions:
+      contents: read
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Obter somente o artefato validado neste run
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: portal-review
+          path: _review
+      - name: Conferir configuração do Pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - name: Identificar o commit público
+        env:
+          DEPLOY_COMMIT: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib
+          folder = pathlib.Path("_review/dist")
+          if not (folder / "index.html").is_file():
+              raise SystemExit("Artefato estático ausente.")
+          (folder / "deployment.json").write_text(json.dumps({"commit": os.environ["DEPLOY_COMMIT"]}) + "\n")
+          PY
+      - name: Preparar somente os arquivos públicos
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        with:
+          path: _review/dist
+      - name: Publicar GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
+  verify:
+    needs: deploy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: portal
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with: {persist-credentials: false}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with: {node-version: '24.21.0', cache: npm, cache-dependency-path: portal/package-lock.json}
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Verificar site publicado sem autenticação
+        env:
+          PORTAL_PUBLIC_URL: ${{ needs.deploy.outputs.page_url }}
+          EXPECTED_COMMIT: ${{ github.sha }}
+        run: node tests/live-site.mjs
