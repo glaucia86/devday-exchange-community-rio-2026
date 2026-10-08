@@ -62,7 +62,7 @@ export function deskReducer(state:DeskState,event:DeskEvent):DeskState {
       const scenario=SCENARIOS[event.scenario];
       return {...createDesk(state.session+1),scenario:event.scenario,revision:1,status:'needs-analysis',draftText:scenario.text,title:scenario.title,
         messages:[{id:1,revision:1,role:'assistant',text:'Olá! Conte o que aconteceu e quem foi afetado. Vamos preparar um ticket juntos.'},{id:2,revision:1,role:'user',text:scenario.text}],
-        notice:'Fala completa do cenário. Nenhuma chamada à OpenAI foi feita.'};
+        notice:''};
     }
     case 'EDIT': return state.ticket?state:{...state,revision:state.revision+1,draftText:event.value,status:'needs-analysis',analysis:null,reviewed:false,ticket:null,notice:'Relato alterado. A análise anterior perdeu a validade.'};
     case 'CORRECT': {
@@ -78,7 +78,7 @@ export function deskReducer(state:DeskState,event:DeskEvent):DeskState {
       if(!state.draftText.trim()||state.ticket||state.status==='analyzing') return state;
       const fixture=SCENARIOS[state.scenario];
       if(state.mode==='mock'&&state.draftText!==fixture.text&&state.draftText!==fixture.correction) return {...state,status:'clarify',analysis:null,reviewed:false,notice:'O mock reproduz apenas os cenários prontos. Texto livre não foi analisado. Escolha um cenário ou use a integração ao vivo quando disponível.'};
-      return {...state,status:'analyzing',analysis:null,reviewed:false,corrected:state.draftText===fixture.correction,notice:state.mode==='mock'?'Reproduzindo uma resposta tipada de exemplo.':'Consultando Decisions no servidor.'};
+      return {...state,status:'analyzing',analysis:null,reviewed:false,corrected:state.draftText===fixture.correction,notice:state.mode==='mock'?'Analisando o relato.':'Consultando Decisions no servidor.'};
     }
     case 'RESOLVED': {
       if(event.session!==state.session||event.revision!==state.revision||state.status!=='analyzing') return state;

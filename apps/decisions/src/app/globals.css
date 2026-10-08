@@ -15,3 +15,12 @@
 @media(max-width:600px) { .live-lab > p, .live-access { margin: 1rem; } .live-lab .example-badge { white-space: normal; } }
 
 .conversation:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+main.stage { font-size: 18px; }
+main.stage h1 { font-size: clamp(48px, 5vw, 72px); }
+main.stage h2 { font-size: 32px; }
+main.stage .welcome h3 { font-size: 40px; }
+main.stage .message p, main.stage .suggestion p, main.stage .intro-copy { font-size: 20px; line-height: 1.55; }
+main.stage .suggestion h3 { font-size: 40px; letter-spacing: -1px; }
+main.stage .ticket-created h3 { font-size: 48px; }
+main.stage .primary, main.stage .text-button, main.stage .create-button, main.stage .toolbar-actions button { font-size: 16px; }
+main.stage .input-area textarea, main.stage .ticket-draft > input, main.stage .ticket-draft select { font-size: 18px; }

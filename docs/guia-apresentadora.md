@@ -4,6 +4,8 @@
 
 Roteiro público para Glaucia preparar e conduzir as demonstrações. **No evento, Glaucia opera os produtos e o público acompanha. Os LABS são para reproduzir as mesmas demonstrações em casa depois. Não há tempo reservado para execução coletiva dos exercícios.**
 
+O [roteiro de palco](roteiro-de-palco.md) divide a apresentação em duas camadas: a base que sempre funciona e a camada ao vivo, que só entra com ensaio feito.
+
 Os blocos podem ser organizados conforme a programação. Os tempos abaixo são **estimativas para ensaiar a demonstração no palco**, ainda não medidos; não redefinem a grade oficial. Instalação, login, criação de ambiente e configuração de chave ficam fora da apresentação.
 
 ## Quatro demonstrações, quatro LABS em casa
@@ -24,6 +26,8 @@ CLI e Cloud compartilham o contrato de encaminhamento. A candidata do Cloud é u
 ## Preparação antes do encontro
 
 - Conferir programação e local no Luma
+- Node.js 24.21.0 ou posterior, como em `.nvmrc`. Na véspera, rode `node scripts/prepare-stage.mjs` e deixe `npm start` pronto em `apps/decisions`
+- Se o Codex CLI entrar no ensaio: `npm install -g @openai/codex@0.161.0`, `codex --version` mostra `codex-cli 0.161.0` e `codex login status` confirma a sessão, sem projetar a conta
 - Preparar uma cópia limpa do material e uma cópia separada para cada demonstração; manter soluções de referência para contingência
 - Conferir acesso e login de Dots e Codex sem expor dados pessoais na projeção
 - Preparar e publicar o ambiente Cloud do exercício antes do palco; manter uma tarefa de ensaio concluída somente se ela realmente tiver sido executada
@@ -44,7 +48,7 @@ node --test apps/decisions/tests/*.test.mts
 node scripts/check-workshop-examples.mjs
 ```
 
-Esperado: Node.js 22.18+, 56 testes aprovados no conjunto atual e aceitação com falhas didáticas conferidas: starter 8/18, candidata 16/18, solução 18/18. Isso verifica os exemplos locais; os ensaios nos produtos são uma etapa adicional.
+Esperado: Node.js 24.21.0 ou posterior, 56 testes aprovados no conjunto atual e aceitação com falhas didáticas conferidas: starter 8/18, candidata 16/18, solução 18/18. Isso verifica os exemplos locais; os ensaios nos produtos são uma etapa adicional.
 
 ## Abertura e transições
 
@@ -85,7 +89,7 @@ Mostre o índice. Apresente o contexto: relatos de suporte fictícios que precis
 1. **Mostrar a linha de base.** Execute `node --test router.test.mjs`: três testes aprovados.
    - Fala: “A linha de base está verde, mas ainda não cobre a mudança.”
 2. **Mostrar o trabalho que falta.** Execute `node ../devday-exchange-community-rio-2026/exercises/ticket-router/verify.mjs router.mjs`.
-   - Esperado: 8/18, com dez falhas. Mostre caixa alta e ambiguidade, sem ler todas as linhas.
+   - Esperado: 8/18, com dez falhas. Mostre a caixa alta e a frase **A senha falhou e a conexão caiu**: o verificador recebe `acessos` e o contrato pede `revisao_humana`. A frase **O aplicativo falhou e a rede caiu** já passa no starter; não use essa linha para mostrar a ambiguidade.
 3. **Delegar no terminal.** Abra `codex` e envie o bloco completo do LAB. Acompanhe a inclusão dos testes antes da implementação.
    - Fala: “Quero ver a falha reproduzida antes de aceitar a correção.”
 4. **Conferir fora da resposta do agente.** Rode novamente a suíte e o verificador.
@@ -127,9 +131,11 @@ Mostre o índice. Apresente o contexto: relatos de suporte fictícios que precis
 
 ## Decisions API
 
-**Estimativa de palco: 10–12 minutos.** [Reprodução em casa](../labs/02-decisions-typescript/README.md)
+**Estimativa de palco: 10–12 minutos.** [Reprodução em casa](../labs/02-decisions-typescript/README.md) · [Roteiro de palco](roteiro-de-palco.md)
 
-**Demonstração principal planejada:** voz para voz real com GPT-Live + Decisions. Ainda está pendente de ensaio real. O mock é contingência e preparação; não é prova de que a conversa real funcionou.
+**O que entra sem ensaio:** a aba **Simulado**, com **Modo palco**, a virada de Acessos e identidade para Aplicações internas e o ticket `DEMO-0001`. O botão na tela é **Corrigir o relato**.
+
+**Demonstração ao vivo, só depois do ensaio:** voz para voz real com GPT-Live + Decisions. O mock não prova que a conversa real funcionou.
 
 ### Condições para ensaiar e levar ao palco
 
@@ -145,7 +151,7 @@ Enquanto esses itens estiverem pendentes, o fluxo principal não deve ser anunci
 
 ### Preparação fora da sessão de voz
 
-Deixe a aplicação local aberta na aba **OpenAI ao vivo**, já configurada. Não comece a captura enquanto explica a arquitetura ou ajusta projeção. Sessões têm limite local de dois minutos; esse controle não garante teto de gasto.
+Deixe a aplicação local aberta com `npm start`, a partir da build do `node scripts/prepare-stage.mjs`. Na aba **OpenAI ao vivo**, já configurada. Não comece a captura enquanto explica a arquitetura ou ajusta projeção. Sessões têm limite local de dois minutos; esse controle não garante teto de gasto.
 
 Fala sugerida: “Vou falar com a Alô, TI. GPT-Live cuida da conversa e Decisions sugere o encaminhamento. O ticket continua fictício e só nasce depois da minha revisão.”
 
@@ -173,7 +179,7 @@ O exercício de editar fixtures e comparar recusas fica no LAB para estudo em ca
 
 **Reset real:** confirmar o encerramento e só então iniciar outra sessão autorizada. Não usar “Recomeçar” do mock para inferir que uma sessão remota foi encerrada.
 
-**Plano B no palco:** se uma conversa real foi iniciada, clique **Encerrar conversa** e confirme o fechamento antes de trocar para Simulado. Se a finalização não for confirmada, pare os novos inícios e siga a verificação de sessão/consumo do guia local; trocar de aba não comprova encerramento remoto. Depois, anuncie “Agora vou reproduzir o fluxo com respostas simuladas”. Na aba **Simulado**, clicar **Explorar cenário → Analisar relato → Simular uma correção → Analisar relato**, revisar e criar `DEMO-0001`. Não há microfone nem inferência nesse caminho. Voz local opcional do dispositivo não é GPT-Live. Se nem a interface estiver disponível, mostrar os testes e fixtures, sem dizer que houve conversa.
+**Plano B no palco:** se uma conversa real foi iniciada, clique **Encerrar conversa** e confirme o fechamento antes de trocar para Simulado. Se a finalização não for confirmada, pare os novos inícios e siga a verificação de sessão/consumo do guia local; trocar de aba não comprova encerramento remoto. Depois, anuncie “Agora vou reproduzir o fluxo com respostas preparadas”. Na aba **Simulado**, clique **Modo palco → Explorar cenário → Analisar relato → Corrigir o relato → Analisar relato**, revise e crie `DEMO-0001`. O seletor e o rodapé já dizem que esta aba é simulada. Não há microfone nem inferência nesse caminho. Voz local opcional do dispositivo não é GPT-Live. Se nem a interface estiver disponível, mostrar os testes e fixtures, sem dizer que houve conversa.
 
 ## Fechamento
 

@@ -11,5 +11,5 @@ export const manifest=[
  {route:'alo-ti/',sourcePath:'README.md',title:'Alô, TI: executar localmente',sections:['executar']},
  {route:'alo-ti/referencia/',sourcePath:'apps/decisions/README.md'},
  {route:'exercicio/',sourcePath:'exercises/ticket-router/README.md'},
- ...['programacao','referencias','validacao','guia-apresentadora','integracao-live','arquitetura-decisions'].map(name=>({route:`materiais/${name}/`,sourcePath:`docs/${name}.md`})),
+ ...['programacao','referencias','validacao','guia-apresentadora','integracao-live','arquitetura-decisions','roteiro-de-palco'].map(name=>({route:`materiais/${name}/`,sourcePath:`docs/${name}.md`})),
 ];

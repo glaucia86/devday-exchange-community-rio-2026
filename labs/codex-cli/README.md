@@ -22,11 +22,11 @@ Implementar uma mudança com Codex no terminal e verificar o resultado com teste
 - **Diff** mostra o que mudou entre duas versões
 - `routeTicket(text)` recebe o texto de um relato e retorna o nome de uma categoria; não cria tickets reais
 
-Você precisa de Node.js 22.18+, Git, uma conexão para usar Codex e uma conta com acesso. A preparação compartilhada explica como abrir o terminal e conferir versões. Não precisa usar uma conta corporativa nem conectar dados de trabalho.
+Você precisa de Node.js 24.21.0 ou posterior, Git, uma conexão para usar Codex e uma conta com acesso. A preparação compartilhada explica como abrir o terminal e conferir versões. Não precisa usar uma conta corporativa nem conectar dados de trabalho.
 
 ## 1. Prepare uma cópia de trabalho
 
-Siga [Prepare seu ambiente](../../README.md#preparacao) para instalar Node.js 22.18+, verificar Git e clonar o material. Abra o terminal na pasta `devday-exchange-community-rio-2026`.
+Siga [Prepare seu ambiente](../../README.md#preparacao) para instalar Node.js 24.21.0 ou posterior, verificar Git e clonar o material. Abra o terminal na pasta `devday-exchange-community-rio-2026`.
 
 Execute uma vez. Este comando de Node funciona no PowerShell, macOS e Linux e recusa sobrescrever uma cópia existente:
 
@@ -55,16 +55,20 @@ node ../devday-exchange-community-rio-2026/exercises/ticket-router/verify.mjs ro
 
 **Esperado antes da mudança:** `ACCEPTANCE {"total":18,"passed":8,"failed":10}` e código de saída 1. Aqui, falhar é parte do exercício: os três testes iniciais não cobrem os requisitos novos. Erro de arquivo ausente ou de sintaxe não conta como esse resultado.
 
+No palco, mostre a falha da frase **A senha falhou e a conexão caiu**. O verificador diz `esperado revisao_humana; recebido acessos`. A outra frase com duas equipes, **O aplicativo falhou e a rede caiu**, já passa neste starter: ele só reconhece a palavra senha e, sem ela, devolve `revisao_humana` por acaso. Não use essa segunda frase para ilustrar a ambiguidade.
+
 ## 2. Entre no Codex
 
 Se o CLI ainda não estiver instalado, o [guia oficial](https://learn.chatgpt.com/docs/codex/cli) oferece instaladores por sistema. Com npm, uma opção é:
 
 ```sh
-npm install -g @openai/codex
+npm install -g @openai/codex@0.161.0
 codex --version
 codex login
 codex login status
 ```
+
+`codex --version` deve mostrar `codex-cli 0.161.0`. Essa é a versão fixada para o encontro. Uma atualização posterior pode mudar a interface no dia do palco.
 
 No PowerShell, use `npm.cmd` se `npm.ps1` for bloqueado. Se instalou via npm e `codex.ps1` também for bloqueado, use `codex.cmd` nos quatro comandos e ao abrir o CLI, ou use o Prompt de Comando. Não altere a política de execução do sistema para acompanhar o LAB. Conclua o login no navegador com sua própria conta; não cole credenciais na conversa. Login com ChatGPT e autenticação por chave são modalidades diferentes. Este LAB não pede chave de API. Veja [autenticação](https://learn.chatgpt.com/docs/auth).
 

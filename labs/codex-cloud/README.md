@@ -23,7 +23,7 @@ Você vai usar dois lugares diferentes:
 
 **GitHub** guarda os arquivos; **ambiente** é a configuração reutilizável da máquina remota; **tarefa** é uma execução isolada dentro dessa configuração. Publicar o ambiente prepara novas tarefas, não publica a aplicação.
 
-Precisa de Node.js 22.18+ e Git para a preparação local, uma conta GitHub sua e uma conta ChatGPT com acesso ao Cloud. Se não tiver acesso, você ainda pode estudar a candidata localmente; não registre isso como um ensaio do produto Cloud.
+Precisa de Node.js 24.21.0 ou posterior e Git para a preparação local, uma conta GitHub sua e uma conta ChatGPT com acesso ao Cloud. Se não tiver acesso, você ainda pode estudar a candidata localmente; não registre isso como um ensaio do produto Cloud.
 
 ## 1. Conheça o defeito antes de delegar
 
@@ -90,7 +90,7 @@ O [guia oficial atual](https://learn.chatgpt.com/docs/environments/cloud-environ
 
 1. Abra **Work in → Cloud → Select environment → Create environment**.
 2. Selecione o repositório fictício. Se precisar conectar GitHub, confira os repositórios e permissões solicitados antes de aceitar.
-3. Em **Get started**, peça Node.js 22.18+ e a execução de `node --version` e `node --test router.test.mjs`. Não há `npm install` neste projeto.
+3. Em **Get started**, peça Node.js 24.21.0 ou posterior e a execução de `node --version` e `node --test router.test.mjs`. Não há `npm install` neste projeto.
 4. Revise o relatório de preparação: Node compatível, os quatro arquivos na raiz e cinco testes aprovados.
 5. Salve, escolha **Publish** e espere **Environment published**. Aqui, publicar cria o ambiente reutilizável do Codex; não coloca uma aplicação na internet.
 6. Escolha **Start a new task** nesse ambiente.
@@ -98,7 +98,7 @@ O [guia oficial atual](https://learn.chatgpt.com/docs/environments/cloud-environ
 Na conversa de preparação, você pode enviar este texto. Ele é um pedido ao Codex, não um comando no seu terminal local:
 
 ```text
-Prepare somente este repositório fictício. Confira Node.js 22.18 ou posterior.
+Prepare somente este repositório fictício. Confira Node.js 24.21.0 ou posterior.
 Na pasta que contém router.mjs, execute node --version,
 node --test router.test.mjs e node verify.mjs router.mjs.
 A candidata deve ter cinco testes próprios aprovados e duas falhas

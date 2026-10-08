@@ -10,13 +10,13 @@ O modo padrão permanece offline. Abrir a aba ao vivo não inicia uma sessão pa
 
 ## Se você veio do LAB e o mock já abriu
 
-A preparação inicial já foi feita. Não clone novamente nem inicie um segundo servidor. Pare sua execução com Ctrl+C antes de editar a configuração e avance para **Chave existente: inserção manual** abaixo. Se você iniciou o mock por outro guia usando `npm run dev`, gere antes a build com `npm run build` (ou `npm.cmd run build` no PowerShell); os próximos passos usam `npm start`.
+A preparação inicial já foi feita com `npm run build` e `npm start`. Não clone novamente nem inicie um segundo servidor. Pare sua execução com Ctrl+C antes de editar a configuração e avance para **Chave existente: inserção manual** abaixo. O palco usa essa build. `npm run dev` reescreve `next-env.d.ts`, arquivo gerado e fora do Git; se chegou a usá-lo, pare o processo, rode `npm run build` (ou `npm.cmd run build` no PowerShell) e siga com `npm start`.
 
 Se ainda não conseguiu abrir o mock, faça uma das preparações por sistema abaixo. Só prossiga para a chave quando a interface local funcionar.
 
 ## Windows: primeiro execute o mock
 
-Use Node.js 22.18 ou posterior; a CI usa 24.21.0. No PowerShell, os comandos npm.cmd evitam o bloqueio comum de npm.ps1, sem alterar a política de execução.
+Use Node.js 24.21.0 ou posterior, como no arquivo `.nvmrc`. No PowerShell, os comandos npm.cmd evitam o bloqueio comum de npm.ps1, sem alterar a política de execução.
 
 Se ainda não clonou:
 
@@ -49,7 +49,7 @@ Abra http://127.0.0.1:3000. Mantenha o terminal aberto. O mock não usa a chave.
 
 ## Se estiver no macOS ou Linux
 
-Use o mesmo repositório e Node.js 22.18+. No terminal, na raiz:
+Use o mesmo repositório e Node.js 24.21.0 ou posterior. No terminal, na raiz:
 
 ```sh
 cd apps/decisions
