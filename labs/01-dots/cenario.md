@@ -1,45 +1,51 @@
-# Cenário fictício: o suporte da Aurora
+# Cenário: vigiar issues e pull requests públicos
 
-A Aurora é uma empresa inventada. Não há pessoas reais, contas conectadas ou sistemas que devam ser alterados.
+A fonte é este repositório, nas duas páginas públicas abaixo. Não há empresa inventada, conta conectada nem sistema para alterar.
+
+Abra as páginas no navegador e anote o que está visível antes de enviar qualquer texto. Número e título valem só se aparecerem na página na hora da consulta.
+
+- Issues: https://github.com/glaucia86/devday-exchange-community-rio-2026/issues
+- Pull requests: https://github.com/glaucia86/devday-exchange-community-rio-2026/pulls
 
 ## Copie este primeiro bloco completo
 
+Este bloco atribui a responsabilidade. Não é um resumo avulso.
+
 ```text
-Vamos praticar com a empresa fictícia Aurora. Use somente estes dados:
+Quero que esta seja uma responsabilidade contínua, não um pedido isolado.
 
-A-101: Não consigo entrar no portal após trocar a senha.
-Situação conhecida: afeta uma pessoa; outras tarefas continuam.
+Fonte, somente estas páginas públicas:
+- https://github.com/glaucia86/devday-exchange-community-rio-2026/issues
+- https://github.com/glaucia86/devday-exchange-community-rio-2026/pulls
 
-A-102: O portal retorna erro 500.
-Situação conhecida: afeta quatro pessoas; alternativa não informada.
+Anote o que estiver aberto agora: número, título e se é issue ou pull request.
+Separe o que você viu do que não deu para ver.
+Se a página não carregar, diga isso e pare. Não complete com outro assunto.
 
-A-103: Preciso de ajuda urgente.
-Situação conhecida: serviço e impacto não informados.
-
-Prepare, aqui na conversa, um resumo de até 150 palavras para eu revisar.
-Para cada relato, separe fatos conhecidos e perguntas que faltam.
-Ao final, proponha duas perguntas de acompanhamento.
-Não envie mensagens, não abra tickets e não conecte nenhuma conta.
-Não invente prazo, prioridade ou responsável.
+Não comente, não abra issue, não abra pull request e não conecte aplicativos nem computador.
+Não invente responsável, prioridade, prazo ou rótulo que não esteja na página.
+Guarde este relatório como ponto de partida. Na próxima mensagem eu vou perguntar só o que mudou.
 ```
 
-## Depois, copie a correção
+## Depois, na mesma conversa, copie a atualização
 
 ```text
-Correção: no A-102, são duas pessoas afetadas, e existe uma alternativa
-temporária pelo aplicativo móvel. Atualize o resumo e indique o que mudou.
-Preserve os fatos dos outros relatos e os limites do pedido original.
+Desde o relatório que você guardou, o que mudou nessas duas páginas?
+Liste só entradas que abriram, fecharam ou mudaram de título.
+Se nada mudou, diga isso.
+Use somente o que estiver visível agora. Aponte o que você não conseguiu rever.
+Mantenha os limites: sem comentário, sem issue nova, sem pull request, sem conexão de aplicativo ou computador, sem responsável ou prioridade inventados.
 ```
 
 ## Como revisar
 
-- A-102 passa de quatro para duas pessoas; a alternativa móvel aparece
-- A-103 continua incompleto; “urgente” não fornece uma medida de impacto
-- Nenhuma pessoa, prazo ou prioridade foi inventada
-- As perguntas esclarecem dados ausentes
-- Nada foi enviado a terceiros nem criado em sistemas
+- Cada número e cada título citado abre na página pública correspondente
+- “Nada mudou” só passa se as duas páginas ainda batem com o relatório anterior
+- Item ausente da página é invenção
+- A conversa não comentou, não abriu issue e não abriu pull request
+- O segundo relatório diz o que mudou em relação ao primeiro
 
-Não existe uma redação única correta. Compare fatos e limites.
+Não existe uma redação única correta. Compare a resposta com as páginas abertas naquela hora.
 
 <a id="exemplo-de-revisao"></a>
 
@@ -47,22 +53,26 @@ Não existe uma redação única correta. Compare fatos e limites.
 
 Antes de olhar a referência, encontre o problema nesta frase:
 
-> “A-102 é crítico, está sem alternativa e será resolvido hoje pela equipe de aplicações.”
+> “A issue 1 é urgente, foi assumida pela equipe de plataforma e será fechada hoje.”
 
-Ela inventa prioridade, ausência de alternativa, prazo e responsável. O relato inicial só dizia que a alternativa não foi informada. Após a correção, sabemos que há uma alternativa móvel.
+Ela inventa prioridade, responsável e prazo. Um número só entra no relatório se estiver na página na hora da consulta, com o título copiado de lá.
 
 <details>
-<summary>Uma resposta possível, depois da correção</summary>
+<summary>Uma forma de resposta que passa, preenchida na hora</summary>
 
-A-101 — Fatos: uma pessoa não entra no portal após trocar a senha; consegue continuar outras tarefas. Falta saber: qual mensagem aparece e se outros acessos funcionam.
+Os colchetes não são um resultado real. Quem revisa troca cada um pelo que a página mostra.
 
-A-102 — Fatos: erro 500 no portal, duas pessoas afetadas, alternativa temporária pelo aplicativo móvel. Falta saber: desde quando ocorre e quais funções estão indisponíveis.
+Relatório inicial, visto em [data e hora, horário de Brasília]:
 
-A-103 — Fato: houve pedido de ajuda “urgente”. Falta saber: qual serviço falhou e qual é o impacto.
+- Issue [número]: “[título copiado da página]”. Aberta.
+- Pull request [número]: “[título copiado da página]”. Aberto.
+- Não deu para ver: [o que a página não mostrou, ou “nada”].
 
-Perguntas de acompanhamento: “Qual serviço e tarefa foram afetados no A-103?”; “Há bloqueio de trabalho ou uma alternativa para esse caso?”.
+Atualização:
 
-Mudança: A-102 passou de quatro para duas pessoas, com alternativa móvel informada. Nenhuma prioridade ou equipe foi atribuída.
+- Mudou: [entrada que abriu, fechou ou trocou de título, com número].
+- Se a página estiver igual: “Nada mudou nas duas páginas desde o relatório anterior.”
+- Continua fora do escopo: comentário, issue nova, pull request e conexão de aplicativo ou computador.
 
 </details>
 

@@ -5,8 +5,15 @@
 Fontes oficiais consultadas em **7 de outubro de 2026**. Modelos, versões e acesso podem mudar antes do encontro.
 
 ## Dots
+
+Páginas oficiais consultadas de novo em **8 de outubro de 2026**:
+
 - [Meet dots](https://learn.chatgpt.com/docs/dots)
-- [LAB: contexto, limites e revisão](../labs/01-dots/README.md)
+- [Get started with your dot](https://learn.chatgpt.com/docs/dots/getting-started)
+- [Tasks and memory](https://learn.chatgpt.com/docs/dots/tasks-and-memory)
+- [Control your dot](https://learn.chatgpt.com/docs/dots/controls)
+- [Connect computers and apps](https://learn.chatgpt.com/docs/dots/computers-and-apps)
+- [LAB: responsabilidade contínua](../labs/01-dots/README.md)
 
 ## Codex CLI
 - [Codex CLI: documentação e instalação](https://learn.chatgpt.com/docs/codex/cli)

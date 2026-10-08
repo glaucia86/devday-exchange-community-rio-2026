@@ -1,92 +1,133 @@
-# LAB · Dots: contexto, limites e revisão
+# LAB · Dots: responsabilidade contínua
 
 [Início](../../README.md) · [Guia da apresentadora](../../docs/guia-apresentadora.md) · [Referências](../../docs/referencias.md)
 
 ## O que você vai aprender
 
-Transformar uma intenção em uma tarefa verificável, corrigir o contexto e revisar a entrega antes de qualquer ação externa. Você será a pessoa que prepara um resumo de suporte da empresa fictícia Aurora.
+Atribuir uma responsabilidade contínua a um dot e conferir, numa fonte pública, só o que mudou.
 
-**Para fazer em casa:** reproduza a demonstração de Dots do [guia da apresentadora](../../docs/guia-apresentadora.md#dots): os mesmos três relatos, a correção de A-102 e a revisão final. No evento, você acompanha Glaucia; não precisa executar os passos junto com ela.
+O dot, na documentação oficial, é um agente que continua um trabalho entre conversas. A orientação é começar pelo que você quer que ele acompanhe, em vez de tratar cada conversa como um pedido novo. Fontes: [Get started with your dot](https://learn.chatgpt.com/docs/dots/getting-started) e [Tasks and memory](https://learn.chatgpt.com/docs/dots/tasks-and-memory).
 
-**Sua entrega:** um resumo revisado, uma correção conferida e uma frase explicando o que você ainda precisa decidir. Estimativa de estudo em casa: 10–15 minutos, ainda não medida.
+**Para fazer em casa:** reproduza a demonstração de Dots do [guia da apresentadora](../../docs/guia-apresentadora.md#dots), com o [cenário](cenario.md) deste repositório. No evento, você acompanha Glaucia. Não precisa executar os passos junto com ela.
 
-**O que já foi testado:** o cenário e os critérios foram revisados. O exercício ainda não foi ensaiado em uma conta com dots. Executar os testes do repositório não valida este fluxo.
+**Sua entrega:** um relatório inicial conferido nas duas páginas públicas, uma atualização que diz só o que mudou e uma frase sobre o que continuou sendo sua decisão. O caminho essencial cabe numa tarde. Essa duração ainda não foi medida com este cenário.
+
+**O que já foi testado:** em 8 de outubro de 2026, numa conta real do ChatGPT, o cenário antigo (resumo dos relatos fictícios da Aurora) respondeu em 20 a 45 segundos e separou fato de lacuna. Esse ensaio não cobre este cenário. A responsabilidade contínua sobre as issues e os pull requests públicos ainda não foi ensaiada. Executar os testes do repositório não valida este fluxo.
 
 ## Essencial e opcional
 
-Para reproduzir a demo, faça as quatro etapas de **Passo a passo em casa**. O desafio final é opcional. Não precisa de terminal, Git ou programação.
+O essencial é criar ou abrir o dot, enviar a responsabilidade, conferir o primeiro relatório nas páginas e pedir o que mudou. Trocar as URLs por uma fonte pública do seu trabalho, e pedir um horário recorrente, fica no final e é opcional. Não precisa de terminal, Git ou programação. Não precisa clonar o repositório.
 
-Três ideias vão orientar sua revisão: **contexto** são os dados fornecidos; **escopo** é o que foi pedido; **evidência** é o trecho que sustenta uma afirmação. Uma hipótese pode ser útil como pergunta, mas não deve aparecer como fato confirmado.
+Três ideias orientam a revisão: **contexto** é o que está nas páginas na hora; **escopo** é vigiar e relatar, sem escrever no GitHub; **evidência** é o número e o título que você mesmo abre na página.
 
 ## Antes de começar
 
-Abra o ChatGPT no navegador desktop ou aplicativo desktop e procure dots. Siga a introdução descrita no [guia oficial](https://learn.chatgpt.com/docs/dots/getting-started). Você pode pular a conexão de aplicativos e computador: este LAB só usa texto fictício colado na conversa. Não precisa clonar o repositório, instalar pacotes ou criar uma chave.
+Use o ChatGPT no navegador desktop ou no aplicativo desktop. O navegador de celular não é suportado. A criação fica no desktop; o aplicativo de celular, quando a atualização existir, abre o mesmo dot. Fonte: [Meet dots](https://learn.chatgpt.com/docs/dots) e [Get started](https://learn.chatgpt.com/docs/dots/getting-started).
 
-A disponibilidade depende do rollout e da conta. Se dots não aparecer, confira [Meet dots](https://learn.chatgpt.com/docs/dots) e use a alternativa de revisão manual ao final. Não altere seu plano para concluir o exercício.
+A disponibilidade depende de rollout, plano, região e, em conta Enterprise, de um administrador. Não altere seu plano para concluir o exercício. Se o dot não aparecer, pare e use a alternativa manual no final. Um chat comum não conta como teste de dots.
+
+### Criar o dot, na primeira vez
+
+A documentação manda abrir dots no ChatGPT e seguir a introdução. Você pode pular a conexão de aplicativos e, no aplicativo desktop, a conexão do computador. O dot começa com nome e aparência padrão. Nome, forma, cor, olhos, óculos e acessórios podem ser personalizados depois. Faça essa personalização longe de um projetor.
+
+A documentação consultada em 8 de outubro de 2026 não nomeia o item de menu dessa introdução. Se a introdução aparecer, siga o que a tela mostrar. Os rótulos podem variar.
+
+### Onde o dot aparece, quando já existe
+
+No teste de 8 de outubro de 2026, numa conta que já tinha dot, não havia um item chamado “dots”. O dot aparecia pelo próprio nome no topo da barra lateral, abaixo de “New chat”, e a conversa abria em `https://chatgpt.com/dots/<id>`. “New chat” é o rótulo observado nessa conta. Os rótulos podem variar. A documentação consultada não descreve essa posição nem esse formato de URL.
+
+### Histórico antigo contamina a rodada
+
+O dot começa com memória relevante do ChatGPT e guarda notas próprias sobre preferências, decisões e responsabilidades. Essas notas seguem para conversas e canais seguintes. Encerrar a conversa não apaga as notas e não interrompe, por si só, um trabalho já atribuído. Trocar de canal não cria outro dot. Fontes: [Get started](https://learn.chatgpt.com/docs/dots/getting-started), [Tasks and memory](https://learn.chatgpt.com/docs/dots/tasks-and-memory) e [Meet dots](https://learn.chatgpt.com/docs/dots).
+
+No teste de 8 de outubro, o dot reutilizado já tinha uma rodada igual do cenário antigo. A conferência da correção ficou contaminada. Para este LAB, a resposta não pode trazer assunto anterior. Se trouxer, a rodada não está concluída.
+
+A documentação consultada fala o tempo todo em um dot e diz que ele pode ter mais de uma responsabilidade. A ação documentada para apagá-lo é **Delete**. Leia a confirmação na tela: a exclusão não pode ser desfeita e não desfaz o que já foi feito em aplicativos conectados. O rótulo visível pode variar. Essas páginas não descrevem um segundo dot ao mesmo tempo, nem a tela que aparece logo depois de apagar. Não invente um botão de dot novo.
+
+Não apague um dot que você já usa para trabalho. No palco, a preparação usa uma conta de demonstração, sem o exercício antigo, longe do projetor. Em casa, se o seu único dot tiver outro histórico, envie mesmo assim o bloco limitado às duas páginas e confira se a resposta misturou assunto antigo.
 
 ### Confira seu ponto de partida
 
-Você deve conseguir abrir a conversa do dot e ver um campo para enviar uma mensagem. Mantenha o cenário em outra aba. Se o produto pedir conexões opcionais, pule-as; o único dado necessário é o texto fictício do exercício. Se você não conseguir localizar dots na conta, pare o caminho do produto e siga a alternativa manual, sem usar um chat comum como prova de que dots foi testado.
+Você precisa ver a conversa desse dot e um campo de mensagem. Mantenha as duas páginas do GitHub em outras abas. Se o produto oferecer conexões, pule-as. Se o dot pedir GitHub, aplicativo ou computador, recuse nesta prática: as páginas são públicas. Se você não achar nem a introdução nem um dot pelo nome, pare o caminho do produto.
+
+Para enviar, use Enter ou o controle de envio do campo. No teste de 8 de outubro esse controle era uma seta. Um exemplo da documentação traz o rótulo “Send message”. O rótulo pode variar. Não procure um botão escrito “Enviar”.
+
+**Espera.** No teste de 8 de outubro, com texto colado do cenário antigo, a resposta completa levou de 20 a 45 segundos. Este cenário pede leitura de páginas e ainda não foi cronometrado. Em casa, espere a resposta completa e anote o tempo. Não use um chat comum se a espera estourar.
 
 ## Passo a passo em casa
 
-### 1. Prepare o pedido
+Este caminho é o que você leva para casa. Cabe numa tarde: abrir ou criar o dot, guardar o primeiro relatório e pedir o que mudou.
 
-Abra o [cenário Aurora](cenario.md). Antes de enviar qualquer coisa, responda:
+### 1. Anote a fonte antes de enviar
 
-- Qual relato não diz nem qual serviço falhou?
-- Dizer “urgente” basta para escolher uma prioridade?
-- Qual é a única entrega que está autorizada?
+Abra o [cenário](cenario.md) e as duas páginas públicas. Antes de enviar, responda nas suas anotações:
 
-**Confira:** A-103 está incompleto; urgência declarada não mede impacto; a entrega é apenas um resumo nesta conversa.
+- Quais números e títulos estão abertos agora em cada página?
+- O que a página não mostra?
+- Qual ação continua fora do pedido?
 
-### 2. Envie contexto e pedido juntos
+**Confira:** a sua lista sai da página, não da memória. Comentário, issue nova e pull request ficam fora.
 
-No cenário, selecione o conteúdo do primeiro bloco, começando por “Vamos praticar...” e terminando em “Não invente prazo, prioridade ou responsável.”. Copie com Ctrl+C (Command+C no Mac), volte à conversa do dot, cole no campo de mensagem e envie pelo botão de enviar. Aguarde a resposta antes de mandar a correção. Não envie apenas o pedido final.
+### 2. Atribua a responsabilidade
 
-Leia a resposta procurando evidências:
+Copie o primeiro bloco do cenário, do “Quero que esta seja uma responsabilidade contínua” até “perguntar só o que mudou.”. Cole no campo do dot e envie com Enter ou com o controle de envio. Aguarde a resposta completa antes do segundo bloco.
 
-| Caso | Deve aparecer | Não pode ser inventado |
+**Espera:** a única faixa medida, 20 a 45 segundos, é a do cenário antigo em 8 de outubro de 2026. Anote o tempo desta resposta à parte.
+
+Leia a resposta ao lado das páginas:
+
+| Confira | Passa | Não passa |
 | --- | --- | --- |
-| A-101 | Uma pessoa afetada; falha após trocar a senha | Que a causa já foi diagnosticada |
-| A-102 | Quatro pessoas; erro 500; alternativa não informada | Que não existe alternativa |
-| A-103 | Serviço e impacto desconhecidos | Uma equipe, responsável ou prioridade |
+| Itens | Número e título iguais aos da página | Número, título ou estado que a página não mostra |
+| Lacuna | Diz o que não deu para ver, ou que a página não carregou | Completa com outro assunto |
+| Escopo | Só o relatório, nesta conversa | Comentário, issue, pull request ou pedido de conexão |
 
-**Pare aqui se:** o resumo abriu um ticket, enviou uma mensagem ou pediu acesso privado. Essas ações não fazem parte do LAB. Se o texto inventar algo, cite a frase e peça uma versão corrigida antes de continuar.
-
-**Se a resposta não passar no checklist**, envie, por exemplo:
+**Pare aqui se:** a resposta comentar, abrir issue, abrir pull request ou pedir conexão. Não autorize. Se inventar um item, cite a página e peça a correção antes de continuar.
 
 ```text
-No A-102, o cenário diz “alternativa não informada”. Você escreveu que
-não há alternativa. Corrija essa afirmação sem mudar os demais fatos.
-Continue produzindo somente o resumo nesta conversa.
+O relatório cita um item que não está na página pública agora.
+Aponte a frase e substitua só esse trecho pelo que a página mostra,
+ou retire o item. Mantenha o restante e os limites do pedido.
 ```
 
-Esse pedido aponta o problema e a evidência. Evite somente dizer “está errado”, porque isso não explica qual fato precisa mudar.
+### 3. Pergunte só o que mudou
 
-### 3. Corrija um fato e confira o restante
+Na mesma conversa, envie o segundo bloco do cenário. A intenção é ver a responsabilidade continuar: o dot usa o relatório que guardou e informa a diferença. Se você não alterou nada, “nada mudou” é uma resposta válida, desde que as páginas confirmem.
 
-Na mesma conversa, envie o segundo bloco do cenário. Não substitua a primeira mensagem: a intenção é observar como o dot revisa uma informação depois de receber uma correção. A-102 passa a afetar duas pessoas e possui uma alternativa pelo aplicativo móvel.
-
-**Confira:** a nova versão mostra os dois fatos alterados, preserva A-101 e continua tratando A-103 como incompleto. Uma resposta fluente que ainda diz “quatro pessoas” não passa na revisão.
+**Confira:** a atualização lista só mudança real, ou diz que nada mudou. Uma resposta fluente que inventa issue, responsável ou prioridade não passa.
 
 ### 4. Registre sua decisão
 
 Preencha, nas suas anotações:
 
-- Aceitei o resumo porque: …
-- Pedi correção ou esclarecimento sobre: …
+- Aceitei o relatório porque: …
+- Pedi correção sobre: …
 - Continuou sendo minha decisão: …
 
-**Critério de conclusão:** fatos corretos, lacunas explícitas, nenhuma prioridade inventada e nenhuma ação externa. A redação pode variar. Confira depois o [exemplo comentado](cenario.md#exemplo-de-revisao).
+**Critério de conclusão:** itens conferidos nas páginas, lacunas explícitas, nenhuma prioridade ou responsável inventado, nenhuma escrita no GitHub e uma atualização comparada ao primeiro relatório. A redação pode variar. Veja a [forma comentada](cenario.md#exemplo-de-revisao).
 
 ## Se algo não funcionar
 
-- **Dots não aparece:** revise manualmente o exemplo comentado do cenário usando o mesmo checklist. Você pode fazer isso por conta própria em casa. Isso pratica revisão, mas não é um teste do produto
-- **Resposta longa:** reforce o limite de 150 palavras e peça somente os três relatos
-- **Resposta misturou suposição com fato:** destaque a afirmação e pergunte qual trecho do cenário a sustenta
-- **Para repetir:** envie o cenário original novamente, dizendo “Nova rodada deste exercício: use somente os relatos abaixo e desconsidere as correções da rodada anterior”. Confira os fatos; não presuma que abrir outra conversa apaga contexto ou memória
+- **O dot não aparece:** revise a forma comentada do cenário com o mesmo checklist, olhando as páginas públicas. Isso pratica revisão e não é um teste do produto
+- **A resposta traz assunto antigo:** a rodada está contaminada. Não conte como concluída. Não apague um dot de trabalho para “limpar” no meio do exercício
+- **A página pública e o relatório divergem:** vale a página. Peça para corrigir a frase, citando o que você vê
+- **O dot pede para conectar GitHub, aplicativo ou computador:** recuse neste LAB. A leitura pedida é de página pública
+- **A resposta demora:** anote o tempo. Não há teto medido para este cenário. Não troque para um chat comum
 
-## Depois do encontro, se quiser aprofundar
+## Leve para casa, no seu trabalho
 
-Acrescente um quarto relato fictício com informação contraditória. Peça ao dot para apontar a contradição antes de resumir. Compare a primeira resposta e a revisão: qual mudança reduziu o risco de alguém agir com informação errada?
+Quando o caminho essencial tiver passado, repita a mesma responsabilidade com uma fonte pública que você já acompanha. Troque as duas URLs do cenário por essa fonte. Exemplos que cabem no mesmo pedido: as issues e os pull requests de um repositório público seu, ou uma página de status pública. Faça uma mudança real que você controla, como abrir e fechar uma issue num repositório seu, e peça de novo o que mudou. Confira na página.
+
+A documentação também permite um horário fixo. Se quiser ver isso na mesma tarde, peça confirmação do que ficou agendado, com fuso e data de término. Um modelo, adaptado do guia oficial:
+
+```text
+Confira as mesmas duas páginas públicas uma vez, às 16:00,
+horário de Brasília, só no próximo dia útil. Avise nesta conversa
+apenas se uma issue ou um pull request abrir, fechar ou mudar de título.
+Se nada mudar, não me interrompa. Confirme o que ficou agendado.
+Não comente, não abra issue e não conecte aplicativos.
+```
+
+Peça para o dot confirmar o horário. No aplicativo desktop, a documentação manda abrir **Scheduled** para rever, desligar ou apagar a tarefa recorrente. O rótulo pode variar. Cancelar o horário é diferente de pausar o trabalho atual. Fonte: [Tasks and memory](https://learn.chatgpt.com/docs/dots/tasks-and-memory) e [Control your dot](https://learn.chatgpt.com/docs/dots/controls). Não deixe um horário de teste rodando depois da tarde.
+
+Conectar o GitHub para investigar uma issue e preparar um pull request é um caminho oficial à parte, em [Computers and apps](https://learn.chatgpt.com/docs/dots/computers-and-apps). Não faz parte deste LAB: aqui o dot só lê páginas públicas e não escreve no repositório.

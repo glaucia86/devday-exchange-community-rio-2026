@@ -69,7 +69,7 @@ Este repositório reúne **material original em português** para acompanhar o e
 
 **No evento, Glaucia conduz as demonstrações e o público acompanha. Os LABS são para fazer em casa depois, reproduzindo as mesmas demonstrações. Não haverá execução coletiva dos exercícios durante a apresentação.**
 
-O fio condutor é o suporte fictício da Aurora: revisar os relatos, melhorar o encaminhamento, revisar uma entrega remota e conversar por voz antes de confirmar um ticket simulado. Cada LAB tem o mesmo cenário, pedido e critérios da demonstração correspondente no [guia da apresentadora](docs/guia-apresentadora.md).
+O fio condutor dos LABS de código e de voz é o suporte fictício da Aurora: revisar os relatos, melhorar o encaminhamento, revisar uma entrega remota e conversar por voz antes de confirmar um ticket simulado. Dots acompanha outra fonte, pública e real: as issues e os pull requests deste repositório. Cada LAB tem o mesmo cenário, pedido e critérios da demonstração correspondente no [guia da apresentadora](docs/guia-apresentadora.md).
 
 
 | Se você quer… | Comece por… |
@@ -89,11 +89,11 @@ Conhecer o básico de JavaScript/TypeScript, terminal e Git ajuda na parte de c�
 <a id="labs"></a>
 ## 🧪 Escolha seu LAB
 
-São **quatro demonstrações, cada uma com um LAB para reproduzir em casa**. Os roteiros são independentes para estudo, mas seguem o mesmo contexto de suporte fictício. Esta ordem facilita a navegação; não define novos horários de palco.
+São **quatro demonstrações, cada uma com um LAB para reproduzir em casa**. Os roteiros são independentes para estudo. O de Dots usa uma fonte pública real; os demais seguem o contexto de suporte fictício. Esta ordem facilita a navegação; não define novos horários de palco.
 
 | Demonstração | O que você vai reproduzir em casa | Abrir o LAB |
 | --- | --- | --- |
-| **Dots** | Dar contexto, limitar ações e revisar uma entrega | [Cenário e passo a passo](labs/01-dots/README.md) |
+| **Dots** | Atribuir uma responsabilidade contínua e conferir o que mudou nas issues e nos pull requests públicos | [Cenário e passo a passo](labs/01-dots/README.md) |
 | **Codex CLI** | Acompanhar uma mudança no terminal, inspecionar o diff e verificar testes | [LAB do CLI](labs/codex-cli/README.md) |
 | **Codex Cloud** | Revisar uma candidata com testes verdes, reproduzir a regressão e conferir uma correção remota | [LAB do Cloud](labs/codex-cloud/README.md) |
 | **Decisions API** | Conversar por voz, corrigir o relato e revisar o ticket; com alternativa simulada e exercícios de contrato | [LAB Decisions](labs/02-decisions-typescript/README.md) |
@@ -146,7 +146,7 @@ Os testes offline e o mock não exigem conta OpenAI nem chave de API. Instalar d
 
 ### Obtenha o projeto antes de escolher um LAB de código
 
-Dots usa somente o cenário na conversa. Para CLI, Cloud ou Decisions, abra um terminal na pasta onde você guarda projetos e execute:
+Dots não pede clone: o LAB usa o ChatGPT e duas páginas públicas do GitHub. Para CLI, Cloud ou Decisions, abra um terminal na pasta onde você guarda projetos e execute:
 
 ```sh
 git clone --branch main https://github.com/glaucia86/devday-exchange-community-rio-2026.git
@@ -257,9 +257,10 @@ node --test apps/decisions/tests/*.test.mts
 node --test exercises/ticket-router/review-candidate/router.test.mjs exercises/decisions-contract/inspect.test.mts
 node scripts/check-workshop-examples.mjs
 node scripts/check-doc-links.mjs
+node --test scripts/check-dots-guide.test.mjs
 ```
 
-O conjunto contém **57 testes**: 3 do starter, 8 da solução, 5 da candidata de revisão, 5 do exercício de contrato e 36 da Alô, TI. Além deles, a verificação pedagógica executa 18 casos de aceitação em cada versão do encaminhador: starter com 10 falhas esperadas, candidata com 2 e solução sem falhas. Consulte a CI do commit atual para o resultado. Testes verdes da candidata não significam que ela já está correta.
+O conjunto contém **57 testes**: 3 do starter, 8 da solução, 5 da candidata de revisão, 5 do exercício de contrato e 36 da Alô, TI. Além deles, a verificação pedagógica executa 18 casos de aceitação em cada versão do encaminhador: starter com 10 falhas esperadas, candidata com 2 e solução sem falhas. Consulte a CI do commit atual para o resultado. Testes verdes da candidata não significam que ela já está correta. O `scripts/check-dots-guide.test.mjs` confere o texto do LAB de Dots e não entra nessa contagem.
 
 Dentro de **`apps/decisions`**, após instalar as dependências:
 
@@ -287,7 +288,8 @@ A [execução de referência](https://github.com/glaucia86/devday-exchange-commu
 | Capturas desktop e celular | Inspecionadas |
 | Voz local do dispositivo | Regressão simulada; áudio real precisa de ensaio |
 | GPT-Live + Decisions | Adaptadores implementados; API e áudio reais ainda sem ensaio |
-| Dots, Codex CLI e Codex Cloud | Guias disponíveis; ensaio dos fluxos reais pendente |
+| Dots | Cenário antigo executado uma vez em 8 de outubro de 2026; o cenário novo ainda não foi ensaiado |
+| Codex CLI e Codex Cloud | Guias disponíveis; ensaio dos fluxos reais pendente |
 
 <a id="apresentadora"></a>
 ## 🎤 Guia da apresentadora
@@ -322,7 +324,7 @@ Use a [programação](docs/programacao.md) para os detalhes do encontro e as [re
 
 | Caminho | Conteúdo |
 | --- | --- |
-| [labs/01-dots/](labs/01-dots/) | Contexto, cenário e prática com Dots |
+| [labs/01-dots/](labs/01-dots/) | Responsabilidade contínua com Dots, sobre issues e pull requests públicos |
 | [labs/codex-cli/](labs/codex-cli/) | Exercício acompanhado pelo terminal |
 | [labs/codex-cloud/](labs/codex-cloud/) | Delegação remota e revisão |
 | [labs/02-decisions-typescript/](labs/02-decisions-typescript/) | Decisões tipadas e revisão humana |

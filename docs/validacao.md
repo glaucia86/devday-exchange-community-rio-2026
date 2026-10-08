@@ -16,7 +16,8 @@
 | Capturas desktop e celular | Inspecionadas; sem corte, sobreposição ou overflow horizontal observado |
 | Voz real pelo dispositivo | Ainda não ensaiada; regressão usa simulação da API do navegador |
 | GPT-Live + Decisions | Adaptadores implementados; ensaio com conta e áudio reais pendente |
-| Dots / Codex CLI / Codex Cloud | Guias disponíveis; fluxos nos produtos ainda não ensaiados |
+| Dots | Cenário antigo executado uma vez em 8 de outubro de 2026; o cenário novo ainda não foi ensaiado |
+| Codex CLI / Codex Cloud | Guias disponíveis; fluxos nos produtos ainda não ensaiados |
 
 A integração ampliou o conjunto unitário para **46 testes**. Os 26 testes anteriores e suas execuções abaixo permanecem como referência histórica; confira a CI no SHA atual. Testes de seleção de fala não comprovam que áudio foi ouvido.
 
@@ -50,7 +51,8 @@ A CI usa runners padrão do repositório público e permissões de leitura. Os p
 - Ensaiar projeção e acessibilidade com teclado/leitor de tela
 - Ouvir a saída real de áudio em dispositivos-alvo
 - Configurar o runtime local somente após autorização; ensaiar o adaptador com fala, transcrição, interrupção e resposta tardia reais
-- Ensaiar os LABS nos produtos Dots, Codex CLI e Codex Cloud
+- Ensaiar o cenário novo de Dots no notebook do projetor. O cenário antigo foi executado uma vez em 8 de outubro de 2026 e não libera o palco
+- Ensaiar os LABS nos produtos Codex CLI e Codex Cloud
 - Confirmar limites de acesso e consumo antes de qualquer API real
 
 Nos próximos ensaios, registrar data, commit, ambiente, versões, comandos, resultados e limitações. Falha continua sendo falha; mock continua sendo mock.
@@ -82,7 +84,9 @@ Execução local desta revisão, no computador cloud, com Node.js 24.19.0:
 
 O conjunto passou a ter 56 testes, contando os cinco testes deliberadamente incompletos da candidata e os cinco do exercício de contrato. A aceitação independente acrescenta 18 verificações para cada versão do encaminhador. A CI executa tanto o verde quanto as falhas didáticas esperadas.
 
-Isso comprova os exercícios locais e seus critérios. Não comprova que uma pessoa concluiu Dots, a interação autenticada do CLI ou uma tarefa Codex Cloud. Esses ensaios continuam pendentes, assim como microfone, áudio audível e APIs reais. O walkthrough público confirma a navegação e o conteúdo que estava publicado; alterações de um PR só chegam ao site após integração e deploy autorizados.
+Isso comprova os exercícios locais e seus critérios. Não comprova que esta revisão concluiu Dots, a interação autenticada do CLI ou uma tarefa Codex Cloud. CLI, Cloud, microfone, áudio audível e APIs reais continuam pendentes. O walkthrough público confirma a navegação e o conteúdo que estava publicado; alterações de um PR só chegam ao site após integração e deploy autorizados.
+
+Esta revisão de repositório não executou Dots. Mais tarde, em 8 de outubro de 2026, o cenário antigo de Dots foi executado uma vez numa conta ChatGPT. O registro está em [Dots · ensaio de 8 de outubro de 2026](#dots-ensaio-2026-10-08). O cenário novo continua sem ensaio.
 
 Comandos novos, na raiz:
 
@@ -92,6 +96,21 @@ node scripts/check-workshop-examples.mjs
 ```
 
 Para conferir o patch atual, use a [CI dos LABS](https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-labs.yml) e a [CI do portal](https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/workflows/check-portal.yml). Não reutilize uma execução de outro SHA como prova de uma alteração posterior.
+
+<a id="dots-ensaio-2026-10-08"></a>
+
+### Dots · ensaio de 8 de outubro de 2026
+
+Conta real em chatgpt.com. Cenário daquele dia: resumo dos relatos fictícios da Aurora, com uma correção no segundo bloco. Não é o cenário atual.
+
+- A resposta completa chegou em 20 a 45 segundos
+- O checklist daquele cenário passou: separou fatos de lacunas e não inventou prioridade nem responsável
+- Não havia um item chamado “dots”. O dot aparecia pelo próprio nome no topo da barra lateral, abaixo de “New chat”, em `https://chatgpt.com/dots/<id>`. Os rótulos podem variar
+- O envio era a seta do campo ou Enter. Não havia um botão com o texto “Enviar”
+- O dot reutilizado já tinha uma rodada igual no histórico. A conferência da correção ficou contaminada
+- A documentação oficial descreve o dot como agente de responsabilidade contínua. Aquele ensaio pediu um resumo único e não mostrou isso
+
+O cenário novo, vigiar as issues e os pull requests públicos deste repositório e relatar só o que mudou, ainda não foi ensaiado. O ensaio de 8 de outubro não libera o bloco de palco.
 
 
 ### Finalidade dos roteiros
