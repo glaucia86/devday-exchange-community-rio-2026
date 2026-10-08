@@ -48,17 +48,72 @@ export function monitoringInsight(history: HistoryEntry[], ticket: { team: Team;
 
 export type InsightSpeechPlan = 'speak' | 'wait' | 'skip';
 
-/** App-initiated speech waits until both sides are quiet, and never runs without a live session. */
+/** Wall-clock marks. Zero means "not observed", never "silent since the epoch". */
+export type ActivityClock = {
+  userSpeechAt: number;
+  assistantAudioEndedAt: number;
+  toolOutputAt: number;
+};
+
+export function idleActivity(): ActivityClock {
+  return { userSpeechAt: 0, assistantAudioEndedAt: 0, toolOutputAt: 0 };
+}
+
+export function noteActivity(clock: ActivityClock, kind: 'user_speech' | 'assistant_audio_end' | 'tool_output', at: number): ActivityClock {
+  if (!(at > 0)) return clock;
+  if (kind === 'user_speech') return { ...clock, userSpeechAt: Math.max(clock.userSpeechAt, at) };
+  if (kind === 'assistant_audio_end') return { ...clock, assistantAudioEndedAt: Math.max(clock.assistantAudioEndedAt, at) };
+  return { ...clock, toolOutputAt: Math.max(clock.toolOutputAt, at) };
+}
+
+/** Quiet time starts at the latest real activity. Missing marks do not count. */
+export function latestActivityAt(clock: ActivityClock): number {
+  return Math.max(clock.userSpeechAt, clock.assistantAudioEndedAt, clock.toolOutputAt);
+}
+
+export type ConfirmationWatch = {
+  sentAt: number;
+  heardSinceSend: boolean;
+  sawSilenceAfterSend: boolean;
+};
+
+export function idleConfirmation(): ConfirmationWatch {
+  return { sentAt: 0, heardSinceSend: false, sawSilenceAfterSend: true };
+}
+
+/** A confirmation is owed until assistant audio that started after it has ended. */
+export function beginConfirmationWatch(at: number, assistantAudible: boolean): ConfirmationWatch {
+  return { sentAt: at, heardSinceSend: assistantAudible, sawSilenceAfterSend: !assistantAudible };
+}
+
+/** Call only when audible changes. Silence after speech records the audio end. */
+export function noteAssistantAudible(watch: ConfirmationWatch, audible: boolean, at: number): { watch: ConfirmationWatch; audioEndedAt: number | null } {
+  if (audible) {
+    return { watch: { ...watch, heardSinceSend: watch.heardSinceSend || watch.sawSilenceAfterSend }, audioEndedAt: null };
+  }
+  return { watch: { ...watch, sawSilenceAfterSend: true }, audioEndedAt: at > 0 ? at : null };
+}
+
+export function confirmationInFlight(watch: ConfirmationWatch, assistantAudible: boolean, assistantAudioEndedAt: number): boolean {
+  if (!(watch.sentAt > 0)) return false;
+  if (!watch.heardSinceSend || assistantAudible) return true;
+  return assistantAudioEndedAt < watch.sentAt;
+}
+
+/** App-initiated speech waits out a confirmation and then a quiet gap, and never runs without a live session. */
 export function planInsightSpeech(input: {
   insight: string | null;
   alreadySaid: boolean;
   sessionActive: boolean;
-  userQuietMs: number;
-  assistantQuietMs: number;
+  now: number;
+  activity: ActivityClock;
+  confirmationInFlight: boolean;
   requiredQuietMs: number;
 }): InsightSpeechPlan {
   if (!input.insight || input.alreadySaid) return 'skip';
   if (!input.sessionActive) return 'skip';
-  if (input.userQuietMs < input.requiredQuietMs || input.assistantQuietMs < input.requiredQuietMs) return 'wait';
+  if (input.confirmationInFlight) return 'wait';
+  const latest = latestActivityAt(input.activity);
+  if (!(latest > 0) || input.now - latest < input.requiredQuietMs) return 'wait';
   return 'speak';
 }
