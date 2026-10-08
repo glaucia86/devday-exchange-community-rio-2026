@@ -48,7 +48,7 @@ jobs:
         id: site
         if: steps.build.outcome == 'success'
         continue-on-error: true
-        run: npm run test:site
+        run: npm run test:site && node --test tests/presenter-build.test.mjs
       - name: Preparar Chromium
         run: npx playwright install --with-deps chromium
       - name: Verificar UI privada com fixture isolada

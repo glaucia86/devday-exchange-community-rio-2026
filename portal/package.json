@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "prepare:content": "node scripts/generate-content.mjs",
-    "test": "node --test tests/content.test.mjs tests/presenter*.test.mjs",
+    "test": "node --test tests/content.test.mjs tests/presenter-controller.test.mjs tests/presenter-config.test.mjs tests/presenter-gateway.test.mjs",
     "test:content": "node --test tests/content.test.mjs",
     "check": "npm run prepare:content && astro check",
     "build": "npm run prepare:content && astro build",

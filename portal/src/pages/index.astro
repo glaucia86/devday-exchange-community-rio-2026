@@ -5,6 +5,7 @@ import banner from '../../../assets/devday-exchange-community-banner.jpg';
 import '../styles/portal.css';
 const base=import.meta.env.BASE_URL;
 const path=(route:string)=>base+route;
+const [eventBrand,eventPlace]=home.event.title.split(' · ');
 ---
 <!doctype html>
 <html lang="pt-BR" data-theme="light">
@@ -17,7 +18,7 @@ const path=(route:string)=>base+route;
  <body class="portal-home" id="topo">
   <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
   <header class="event-header">
-   <a class="event-brand" href={base}>DevDay Exchange <span>Rio 2026</span></a>
+   <a class="event-brand" href={base}>{eventBrand.replace(' Community','')} <span>{eventPlace.replace(' de Janeiro','')}</span></a>
    <button class="menu-toggle" data-menu-toggle aria-expanded="false" aria-controls="event-nav" aria-label="Abrir menu">Menu</button>
    <nav id="event-nav" aria-label="Navegação principal">
     <a href={path('prepare-se/')}>Comece aqui</a><a href="#labs">Laboratórios</a><a href={path('alo-ti/')}>Alô, TI</a><a href={path('materiais/')}>Materiais e busca</a><a href={home.repository}>GitHub ↗</a>
@@ -25,8 +26,8 @@ const path=(route:string)=>base+route;
   </header>
   <main id="main-content" tabindex="-1">
    <section class="event-hero" aria-labelledby="event-title">
-    <div class="hero-copy"><p class="eyebrow">Comunidade · Rio de Janeiro</p><h1 id="event-title">DevDay Exchange <span>Rio 2026</span></h1><p class="hero-description">{home.event.slogan}</p><div class="hero-actions"><a class="button" href="#labs">Escolher LAB <span aria-hidden="true">→</span></a><a class="text-action" href={home.event.registration}>Inscreva-se ↗</a></div></div>
-    <Picture src={banner} formats={['avif','webp']} widths={[400,640,960,1280]} sizes="(min-width: 900px) 52vw, 100vw" alt="OpenAI DevDay Exchange Community Event, arte do encontro" loading="eager" fetchpriority="high" class="event-banner" />
+    <div class="hero-copy"><p class="eyebrow">Comunidade · Rio de Janeiro</p><h1 id="event-title">{eventBrand.replace(' Community','')} <span>{eventPlace.replace(' de Janeiro','')}</span></h1><p class="hero-description">{home.event.slogan}</p><div class="hero-actions"><a class="button" href="#labs">Escolher LAB <span aria-hidden="true">→</span></a><a class="text-action" href={home.event.registration}>Inscreva-se ↗</a></div></div>
+    <Picture src={banner} formats={['avif','webp']} width={1280} height={720} widths={[400,640,960,1280]} sizes="(min-width: 900px) 52vw, 100vw" alt="OpenAI DevDay Exchange Community Event, arte do encontro" loading="eager" fetchpriority="high" class="event-banner" />
    </section>
    <p class="event-details" id="encontro">{home.event.details}</p>
    <aside class="prepare-strip"><div><span aria-hidden="true">↗</span><strong>Tudo pronto para começar?</strong></div><a href={path('prepare-se/')}>Prepare seu ambiente <span aria-hidden="true">→</span></a></aside>

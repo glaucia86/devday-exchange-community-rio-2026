@@ -5,7 +5,7 @@ import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
 import remarkStringify from 'remark-stringify';
 import { toString } from 'mdast-util-to-string';
-import { parseFragment, serialize } from 'parse5';
+import { parseFragment } from 'parse5';
 import { manifest as defaultManifest, REPOSITORY } from './content-manifest.mjs';
 const processor=unified().use(remarkParse).use(remarkGfm).use(remarkStringify,{bullet:'-',fences:true});
 const rootAnchors={preparacao:'prepare-se/#preparacao',validar:'prepare-se/#validar',checklist:'prepare-se/#checklist',executar:'alo-ti/#executar',estado:'materiais/validacao/',apresentadora:'materiais/guia-apresentadora/',estrutura:'materiais/'};
@@ -32,7 +32,10 @@ export function rewriteLink(href,sourcePath,manifest,basePath){
  return REPOSITORY+(raw.endsWith('/')?'/tree/main/':'/blob/main/')+target.split('/').map(encodeURIComponent).join('/')+query+hash;
 }
 function walk(node,visit){visit(node);for(const child of node.children??node.childNodes??[])walk(child,visit);}
-function anchorId(node){return node.type==='html'?node.value.match(/^\s*<a\s+id="([\w-]+)"\s*><\/a>\s*$/)?.[1]:undefined;}
+function anchorId(node){
+ const html=node.type==='html'?node.value:node.type==='paragraph'&&node.children.every(n=>n.type==='html')?node.children.map(n=>n.value).join(''):'';
+ return html.match(/^\s*<a\s+id="([\w-]+)"\s*><\/a>\s*$/)?.[1];
+}
 function section(tree,id){
  const start=tree.children.findIndex(n=>anchorId(n)===id);
  if(start<0)throw new Error('Seção obrigatória ausente no README.md: '+id);
@@ -47,16 +50,19 @@ function transform(tree,sourcePath,manifest,basePath){
  walk(out,node=>{
   if(['link','image','definition'].includes(node.type))node.url=rewriteLink(node.url,sourcePath,manifest,basePath);
   if(node.type==='html'){
-   const fragment=parseFragment(node.value);
-   function clean(parent){
-    parent.childNodes=(parent.childNodes??[]).filter(n=>!['script','style','iframe','object','embed','form','input','button'].includes(n.tagName));
-    for(const n of parent.childNodes){
-     if(n.attrs)n.attrs=n.attrs.filter(a=>['href','src','id','alt','title','width','height','align','class'].includes(a.name));
-     for(const a of n.attrs??[]){if(a.name==='href'||a.name==='src')a.value=rewriteLink(a.value,sourcePath,manifest,basePath);}
-     clean(n);
-    }
-   }
-   clean(fragment);node.value=serialize(fragment);
+   // Source offsets preserve open/close HTML blocks across Markdown nodes.
+   // Serializing each fragment would prematurely close <details> and <div>.
+   const fragment=parseFragment(node.value,{sourceCodeLocationInfo:true}),edits=[];
+   const allowed=new Set(['a','img','div','p','strong','em','br','details','summary','span','h1','h2','h3','h4','h5','h6','ul','ol','li','code','pre','blockquote','table','thead','tbody','tr','th','td','hr']);
+   function clean(parent){for(const n of parent.childNodes??[]){
+    const location=n.sourceCodeLocation;
+    if(n.tagName&&!allowed.has(n.tagName)&&location){edits.push({start:location.startOffset,end:location.endOffset,value:''});continue;}
+    for(const a of n.attrs??[]){const range=location?.attrs?.[a.name];if(!range)continue;
+     if(!['href','src','id','alt','title','width','height','align','class'].includes(a.name))edits.push({start:range.startOffset,end:range.endOffset,value:''});
+     else if(a.name==='href'||a.name==='src'){const value=rewriteLink(a.value,sourcePath,manifest,basePath).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;');edits.push({start:range.startOffset,end:range.endOffset,value:`${a.name}="${value}"`});}
+    }clean(n);
+   }}
+   clean(fragment);for(const edit of edits.sort((a,b)=>b.start-a.start))node.value=node.value.slice(0,edit.start)+edit.value+node.value.slice(edit.end);
   }
  });return out;
 }

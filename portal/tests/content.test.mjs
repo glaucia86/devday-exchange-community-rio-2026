@@ -41,6 +41,7 @@ test('loads four independent labs and the complete material map', async () => {
   assert.match(prep.markdown, /id="preparacao"/);
   assert.match(prep.markdown, /npm --version/);
   assert.match(prep.markdown, /<details>/);
+  assert.match(prep.markdown, /<details>[\s\S]*npm\.cmd[\s\S]*<\/details>/);
   assert.ok(pages.every(p => p.sourcePath && p.title && p.markdown));
 });
 test('source changes are reflected and required sections cannot silently disappear', async () => {
