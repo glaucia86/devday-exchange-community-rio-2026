@@ -42,6 +42,9 @@ test('loads four independent labs and the complete material map', async () => {
   const prep = pages.find(p => p.route === 'prepare-se/');
   assert.match(prep.markdown, /id="preparacao"/);
   assert.match(prep.markdown, /npm --version/);
+  assert.match(prep.markdown, /git clone --branch main/);
+  assert.match(prep.markdown, /cd devday-exchange-community-rio-2026/);
+  assert.match(prep.markdown, /node --test exercises\/ticket-router\/starter\/router.test.mjs/);
   assert.match(prep.markdown, /<details>/);
   assert.match(prep.markdown, /<details>[\s\S]*npm\.cmd[\s\S]*<\/details>/);
   assert.ok(pages.every(p => p.sourcePath && p.title && p.markdown));
@@ -81,3 +84,4 @@ test('the home demo overview follows its canonical Markdown', async () => {
   assert.equal(home.local.steps.length,5);
   assert.match(home.local.steps.join(' '),/revisão humana/);
 });
+

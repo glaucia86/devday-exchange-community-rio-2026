@@ -89,13 +89,13 @@ São **quatro temas independentes**, com objetivos e instruções próprios. Est
 | --- | --- | --- |
 | **Dots** | Dar contexto, limitar ações e revisar uma entrega | [Cenário e passo a passo](labs/01-dots/README.md) |
 | **Codex CLI** | Acompanhar uma mudança no terminal, inspecionar o diff e verificar testes | [LAB do CLI](labs/codex-cli/README.md) |
-| **Codex Cloud** | Delegar uma tarefa remota e revisar o resultado | [LAB do Cloud](labs/codex-cloud/README.md) |
+| **Codex Cloud** | Revisar uma candidata com testes verdes, reproduzir a regressão e conferir uma correção remota | [LAB do Cloud](labs/codex-cloud/README.md) |
 | **Decisions API** | Inspecionar uma decisão tipada, corrigir o relato e confirmar o encaminhamento | [LAB Decisions](labs/02-decisions-typescript/README.md) |
 
-CLI e Cloud usam o mesmo [exercício fictício de encaminhamento](exercises/ticket-router/README.md), com experiências de execução e revisão separadas. A experiência de voz para voz faz parte de **Decisions API**. A [arquitetura proposta](docs/arquitetura-decisions.md) descreve o fluxo e suas etapas pendentes.
+CLI e Cloud usam o mesmo [contrato de encaminhamento fictício](exercises/ticket-router/README.md), com pontos de partida diferentes: implementação a partir do starter no CLI e revisão de uma candidata defeituosa no Cloud. A experiência de voz para voz faz parte de **Decisions API**. A [arquitetura proposta](docs/arquitetura-decisions.md) descreve o fluxo e suas etapas pendentes.
 
 <a id="preparacao"></a>
-## 🧰 1. Prepare seu ambiente
+## 🧰 Prepare seu ambiente
 
 | Ferramenta | Requisito | Para que serve |
 | --- | --- | --- |
@@ -115,6 +115,23 @@ git --version
 
 Os testes offline e o mock não exigem conta OpenAI nem chave de API. Instalar dependências requer acesso ao registro npm. O acesso aos produtos dos LABS deve ser preparado separadamente.
 
+### Obtenha o projeto antes de escolher um LAB de código
+
+Dots usa somente o cenário na conversa. Para CLI, Cloud ou Decisions, abra um terminal na pasta onde você guarda projetos e execute:
+
+```sh
+git clone --branch main https://github.com/glaucia86/devday-exchange-community-rio-2026.git
+cd devday-exchange-community-rio-2026
+node --test exercises/ticket-router/starter/router.test.mjs
+```
+
+**Confira:** o terminal está na pasta `devday-exchange-community-rio-2026` e os três testes passam. Quando um LAB disser “na raiz do repositório”, é esta pasta. Se `node` ou `git` não existir, instale pela fonte oficial da tabela e reabra o terminal.
+
+Se já tiver uma cópia, não clone por cima nem descarte alterações. Confira `git status --short`; atualize somente quando souber o que está preservando. O material publicado fica em `main`.
+
+Os exercícios de código não precisam de `npm install`. A instalação com `npm ci --ignore-scripts` é necessária apenas para abrir a interface Alô, TI, conforme [Execute a demo](#executar). Os LABS de CLI e Cloud explicam separadamente o login e a preparação do produto.
+
+
 <details>
 <summary><strong>🪟 Usando Windows com PowerShell?</strong></summary>
 
@@ -123,15 +140,17 @@ Se o PowerShell informar que `npm.ps1` não pode ser carregado, abra o Prompt de
 </details>
 
 <a id="executar"></a>
-## 🚀 2. Execute a demo Alô, TI
+## 🚀 Execute a demo Alô, TI
 
 A demo **Alô, TI** é um service desk fictício. Você escolhe um cenário, analisa o relato, simula uma correção e revisa os campos antes de criar um ticket simulado.
 
 O fluxo padrão usa fixtures e estado em memória, sem API ou microfone. A integração ao vivo exige configuração segura e autorização de custo. Consulte o [guia Windows e os limites](docs/integracao-live.md).
 
-### Clone o material
+### Abra sua cópia do material
 
-O material está na branch **`main`**:
+Se você já seguiu **Prepare seu ambiente**, use a mesma pasta `devday-exchange-community-rio-2026` e pule o bloco de clone abaixo. Não clone o projeto dentro dele mesmo.
+
+**Somente se ainda não clonou:** abra o terminal na pasta onde guarda projetos. O material está na branch **`main`**:
 
 ```sh
 git clone --branch main https://github.com/glaucia86/devday-exchange-community-rio-2026.git
@@ -159,7 +178,7 @@ Execute um comando por vez e deixe o terminal aberto. Acesse **http://127.0.0.1:
 Quando disponível, a interface pode ler respostas com a **voz local do dispositivo**. Não é áudio OpenAI nem transcrição real. A saída de áudio ainda precisa de ensaio nos dispositivos-alvo. Veja o [README da aplicação](apps/decisions/README.md).
 
 <a id="validar"></a>
-## ✅ 3. Verifique seu ambiente
+## ✅ Verifique seu ambiente
 
 Na **raiz do repositório**, com Node.js 22.18 ou posterior:
 
@@ -167,10 +186,12 @@ Na **raiz do repositório**, com Node.js 22.18 ou posterior:
 node --test exercises/ticket-router/starter/router.test.mjs
 node --test exercises/ticket-router/solution/router.test.mjs
 node --test apps/decisions/tests/*.test.mts
+node --test exercises/ticket-router/review-candidate/router.test.mjs exercises/decisions-contract/inspect.test.mts
+node scripts/check-workshop-examples.mjs
 node scripts/check-doc-links.mjs
 ```
 
-O conjunto unitário contém **46 testes**: 3 do starter, 8 da solução e 35 de domínio, contratos e proteções da Alô, TI. Consulte a CI do commit atual para o resultado.
+O conjunto contém **56 testes**: 3 do starter, 8 da solução, 5 da candidata de revisão, 5 do exercício de contrato e 35 da Alô, TI. Além deles, a verificação pedagógica executa 18 casos de aceitação em cada versão do encaminhador: starter com 10 falhas esperadas, candidata com 2 e solução sem falhas. Consulte a CI do commit atual para o resultado. Testes verdes da candidata não significam que ela já está correta.
 
 Dentro de **`apps/decisions`**, após instalar as dependências:
 
@@ -192,7 +213,7 @@ A [execução de referência](https://github.com/glaucia86/devday-exchange-commu
 | Área | Situação |
 | --- | --- |
 | Quatro LABS e guia da apresentadora | Disponíveis |
-| Encaminhador e Alô, TI | 46 testes definidos; resultado por commit no Actions |
+| Encaminhador e Alô, TI | 56 testes e aceitação red/green; resultado por commit no Actions |
 | TypeScript e build Next.js | Aprovados na execução de referência |
 | Interface mock em Chromium | Revisão, correção, reset e tratamento de erro verificados |
 | Capturas desktop e celular | Inspecionadas |
@@ -268,3 +289,4 @@ Documentação e código originais sob a [licença MIT](LICENSE). Marcas e mater
 </p>
 <p><a href="#topo">↑ Voltar ao topo</a></p>
 </div>
+

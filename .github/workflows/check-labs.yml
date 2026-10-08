@@ -30,6 +30,10 @@ jobs:
         run: node --test exercises/ticket-router/starter/router.test.mjs
       - name: Testar a solução de referência
         run: node --test exercises/ticket-router/solution/router.test.mjs
+      - name: Testar os exemplos dos participantes
+        run: node --test exercises/ticket-router/review-candidate/router.test.mjs exercises/decisions-contract/inspect.test.mts
+      - name: Confirmar starter vermelho, candidata incompleta e solução verde
+        run: node scripts/check-workshop-examples.mjs
       - name: Conferir links locais da documentação
         run: node scripts/check-doc-links.mjs
   ui-build:
@@ -73,3 +77,4 @@ jobs:
           name: mesa-ti-ui-review
           retention-days: 7
           path: apps/decisions/test-results
+

@@ -1,43 +1,54 @@
 # Exercício compartilhado: encaminhar relatos fictícios
 
-Este pequeno projeto dá contexto aos LABS de **Codex CLI** e **Codex Cloud**, com objetivos distintos. É um exercício de revisão de código baseado em regras; não chama Decisions nem qualquer API.
+O LAB CLI parte de uma função mínima. O LAB Cloud começa com uma candidata que parece pronta, mas contém um erro. Ambos praticam o mesmo contrato de revisão de código. O projeto não chama Decisions nem qualquer API.
 
-## Requisitos e ponto de partida
+## Antes de executar
 
-Node.js 22.18 ou posterior. Sem npm install, dependências ou chaves.
+Precisa de Node.js 22.18+ e do material [clonado](../../README.md#preparacao). Não há pacotes nem chaves para instalar. Todos os comandos abaixo partem da raiz do repositório.
 
-Na raiz do repositório:
+| Pasta | Papel | Testes da pasta | Aceitação independente |
+| --- | --- | --- | --- |
+| `starter` | Início do LAB CLI | 3 passam | 8 passam, 10 falham |
+| `review-candidate` | Entrega para revisar no LAB Cloud | 5 passam | 16 passam, 2 falham |
+| `solution` | Referência, consultar depois da tentativa | 8 passam | 18 passam |
 
-```bash
-node --test exercises/ticket-router/starter/router.test.mjs
-```
+## Contrato do desafio
 
-Resultado esperado: **3 testes aprovados**. A pasta starter contém um comportamento mínimo que reconhece apenas “senha” em minúsculas.
-
-## O desafio
-
-Evoluir `routeTicket(text)` para:
+Evoluir ou corrigir `routeTicket(text)` para:
 
 - Ignorar maiúsculas/minúsculas e acentos
-- Retornar `acessos` para senha, login ou permissão
-- Retornar `infraestrutura` para conexão, Wi-Fi ou rede
-- Retornar `aplicacoes` para erro 500 ou aplicativo
-- Retornar `revisao_humana` quando nenhum grupo ou mais de um grupo corresponder
-- Aceitar entrada ausente sem lançar erro
-- Manter as opções acima, sem dependências, rede, serviços ou efeitos externos
+- Reconhecer palavras inteiras: senha, login ou permissão → `acessos`
+- Conexão, Wi-Fi ou rede → `infraestrutura`
+- Erro 500 ou aplicativo → `aplicacoes`
+- Nenhuma categoria ou mais de uma categoria → `revisao_humana`
+- Duas palavras da mesma categoria não criam ambiguidade
+- Entrada ausente ou não textual → `revisao_humana`, sem lançar erro
+- Não adicionar dependências, rede, serviços ou efeitos externos
 
-Antes de implementar, acrescentar testes para os novos casos e observar as falhas. Depois implementar e executar a suíte toda. Os testes iniciais não são prova de que o desafio já foi resolvido.
+Exemplos: “SENHA expirada” → `acessos`; “senha e login” → `acessos`; “senha e conexão” → `revisao_humana`. O verificador não tenta avaliar toda a língua portuguesa. Outras grafias e regras precisam de uma ampliação explícita do contrato.
 
-## Referência e verificação
+## Prove a diferença entre passar testes e concluir o desafio
 
-Só compare com a solução depois da sua tentativa:
-
-```bash
-node --test exercises/ticket-router/solution/router.test.mjs
+```sh
+node --test exercises/ticket-router/starter/router.test.mjs
+node exercises/ticket-router/verify.mjs exercises/ticket-router/starter/router.mjs
 ```
 
-Resultado esperado: **8 testes aprovados**. Inspecione `solution/router.mjs` e explique por que uma entrada que menciona senha e conexão pede revisão humana. O teste cobre um classificador didático limitado, não a qualidade de uma triagem real.
+O primeiro comando passa. O segundo termina com código 1 e `ACCEPTANCE {"total":18,"passed":8,"failed":10}`. As falhas mostram o trabalho que ainda falta, não um problema de instalação.
+
+O verificador é separado da pasta que o agente edita. Depois da sua tentativa, passe o caminho do seu `router.mjs` para ele. Não reduza os testes para aceitar uma resposta incorreta.
+
+## Referência, só depois de tentar
+
+```sh
+node --test exercises/ticket-router/solution/router.test.mjs
+node exercises/ticket-router/verify.mjs exercises/ticket-router/solution/router.mjs
+```
+
+Esperado: oito testes da solução e 18 casos de aceitação aprovados. Explique por que a solução precisa contar categorias antes de retornar, em vez de aceitar a primeira correspondência.
 
 ## Reset seguro
 
-Trabalhe em uma cópia de starter. Para recomeçar, faça outra cópia do starter original, sem apagar suas alterações anteriores. Não use comandos destrutivos para limpar o projeto durante o encontro.
+Trabalhe em uma cópia. Para recomeçar, use outra pasta e preserve sua tentativa anterior. Os LABS trazem comandos e caminhos específicos para [CLI](../../labs/codex-cli/README.md) e [Cloud](../../labs/codex-cloud/README.md).
+
+Para quem mantém o material, `node scripts/check-workshop-examples.mjs` confirma as falhas didáticas do starter e da candidata, além do resultado verde da solução. Um arquivo ausente ou erro de sintaxe não é aceito como a etapa vermelha.

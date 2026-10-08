@@ -15,11 +15,12 @@ Resultado inicial esperado: **3 testes aprovados**. O código reconhece apenas �
 Amplie routeTicket(text) para:
 
 - Normalizar maiúsculas/minúsculas e acentos
-- Retornar acessos quando encontrar senha, login ou permissão
+- Reconhecer palavras inteiras e retornar acessos quando encontrar senha, login ou permissão
 - Retornar infraestrutura quando encontrar conexão, Wi-Fi ou rede
 - Retornar aplicacoes quando encontrar erro 500 ou aplicativo
 - Retornar revisao_humana quando nenhum grupo ou mais de um grupo corresponder
-- Tratar entrada ausente sem lançar erro
+- Duas palavras da mesma categoria não criam ambiguidade
+- Retornar revisao_humana para entrada ausente ou não textual, sem lançar erro
 
 Escreva testes para caixa alta, acentos, erro do aplicativo, categorias conflitantes, texto vazio e entrada ausente. Execute-os antes da mudança e observe as falhas. Implemente e execute a suíte toda.
 
@@ -28,3 +29,4 @@ Sem dependências, acesso à rede, APIs ou efeitos externos. Não faça commit, 
 ## Reset
 
 Guarde a tentativa. Faça uma nova cópia desta pasta a partir do material original para recomeçar, sem apagar o trabalho anterior.
+

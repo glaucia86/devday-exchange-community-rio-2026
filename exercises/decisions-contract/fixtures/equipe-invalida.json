@@ -1,0 +1,7 @@
+{
+  "answers": [
+    { "type": "predicate", "name": "contexto", "probability": 0.96 },
+    { "type": "choice", "name": "equipe", "choice": "financeiro", "confidence": 0.91 },
+    { "type": "score", "name": "impacto", "score": 1.25, "confidence": 0.8 }
+  ]
+}

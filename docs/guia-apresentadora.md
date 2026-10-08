@@ -43,7 +43,7 @@ Use a mesma pergunta em todos os blocos: **“Que evidência me permite aceitar 
 
 1. **Mostrar:** os três relatos do [cenário Aurora](../labs/01-dots/cenario.md).
    - **Falar:** “Vou fornecer o contexto e deixar claro o que não deve ser executado.”
-2. **Agir:** colar o cenário e o pedido em uma conversa com o dot, se disponível.
+2. **Agir:** copiar o bloco completo do cenário, com dados e pedido, em uma conversa com o dot, se disponível.
    - **Esperado:** resumo para revisão, separando fatos e lacunas, sem enviar mensagens ou abrir tickets.
 3. **Agir:** conferir A-103 e perguntar à plateia o que falta.
    - **Falar:** “Uma palavra como urgente não informa sozinha impacto, prazo ou prioridade.”
@@ -51,7 +51,7 @@ Use a mesma pergunta em todos os blocos: **“Que evidência me permite aceitar 
    - **Esperado:** duas pessoas afetadas e alternativa móvel no texto atualizado.
 5. **Encerrar:** apontar no checklist o que você aceitaria e o que pediria para corrigir.
 
-**Reset:** outra conversa com o cenário original.  
+**Reset:** reenviar o cenário original, identificando uma nova rodada e pedindo para desconsiderar as correções anteriores. Conferir os fatos, sem presumir limpeza de memória.  
 **Plano B:** revisar um resumo escrito a partir dos mesmos relatos ou fazer a leitura em dupla, indicando que o produto não foi executado.  
 **Ponto de parada:** se houver pedido de acesso privado ou envio externo, não autorizar para salvar a demo.
 
@@ -63,12 +63,12 @@ Use a mesma pergunta em todos os blocos: **“Que evidência me permite aceitar 
 2. **Executar:** `node --test router.test.mjs`.
    - **Esperado:** 3 testes aprovados.
    - **Falar:** “A linha de base passa, mas ainda não cobre o que vou pedir.”
-3. **Executar:** `codex` e enviar o pedido delimitado do LAB.
+3. **Executar:** o verificador independente do LAB e mostrar as 10 falhas esperadas do starter. Depois abrir `codex` e enviar o pedido delimitado.
    - **Esperado:** novos testes falham antes da mudança; implementação vem depois; nada de dependências, rede, commit ou push.
 4. **Mostrar:** um teste com caixa alta, um com acentos e um relato ambíguo.
    - **Falar:** “Quero ver o caso difícil representado no teste.”
-5. **Executar:** novamente `node --test router.test.mjs`; revisar arquivos alterados.
-   - **Esperado:** casos novos aprovados e retorno de revisão humana quando duas equipes seriam plausíveis.
+5. **Executar:** novamente `node --test router.test.mjs` e o verificador independente; revisar arquivos alterados.
+   - **Esperado:** casos novos aprovados, 18/18 na aceitação e retorno de revisão humana quando duas equipes seriam plausíveis.
 
 **Reset:** guardar a tentativa e abrir outra cópia do starter.  
 **Plano B:** mostrar a solução e executar `node --test exercises/ticket-router/solution/router.test.mjs` na raiz; explicitar que a geração pelo CLI não foi realizada ao vivo.  
@@ -76,21 +76,22 @@ Use a mesma pergunta em todos os blocos: **“Que evidência me permite aceitar 
 
 ## Codex Cloud
 
-**Sugestão: 8–10 minutos, com tarefa preparada para contingência.** [Guia do participante](../labs/codex-cloud/README.md)
+**Sugestão: 8–10 minutos, com ambiente preparado antes.** [Guia do participante](../labs/codex-cloud/README.md)
 
-1. **Mostrar:** o repositório fictício e o ambiente selecionado.
-   - **Falar:** “Agora a execução acontece remotamente; a tarefa e o critério continuam explícitos.”
-2. **Agir:** enviar o pedido do LAB em uma tarefa Cloud, somente com acesso já preparado.
-   - **Esperado:** a tarefa trabalha no exercício escolhido e informa os comandos executados.
-3. **Mostrar:** estado pendente, conclusão ou falha real, conforme ocorrer.
+1. **Mostrar:** o repositório fictício com a candidata e o ambiente já publicado.
+   - **Falar:** “Esta entrega passa cinco testes. Vamos conferir se ela cumpre o contrato.”
+2. **Executar:** `node --test router.test.mjs` e `node verify.mjs router.mjs`.
+   - **Esperado:** cinco testes verdes, mas duas falhas na aceitação de 18 casos. A candidata escolhe a primeira equipe e perde a ambiguidade.
+3. **Agir:** enviar o pedido completo do LAB em uma nova tarefa no ambiente correto.
+   - **Esperado:** testes de regressão antes da correção, sem alterar o verificador.
+4. **Mostrar:** o estado real da tarefa e, quando terminar, diff e logs.
    - **Falar:** “Concluir a execução não é o mesmo que aprovar a mudança.”
-4. **Agir:** inspecionar diff e resultado dos testes. Conferir casos ambíguos e escopo.
-   - **Esperado:** revisão documentada. Não fazer merge/deploy para concluir a apresentação.
-5. **Conectar ao CLI:** apontar o que mudou no ambiente de execução e o que não mudou no checklist de aceitação.
+5. **Revisar:** as duas verificações devem passar; apontar no código por que duas palavras da mesma categoria não são duas equipes.
+   - **Esperado:** 18/18 na aceitação e revisão documentada. Não fazer PR, merge ou deploy para concluir a apresentação.
 
-**Reset:** nova tarefa sobre outra cópia do starter, sem apagar a tentativa anterior.  
-**Plano B:** abrir uma tarefa de ensaio já concluída, se existir, identificando-a; caso contrário, usar a solução local como entrega para revisão, sem simular uma execução Cloud.  
-**Ponto de parada:** se a tarefa demora, seguir para a revisão preparada e informar o estado verdadeiro.
+**Reset:** nova tarefa a partir da candidata original, preservando a entrega anterior.  
+**Plano B:** mostrar a candidata local, reproduzir as duas falhas e comparar com a solução. Explicitar que a execução Cloud não aconteceu.  
+**Ponto de parada:** erro de conta, permissão ou setup não justifica conectar um projeto de trabalho. Se a tarefa demorar, informar o estado verdadeiro e usar a revisão preparada.
 
 ## Decisions API
 
@@ -98,7 +99,7 @@ Use a mesma pergunta em todos os blocos: **“Que evidência me permite aceitar 
 
 1. **Mostrar:** Alô, TI e o selo Simulado.
    - **Falar:** “Vamos observar a conversa, a sugestão e a confirmação. Hoje este modo usa respostas de exemplo.”
-2. **Agir:** abrir “Acesso ao portal” e clicar “Analisar relato”.
+2. **Agir:** clicar “Explorar cenário”, conferir “Acesso ao portal” e clicar “Analisar relato”.
    - **Esperado:** transcrição visível, sugestão de Acessos e identidade, ticket ainda em rascunho.
 3. **Mostrar:** “Por trás da decisão”.
    - **Falar:** “Predicate estima uma condição. Choice escolhe uma opção. Score avalia uma rubrica.”
@@ -111,6 +112,8 @@ Use a mesma pergunta em todos os blocos: **“Que evidência me permite aceitar 
    - **Esperado:** DEMO-0001 visível, uma vez; nenhuma transmissão a um sistema de tickets.
 7. **Agir:** recomeçar, escolher relato incompleto ou simular falha.
    - **Esperado:** esclarecimento/erro explícito, preservando o relato.
+
+**Checkpoint de contrato:** se houver tempo no bloco, executar as fixtures `completo.json`, `incerto.json` e `recusado.json` com `exercises/decisions-contract/inspect.mts`, como no LAB. Comparar sugestão, bloqueio humano e recusa. O exercício de edição de fixtures fica para depois do encontro. As perguntas estão em `live-contract.ts`; cenários e reducer estão em `service-desk.ts`.
 
 **Voz atual:** se houver voz local PT no navegador, ativar o som para ler a resposta. Dizer que não é voz OpenAI.  
 **Voz OpenAI experimental:** os adaptadores já estão no código, desativados por padrão. Demonstrar GPT-Live somente após configuração autorizada e ensaio real no dispositivo; o servidor local gerencia sessões e Decisions, enquanto o navegador recebe transcrições pelo canal WebRTC. Não inserir a chave OpenAI no navegador. Consulte o [guia local](integracao-live.md).  
@@ -126,3 +129,4 @@ Retomar: contexto, escopo, evidência e confirmação. Abrir o índice com os qu
 ## Depois de cada ensaio
 
 Registrar data, versões, ambiente, comandos, resultado e limitações em [validação](validacao.md). Manter separados: teste de domínio, build, inspeção visual, áudio reproduzido e integração real. Não promover um estágio pendente para “validado” sem executar sua verificação.
+
