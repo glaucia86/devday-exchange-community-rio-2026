@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // RED scaffold: the success cases must fail before access is implemented.
+    function presenterUid() {
+      return '__PRESENTER_UID__';
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

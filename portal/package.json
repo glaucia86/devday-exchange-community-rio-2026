@@ -1,0 +1,35 @@
+{
+  "name": "devday-rio-portal",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prepare:content": "node scripts/generate-content.mjs",
+    "test": "node --test tests/content.test.mjs tests/presenter*.test.mjs",
+    "test:content": "node --test tests/content.test.mjs",
+    "check": "npm run prepare:content && astro check",
+    "build": "npm run prepare:content && astro build",
+    "preview": "astro preview --host 127.0.0.1 --port 4321",
+    "dev": "npm run prepare:content && astro dev --host 127.0.0.1",
+    "test:site": "node --test tests/site.test.mjs",
+    "test:browser": "node tests/browser.mjs"
+  },
+  "dependencies": {
+    "astro": "7.3.7",
+    "@astrojs/starlight": "latest",
+    "firebase": "latest",
+    "unified": "11.0.5",
+    "remark-parse": "11.0.0",
+    "remark-gfm": "4.0.1",
+    "remark-stringify": "11.0.0",
+    "mdast-util-to-string": "4.0.0",
+    "parse5": "latest"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "typescript": "5.9.3",
+    "playwright": "1.63.0",
+    "@firebase/rules-unit-testing": "latest",
+    "firebase-tools": "latest"
+  },
+  "engines": { "node": ">=24.21.0" }
+}

@@ -1,0 +1,55 @@
+name: Verificar portal
+on:
+  push:
+    branches: [dev/github-pages-portal]
+  pull_request:
+    paths: ['portal/**', 'labs/**', 'docs/**', 'README.md', 'assets/**', '.github/workflows/check-portal.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: portal-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  content-red:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: portal
+    env:
+      ASTRO_TELEMETRY_DISABLED: '1'
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24.21.0'
+      - name: Fixar dependências estáveis para o primeiro lockfile
+        run: |
+          npm install --ignore-scripts --no-audit --no-fund --save-exact @astrojs/starlight@latest firebase@latest parse5@latest
+          npm install --ignore-scripts --no-audit --no-fund --save-dev --save-exact @firebase/rules-unit-testing@latest firebase-tools@latest
+      - name: Registrar pacote e lockfile públicos para revisão
+        run: |
+          node --input-type=module -e 'import{readFileSync}from"node:fs";import{gzipSync}from"node:zlib";for(const file of ["package.json","package-lock.json"]){console.log("PORTAL_FILE_START "+file);const s=gzipSync(readFileSync(file)).toString("base64");for(let i=0;i<s.length;i+=6000)console.log(s.slice(i,i+6000));console.log("PORTAL_FILE_END "+file)}'
+      - name: Verificar testes de conteúdo RED
+        id: content
+        continue-on-error: true
+        run: npm run test:content
+      - name: Verificar controlador da apresentadora RED
+        id: presenter
+        continue-on-error: true
+        run: node --test tests/presenter-controller.test.mjs
+      - name: Verificar regras no emulador RED
+        id: rules
+        continue-on-error: true
+        run: |
+          export JAVA_HOME="$JAVA_HOME_21_X64"
+          export PATH="$JAVA_HOME/bin:$PATH"
+          java -version
+          npx firebase emulators:exec --only firestore --project demo-devday-presenter --config firebase/firebase.json "node --test tests/rules.test.mjs"
+      - name: Consolidar resultados
+        if: always()
+        run: test '${{ steps.content.outcome }}' = success && test '${{ steps.presenter.outcome }}' = success && test '${{ steps.rules.outcome }}' = success
