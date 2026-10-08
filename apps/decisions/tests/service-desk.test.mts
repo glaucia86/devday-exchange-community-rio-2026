@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createDesk, deskReducer, FREE_TEXT_REPLY, mockDecision, SCENARIOS } from '../src/domain/service-desk.ts';
+import { getSpokenReply } from '../src/domain/spoken-reply.ts';
 
 function reviewable() {
   let s = createDesk();
@@ -65,6 +66,21 @@ test('failure and ambiguous cases require clarification without invented tickets
   let s=deskReducer(deskReducer(createDesk(),{type:'REPLAY',scenario:'ambiguous'}),{type:'ANALYZE'});
   s=deskReducer(s,{type:'RESOLVED',session:s.session,revision:s.revision,result:mockDecision('ambiguous',false)});
   assert.equal(s.status,'clarify');assert.equal(s.ticket,null);
+});
+test('simulated failure keeps the notice beside the conversation and does not speak it', () => {
+  let s = deskReducer(deskReducer(createDesk(), { type: 'REPLAY', scenario: 'access' }), { type: 'ANALYZE' });
+  assert.equal(s.status, 'analyzing');
+  const before = s.messages.map((message) => ({ ...message }));
+  assert.deepEqual(deskReducer(s, { type: 'FAILED', session: s.session, revision: s.revision - 1 }), s);
+  s = deskReducer(s, { type: 'FAILED', session: s.session, revision: s.revision });
+  assert.equal(s.status, 'error');
+  assert.equal(s.analysis, null);
+  assert.equal(s.reviewed, false);
+  assert.equal(s.draftText, SCENARIOS.access.text);
+  assert.equal(s.notice, 'A análise falhou. Seu relato continua aqui; tente novamente.');
+  assert.deepEqual(s.messages, before);
+  assert.equal(s.messages.some((message) => message.role === 'assistant' && message.text === s.notice), false);
+  assert.equal(getSpokenReply(s, ''), null);
 });
 
 test('free text does not get a canned suggestion disguised as an analysis',()=>{

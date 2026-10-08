@@ -16,8 +16,22 @@ Páginas oficiais consultadas de novo em **8 de outubro de 2026**:
 - [LAB: responsabilidade contínua](../labs/01-dots/README.md)
 
 ## Codex CLI
+
+Consulta destes links do CLI: **8 de outubro de 2026**.
+
 - [Codex CLI: documentação e instalação](https://learn.chatgpt.com/docs/codex/cli)
-- [Changelog do ChatGPT e Codex](https://learn.chatgpt.com/docs/changelog)
+- [Referência de flags, inclusive `-m`, `-s` e `-a`](https://developers.openai.com/codex/cli/reference)
+- [Modo não interativo: `codex exec` começa somente leitura](https://developers.openai.com/codex/noninteractive.md)
+- [Aprovações, sandbox e pedido de confiança da pasta](https://developers.openai.com/codex/agent-approvals-security.md)
+- [Configuração: `allow_login_shell`](https://developers.openai.com/codex/config-advanced)
+- [Slash commands publicados (ainda sem `/voice` e `/agents` nesta consulta)](https://developers.openai.com/codex/cli/slash-commands)
+- [Changelog publicado do Codex](https://developers.openai.com/codex/changelog)
+- [DevDay 2026 Recap: voz na CLI e visão `/agents`](https://openai.com/index/devday-2026-recap/)
+- [Release 0.161.0](https://github.com/openai/codex/releases/tag/rust-v0.161.0)
+- [Release 0.156.0: voz por padrão, F8 e `/tui`](https://github.com/openai/codex/releases/tag/rust-v0.156.0)
+- [Release 0.155.0: `/voice` experimental](https://github.com/openai/codex/releases/tag/rust-v0.155.0)
+- [Comandos da tag 0.161.0](https://github.com/openai/codex/blob/rust-v0.161.0/codex-rs/tui/src/slash_command.rs)
+- [Catálogo de modelos da tag 0.161.0](https://github.com/openai/codex/blob/rust-v0.161.0/codex-rs/models-manager/models.json)
 - [LAB do CLI](../labs/codex-cli/README.md)
 
 ## Codex Cloud

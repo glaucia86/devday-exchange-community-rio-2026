@@ -40,7 +40,7 @@ Siga somente [Prepare seu ambiente](../../README.md#preparacao) até clonar o pr
 node --test apps/decisions/tests/*.test.mts
 ```
 
-**Esperado:** no fim da saída, `tests 50`, `pass 50`, `fail 0`. O teste de handshake usa somente loopback, isto é, comunicação interna na própria máquina, sem chave real ou internet. Se o comando falhar por caminho ou versão do Node, corrija a preparação antes de seguir.
+**Esperado:** no fim da saída, `tests 51`, `pass 51`, `fail 0`. O teste de handshake usa somente loopback, isto é, comunicação interna na própria máquina, sem chave real ou internet. Se o comando falhar por caminho ou versão do Node, corrija a preparação antes de seguir.
 
 Agora use o terminal que está confirmado na raiz do repositório. Execute uma linha por vez para entrar na pasta da aplicação, instalar e iniciar:
 
