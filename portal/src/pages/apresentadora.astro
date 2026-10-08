@@ -1,0 +1,65 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import '../presenter/presenter.css';
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'Área da apresentadora',
+    description: 'Acesso restrito às anotações da apresentadora do DevDay Exchange Rio 2026.',
+    editUrl: false,
+    lastUpdated: false,
+    tableOfContents: false,
+    pagefind: false,
+    head: [{ tag: 'meta', attrs: { name: 'robots', content: 'noindex, nofollow' } }],
+  }}
+  lang="pt-BR"
+>
+  <section class="presenter-panel" data-presenter-root data-pagefind-ignore aria-labelledby="presenter-title">
+    <div class="presenter-heading">
+      <span class="presenter-eyebrow">BASTIDORES DO ENCONTRO</span>
+      <h2 id="presenter-title">Seu roteiro, só para você.</h2>
+      <p>Um espaço para conduzir a conversa, guardar lembretes e acompanhar o encontro.</p>
+      <p class="presenter-hint">O guia da apresentadora no repositório continua público. As novas anotações desta área são privadas.</p>
+    </div>
+
+    <div class="presenter-config" data-config-note>
+      <strong>Configuração pendente</strong>
+      <p>O acesso ficará disponível depois que o projeto Firebase e a conta da apresentadora forem configurados.</p>
+    </div>
+
+    <div class="presenter-login" data-login-region>
+      <button type="button" class="presenter-primary" data-login disabled>Entrar com GitHub</button>
+      <p>Apenas a conta da apresentadora pode acessar as anotações. Os LABS e materiais continuam públicos.</p>
+    </div>
+
+    <p class="presenter-status" data-status role="status" aria-live="polite" aria-atomic="true" tabindex="-1">Aguardando configuração.</p>
+    <p class="presenter-error" data-error role="alert" hidden></p>
+
+    <form class="presenter-editor" data-editor hidden autocomplete="off">
+      <label for="presenter-notes">Anotações privadas</label>
+      <p id="presenter-note-help" class="presenter-hint">Texto simples, salvo apenas ao clicar em “Salvar notas”. Não inclua senhas, chaves de API ou dados pessoais de participantes.</p>
+      <textarea
+        id="presenter-notes"
+        data-content
+        rows="16"
+        maxlength="16000"
+        autocomplete="off"
+        spellcheck="false"
+        aria-describedby="presenter-note-help presenter-note-count"
+      ></textarea>
+      <div class="presenter-toolbar">
+        <p id="presenter-note-count" class="presenter-hint" data-counter>0 de 16.000 caracteres</p>
+        <button type="submit" class="presenter-primary" data-save disabled>Salvar notas</button>
+      </div>
+      <p class="presenter-hint">Alterações não salvas são descartadas ao sair ou recarregar. A sessão fica apenas na memória desta aba.</p>
+    </form>
+
+    <button type="button" class="presenter-secondary" data-logout hidden>Sair e limpar esta tela</button>
+    <noscript><p class="presenter-config">O JavaScript precisa estar habilitado para entrar. Você pode continuar acessando todos os materiais públicos.</p></noscript>
+  </section>
+</StarlightPage>
+
+<script>
+  import '../presenter/client.mjs';
+</script>

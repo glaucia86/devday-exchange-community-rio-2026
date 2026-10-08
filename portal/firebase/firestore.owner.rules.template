@@ -1,9 +1,29 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // RED scaffold: the success cases must fail before access is implemented.
+    // Replace only with the verified Firebase UID, never a GitHub username/email.
     function presenterUid() {
       return '__PRESENTER_UID__';
+    }
+    function isPresenter(uid) {
+      return request.auth != null
+        && request.auth.uid == presenterUid()
+        && uid == presenterUid()
+        && request.auth.token.firebase.sign_in_provider == 'github.com';
+    }
+    function validNote() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['content', 'updatedAt'])
+        && data.keys().hasOnly(['content', 'updatedAt'])
+        && data.content is string
+        && data.content.size() <= 16000
+        && data.updatedAt is timestamp
+        && data.updatedAt == request.time;
+    }
+    match /presenter/{uid}/notes/evento {
+      allow get: if isPresenter(uid);
+      allow create, update: if isPresenter(uid) && validNote();
+      allow list, delete: if false;
     }
     match /{document=**} {
       allow read, write: if false;

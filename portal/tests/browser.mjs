@@ -1,0 +1,58 @@
+import { chromium } from 'playwright';
+import assert from 'node:assert/strict';
+import { mkdir } from 'node:fs/promises';
+const root='http://127.0.0.1:4321/devday-exchange-community-rio-2026/';
+await mkdir('test-results',{recursive:true});
+const browser=await chromium.launch();
+try{
+ const page=await browser.newPage({viewport:{width:1440,height:1000}});
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(root);await page.waitForLoadState('networkidle');
+ assert.equal(await page.locator('h1').count(),1);
+ await page.keyboard.press('Tab');
+ const skip=page.getByRole('link',{name:/Pular para o conteúdo/i});
+ await skip.press('Enter');
+ assert.equal(await page.evaluate(()=>document.activeElement?.id),'main-content');
+ assert.ok(await page.locator('a[href$="/labs/dots/"]').count());
+ await page.screenshot({path:'test-results/home-desktop.png',fullPage:true});
+ await page.goto(root+'labs/dots/');await page.reload();
+ assert.match(await page.locator('h1').innerText(),/Dots/);
+ await page.screenshot({path:'test-results/lab-desktop.png',fullPage:true});
+ const search=page.getByRole('button',{name:/Pesquisar|Search/i}).first();
+ await search.click();
+ const input=page.locator('dialog input[type="search"], dialog input').first();
+ await input.fill('Aurora');
+ await page.locator('.pagefind-ui__result-link').first().waitFor();
+ assert.ok(await page.locator('.pagefind-ui__result-link').count());
+ await input.fill('zzzz-sem-resultado-ficticio');
+ await page.waitForTimeout(500);
+ assert.equal(await page.locator('.pagefind-ui__result-link').count(),0);
+ await page.keyboard.press('Escape');
+ assert.equal(await page.locator('dialog[open]').count(),0);
+ await page.goto(root+'prepare-se/');
+ const copy=page.getByRole('button',{name:/copiar|copy/i}).first();
+ await copy.click();
+ await page.goto(root+'apresentadora/');
+ assert.equal(await page.locator('textarea:visible').count(),0);
+ assert.match(await page.locator('main').innerText(),/configura|indisponível|preparação/i);
+ await page.screenshot({path:'test-results/apresentadora-fechada-desktop.png',fullPage:true});
+ for(const width of [390,320]){
+  await page.setViewportSize({width,height:844});await page.goto(root);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth),false);
+  const menu=page.getByRole('button',{name:/Abrir menu/i});
+  await menu.click();assert.equal(await menu.getAttribute('aria-expanded'),'true');
+  await page.keyboard.press('Escape');assert.equal(await menu.getAttribute('aria-expanded'),'false');
+  assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('data-menu-toggle')),'');
+  await page.screenshot({path:`test-results/home-mobile-${width}.png`,fullPage:true});
+  await page.goto(root+'labs/dots/');
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth),false);
+  await page.screenshot({path:`test-results/lab-mobile-${width}.png`,fullPage:true});
+ }
+ await page.emulateMedia({reducedMotion:'reduce'});await page.goto(root);
+ assert.equal(await page.locator('h1').evaluate(el=>getComputedStyle(el).animationName),'none');
+ const noJs=await browser.newPage({javaScriptEnabled:false,viewport:{width:390,height:844}});
+ await noJs.goto(root);assert.equal(await noJs.locator('h1').isVisible(),true);
+ await noJs.goto(root+'labs/dots/');assert.match(await noJs.locator('main').innerText(),/Passo a passo/);
+ assert.deepEqual(errors,[]);
+ console.log('Portal browser: navegação, busca, teclado, mobile e redução de movimento aprovados.');
+}finally{await browser.close();}
