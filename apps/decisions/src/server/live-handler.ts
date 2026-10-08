@@ -8,7 +8,21 @@ const JSON_HEADERS={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff
 const reply=(body:unknown,status=200)=>Response.json(body,{status,headers:JSON_HEADERS});
 const error=(status:number,message:string)=>reply({error:message},status);
 const object=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
-const loopback=(url:URL)=>url.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(url.hostname);
+const LOOPBACK=new Set(['127.0.0.1','localhost','[::1]']);
+function httpHost(value:string):URL|null{
+  try{const parsed=new URL(`http://${value}`);return parsed.username||parsed.password||parsed.pathname!=='/'||parsed.search||parsed.hash?null:parsed;}
+  catch{return null;}
+}
+/** O next start reescreve request.url para localhost mesmo quando o navegador usa 127.0.0.1. A origem vale pelo Host e pelo Origin, e os dois nomes de loopback são aceitos. */
+function localSameOrigin(request:Request):boolean{
+  let url:URL;try{url=new URL(request.url);}catch{return false;}
+  const host=request.headers.get('host'),origin=request.headers.get('origin');
+  if(!host||!origin||url.protocol!=='http:'||!LOOPBACK.has(url.hostname))return false;
+  const hostUrl=httpHost(host);
+  if(!hostUrl||!LOOPBACK.has(hostUrl.hostname)||hostUrl.port!==url.port)return false;
+  let originUrl:URL;try{originUrl=new URL(origin);}catch{return false;}
+  return originUrl.protocol==='http:'&&originUrl.host===hostUrl.host&&LOOPBACK.has(originUrl.hostname);
+}
 export function liveConfigured(env:Env):boolean {
  return env.MESA_LIVE_ENABLED==='true'&&!!env.OPENAI_API_KEY&&!!env.MESA_LIVE_ACCESS_TOKEN&&env.MESA_LIVE_ACCESS_TOKEN.length>=32;
 }
@@ -52,8 +66,7 @@ export function createLiveHandler(env:Env,fetcher:Fetcher,openGuard:GuardFactory
  }
  return async(request:Request):Promise<Response>=>{
   if(!liveConfigured(env))return error(503,'Modo ao vivo desativado. Configuração segura e autorização de custo ainda são necessárias.');
-  const url=new URL(request.url);
-  if(!loopback(url)||request.headers.get('origin')!==url.origin||request.headers.get('host')!==url.host)return error(403,'A demonstração ao vivo aceita somente acesso local de mesma origem.');
+  if(!localSameOrigin(request))return error(403,'A demonstração ao vivo aceita somente acesso local de mesma origem.');
   const auth=request.headers.get('authorization')??'',expected='Bearer '+env.MESA_LIVE_ACCESS_TOKEN;
   if(auth.length>512||Buffer.byteLength(auth)!==Buffer.byteLength(expected)||!timingSafeEqual(Buffer.from(auth),Buffer.from(expected)))return error(401,'Acesso da demonstração inválido.');
   if(request.method!=='POST')return error(405,'Método não permitido.');

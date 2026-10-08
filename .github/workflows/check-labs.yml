@@ -63,6 +63,8 @@ jobs:
         run: npm test
       - name: Gerar build de produção
         run: npm run build
+      - name: Conferir origem local no next start
+        run: node --test tests/live-origin.mjs
       - name: Preparar Chromium
         run: npx playwright install --with-deps chromium
       - name: Verificar interação e capturar telas

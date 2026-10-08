@@ -73,6 +73,18 @@ node verify.mjs router.mjs
 
 O resultado continua sendo cinco testes aprovados e 16/18 na aceitação. Isso mostra que os quatro arquivos bastam para reproduzir o defeito, sem depender do restante do material.
 
+Transforme a cópia local em um repositório. No caminho offline, `git diff` mostra a correção. No caminho Cloud, você continua enviando só os quatro arquivos, não a pasta `.git`:
+
+```sh
+git init -b main
+git config user.name "Exercicio"
+git config user.email "exercicio@example.invalid"
+git add README.md router.mjs router.test.mjs verify.mjs
+git commit -m "Candidata original do exercício"
+```
+
+Esses `git config` ficam só nesta cópia.
+
 ### Envie somente esses arquivos para seu GitHub
 
 1. Entre no GitHub com sua própria conta. No menu de criação do canto superior direito, escolha **New repository**
