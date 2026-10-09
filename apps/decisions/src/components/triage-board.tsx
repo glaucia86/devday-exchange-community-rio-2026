@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { AnimatePresence, LayoutGroup, MotionConfig, motion } from 'motion/react';
 import NumberFlow from '@number-flow/react';
-import { ArrowLeft, AudioLines, Braces, Crown, LoaderCircle, Mic, MicOff, ShieldCheck, Sparkles, Trophy, UserCheck } from 'lucide-react';
+import { ArrowLeft, AudioLines, Braces, Crown, LoaderCircle, Mic, MicOff, ShieldCheck, Sparkles, Trophy, UserCheck, Volume2, VolumeX } from 'lucide-react';
 import { TEAMS, type Team } from '../domain/service-desk';
 import { addCard, boardSummary, cardAnnouncement, COLUMNS, columnCounts, createTriage, hear, noteCall, pendingReport, resolveReview, topTeam, urgencyLabel, type TriageState } from '../domain/triage';
 import type { LiveEvent } from '../domain/live-contract';
@@ -37,6 +37,8 @@ export default function TriageBoard(){
  const [showJson,setShowJson]=useState(false);
  const [stage,setStage]=useState<FlowStage>('idle');
  const [flying,setFlying]=useState<{id:number;text:string}|null>(null);
+ const [micMuted,setMicMuted]=useState(false);
+ const [voiceMuted,setVoiceMuted]=useState(false);
  const stageTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
  const audio=useRef<HTMLAudioElement>(null);
  const audioCtx=useRef<AudioContext|null>(null);
@@ -109,6 +111,7 @@ export default function TriageBoard(){
   void audioCtx.current.resume();
   const epoch=++generation.current;
   setConnection('connecting');setFailure('');setFinished(false);setSeconds(0);setAssistant('');setNotice('Solicitando acesso ao microfone…');
+  setMicMuted(false);setVoiceMuted(false);audio.current.muted=false;
   delegations.current.clear();busy.current=false;commit(createTriage());
   const client=new LiveBrowser({token,audio:audio.current,audioContext:audioCtx.current,mode:'triage',
    onInputLevel:value=>{level.current=value;},
@@ -120,6 +123,8 @@ export default function TriageBoard(){
   catch(e){if(mounted.current&&epoch===generation.current)setFailure(e instanceof Error?e.message:'Falha na conexão.');await client.stop();}
  }
  async function stop(){setConnection('closing');await live.current?.stop();if(mounted.current)setConnection('idle');}
+ function toggleMic(){const next=!micMuted;live.current?.setMicMuted(next);setMicMuted(next);}
+ function toggleVoice(){const next=!voiceMuted;if(audio.current)audio.current.muted=next;setVoiceMuted(next);}
  function route(id:number,team:Team){
   const next=resolveReview(current.current,id,team);
   commit(next);
@@ -149,9 +154,10 @@ export default function TriageBoard(){
     <label className="review-check"><input type="checkbox" checked={consent} disabled={connection!=='idle'} onChange={e=>setConsent(e.target.checked)}/><span>Entendi o envio de áudio e texto à OpenAI e estou autorizada a usar a API com custo nesta demo. Dados fictícios.</span></label>
     <button className="primary start" disabled={!enabled||!consent||token.length<32||connection!=='idle'} onClick={()=>void start()}>{connection==='connecting'?<LoaderCircle size={17} className="spin"/>:<Mic size={17}/>}Iniciar triagem ao vivo</button>
    </div>:<div className="tri-live">
-    <div className={'live-voice'+(active?' is-listening':'')} aria-label={active?'Microfone ouvindo':'Microfone inativo'}>
-     <span className="live-voice-icon"><Mic size={22}/></span>
-     <span className="live-voice-copy"><strong>{active?'Ouvindo a sala':'Encerrando'}</strong><small>Diga “registra” para classificar</small></span>
+    <div className={'live-voice'+(active&&!micMuted?' is-listening':'')+(micMuted?' is-muted':'')}>
+     <button type="button" className={'live-voice-icon'+(micMuted?' is-off':'')} aria-pressed={micMuted} aria-label={micMuted?'Ativar meu microfone':'Mutar meu microfone'} title={micMuted?'Ativar meu microfone':'Mutar meu microfone'} disabled={!active} onClick={toggleMic}>{micMuted?<MicOff size={22}/>:<Mic size={22}/>}</button>
+     <span className="live-voice-copy"><strong>{micMuted?'Microfone mudo':active?'Ouvindo a sala':'Encerrando'}</strong><small>{micMuted?'Clique no microfone para voltar a ouvir':'Diga “registra” para classificar'}</small></span>
+     <button type="button" className={'live-voice-icon is-speaker'+(voiceMuted?' is-off':'')} aria-pressed={voiceMuted} aria-label={voiceMuted?'Ativar a voz da assistente':'Mutar a voz da assistente'} title={voiceMuted?'Ativar a voz da assistente':'Mutar a voz da assistente'} disabled={!active} onClick={toggleVoice}>{voiceMuted?<VolumeX size={22}/>:<Volume2 size={22}/>}</button>
     </div>
     <div className="tri-stats">
      <span aria-label={`${board.cards.length} chamados`}><NumberFlow value={board.cards.length} aria-hidden="true"/> chamados</span>

@@ -33,6 +33,7 @@ export class LiveBrowser {
  private lastNotice='';
  get id(){return this.sessionId;}
  get active(){return this.ready&&!this.stopped;}
+ setMicMuted(muted:boolean){this.stream?.getAudioTracks().forEach(track=>{track.enabled=!muted;});}
  async request(body:unknown,signal?:AbortSignal){
   const response=await fetch('/api/live',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+this.options.token},body:JSON.stringify(body),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(20000)]):AbortSignal.timeout(20000)});
   const data=await response.json();

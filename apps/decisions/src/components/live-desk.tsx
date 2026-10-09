@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { Mic, MicOff, ShieldCheck, Sparkles, LoaderCircle, ArrowRight } from 'lucide-react';
+import { Mic, MicOff, ShieldCheck, Sparkles, LoaderCircle, ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import { canCreate, createDesk, deskReducer, TEAMS, type DeskEvent, type DeskState, type Team } from '../domain/service-desk';
 import { type LiveEvent, type TranscriptLine } from '../domain/live-contract';
 import { interfaceContext, applyVoiceCommand, type CommandLogEntry, type VoiceEffect } from '../domain/voice-commands';
@@ -31,6 +31,8 @@ export default function LiveDesk({onInputLevel}:Props){
  const transcript=useRef<TranscriptLine[]>([]);
  const [seconds,setSeconds]=useState(0);
  const [inputLevel,setInputLevel]=useState(0);
+ const [micMuted,setMicMuted]=useState(false);
+ const [voiceMuted,setVoiceMuted]=useState(false);
  const audio=useRef<HTMLAudioElement>(null);
  const live=useRef<LiveBrowser|null>(null);
  const mounted=useRef(true);
@@ -174,6 +176,7 @@ export default function LiveDesk({onInputLevel}:Props){
   if(!audioCtx.current||audioCtx.current.state==='closed')audioCtx.current=new AudioContext();
   void audioCtx.current.resume();
   setConnection('connecting');setFailure('');setNotice('Solicitando acesso ao microfone…');
+  setMicMuted(false);setVoiceMuted(false);audio.current.muted=false;
   const epoch=++generation.current;
   if(insightTimer.current)clearTimeout(insightTimer.current);
   insightSaid.current='';
@@ -189,6 +192,8 @@ export default function LiveDesk({onInputLevel}:Props){
   setConnection('closing');abandonInflight('A conversa foi encerrada. Nenhum ticket novo foi criado.');
   await live.current?.stop();if(mounted.current)setConnection('idle');
  }
+ function toggleMic(){const next=!micMuted;live.current?.setMicMuted(next);setMicMuted(next);}
+ function toggleVoice(){const next=!voiceMuted;if(audio.current)audio.current.muted=next;setVoiceMuted(next);}
  function confirm(){
   if(!canCreate(current.current))return;
   apply({type:'CREATE'});
@@ -211,10 +216,11 @@ export default function LiveDesk({onInputLevel}:Props){
    <input id="demo-token" type="password" autoComplete="off" value={token} maxLength={256} disabled={connection!=='idle'} onChange={e=>setToken(e.target.value)}/>
    <label className="review-check"><input type="checkbox" checked={consent} disabled={connection!=='idle'} onChange={e=>setConsent(e.target.checked)}/><span>Entendi o envio de áudio e texto à OpenAI e estou autorizada a usar a API com custo nesta demo.</span></label>
    <div className="input-actions"><button className="primary" disabled={!enabled||!consent||token.length<32||connection!=='idle'} onClick={()=>void start()}>{connection==='connecting'?<LoaderCircle size={16} className="spin"/>:<Mic size={16}/>}Iniciar conversa real</button><button className="text-button" disabled={connection==='idle'||connection==='closing'} onClick={()=>void stop()}><MicOff size={16}/>Encerrar conversa</button><span>{Math.ceil(seconds)} s informados pela API</span></div>
-  <div className={'live-voice '+(connection==='active'?'is-listening':'')} aria-label={connection==='active'?'Microfone ouvindo':'Microfone inativo'}>
-   <span className="live-voice-icon"><Mic size={22}/></span>
+  <div className={'live-voice '+(connection==='active'&&!micMuted?'is-listening':'')+(micMuted?' is-muted':'')}>
+   <button type="button" className={'live-voice-icon'+(micMuted?' is-off':'')} aria-pressed={micMuted} aria-label={micMuted?'Ativar meu microfone':'Mutar meu microfone'} title={micMuted?'Ativar meu microfone':'Mutar meu microfone'} disabled={connection!=='active'} onClick={toggleMic}>{micMuted?<MicOff size={22}/>:<Mic size={22}/>}</button>
    <span className="live-wave" aria-hidden="true">{[.62,.88,1.15,1.35,1.08,.82,.58].map((factor,index)=><i key={index} style={{height:`${10+Math.round(inputLevel*factor*38)}px`}}/>)}</span>
-   <span className="live-voice-copy"><strong>{connection==='active'?'Ouvindo você':'Microfone em espera'}</strong><small>{connection==='active'?'Fale normalmente':'A onda reage à sua voz'}</small></span>
+   <span className="live-voice-copy"><strong>{micMuted?'Microfone mudo':connection==='active'?'Ouvindo você':'Microfone em espera'}</strong><small>{micMuted?'Clique no microfone para voltar a ouvir':connection==='active'?'Clique no microfone para mutar':'A onda reage à sua voz'}</small></span>
+   <button type="button" className={'live-voice-icon is-speaker'+(voiceMuted?' is-off':'')} aria-pressed={voiceMuted} aria-label={voiceMuted?'Ativar a voz da assistente':'Mutar a voz da assistente'} title={voiceMuted?'Ativar a voz da assistente':'Mutar a voz da assistente'} disabled={connection!=='active'} onClick={toggleVoice}>{voiceMuted?<VolumeX size={22}/>:<Volume2 size={22}/>}</button>
   </div>
    <audio ref={audio} autoPlay controls aria-label="Áudio da conversa OpenAI"/>
    <p role="status">{notice}</p>{failure&&<p role="alert" className="notice error">{failure}</p>}
