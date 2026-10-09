@@ -23,6 +23,22 @@ test('a card clears the heard text and keeps ids increasing', () => {
   assert.equal(state.last?.team, 'applications');
 });
 
+test('a completed card consumes only the speech captured before classification', () => {
+  const captured = hear(createTriage(), 'A VPN caiu. Registra.');
+  const latest = hear(captured, ' O portal mostra erro 500.');
+  const next = addCard(latest, pendingReport(captured), decision('infrastructure'), 1, 'heard', captured.heard);
+  assert.equal(next.cards[0].text, 'A VPN caiu');
+  assert.equal(next.heard, ' O portal mostra erro 500.');
+});
+
+test('a rate limit queues the captured report without consuming later speech', () => {
+  const captured = hear(createTriage(), 'A VPN caiu. Registra.');
+  const latest = hear(captured, ' O portal mostra erro 500.');
+  const next = enqueue(latest, captured.heard);
+  assert.deepEqual(next.queue, ['A VPN caiu']);
+  assert.equal(next.heard, ' O portal mostra erro 500.');
+});
+
 test('calls are counted separately from cards, so failures still show in the budget', () => {
   const state = noteCall(noteCall(createTriage()));
   assert.equal(state.calls, 2);

@@ -69,6 +69,7 @@ export default function TriageBoard(){
  async function classify(delegationId:string|null,queued?:string):Promise<boolean>{
   const client=live.current,epoch=generation.current;
   if(!client?.active)return false;
+  const capturedHeard=current.current.heard;
   const text=queued??pendingReport(current.current);
   if(!text){client.send('Ainda não ouvi um relato novo. Peça para a apresentadora descrever o problema antes de registrar.',delegationId,false);return false;}
   if(busy.current){if(!queued)client.send('Ainda estou classificando o chamado anterior. Já volto com o resultado.',delegationId,false);return false;}
@@ -78,7 +79,7 @@ export default function TriageBoard(){
   try{
    const result=await client.request({action:'decide',sessionId:client.id,revision:current.current.calls,text,transcript:[]});
    if(epoch!==generation.current||!mounted.current)return false;
-   const next=addCard(current.current,text,result.result,Date.now(),queued?'queue':'heard');
+   const next=addCard(current.current,text,result.result,Date.now(),queued?'queue':'heard',capturedHeard);
    // Same render as the new card, so the shared layoutId animates the flight.
    setFlying(null);commit(next);
    settle('placed');settle('listening',PLACED_MS);
@@ -90,7 +91,7 @@ export default function TriageBoard(){
    const message=e instanceof Error?e.message:'A classificação falhou.';
    setFailure(message);setFlying(null);settle('listening');
    if((e as {status?:number}).status===429){
-    if(!queued)commit(enqueue(current.current));
+    if(!queued)commit(enqueue(current.current,capturedHeard));
     setNotice(queued?'O Decisions continua no limite. A fila foi mantida.':'Limite do Decisions: o relato foi para a fila. Siga coletando relatos ou pause a triagem.');
     client.send(queued?'O Decisions continua no limite de uso. Os relatos seguem na fila, sem classificação.':'O Decisions atingiu o limite de uso. O relato foi guardado na fila, sem classificação. Diga à sala que a fila será classificada depois e que podemos seguir ouvindo novos relatos.',delegationId,false);
     client.send(boardSummary(current.current),null,true);
