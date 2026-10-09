@@ -40,6 +40,8 @@ export default function TriageBoard(){
  const [flying,setFlying]=useState<{id:number;text:string}|null>(null);
  const [micMuted,setMicMuted]=useState(false);
  const [voiceMuted,setVoiceMuted]=useState(false);
+ const [voiceBlocked,setVoiceBlocked]=useState(false);
+ const [storageFailed,setStorageFailed]=useState(false);
  const stageTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
  const audio=useRef<HTMLAudioElement>(null);
  const audioCtx=useRef<AudioContext|null>(null);
@@ -52,7 +54,8 @@ export default function TriageBoard(){
  const endIntent=useRef<'pause'|'finish'|null>(null);
  function commit(next:TriageState){
   current.current=next;if(mounted.current)setBoard(next);
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify({cards:next.cards,queue:next.queue,calls:next.calls}));}catch{}
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify({cards:next.cards,queue:next.queue,calls:next.calls}));if(mounted.current)setStorageFailed(false);}
+  catch{if(mounted.current)setStorageFailed(true);}
  }
  function settle(next:FlowStage,after=0){
   if(stageTimer.current)clearTimeout(stageTimer.current);
@@ -65,7 +68,8 @@ export default function TriageBoard(){
  }
  useEffect(()=>{
   mounted.current=true;
-  try{const saved=localStorage.getItem(STORAGE_KEY);if(saved){const restored=restoreTriage(JSON.parse(saved));current.current=restored;setBoard(restored);}}catch{}
+  try{const saved=localStorage.getItem(STORAGE_KEY);if(saved){const restored=restoreTriage(JSON.parse(saved));current.current=restored;setBoard(restored);}}
+  catch{setStorageFailed(true);}
   const abort=new AbortController();
   fetch('/api/live',{signal:abort.signal}).then(r=>r.json()).then(data=>{if(mounted.current)setEnabled(data.enabled===true);}).catch(()=>{if(mounted.current)setEnabled(false);});
   return()=>{mounted.current=false;generation.current++;abort.abort();classification.current?.abort();classification.current=null;if(stageTimer.current)clearTimeout(stageTimer.current);void audioCtx.current?.close();void live.current?.stop();};
@@ -137,10 +141,11 @@ export default function TriageBoard(){
   void audioCtx.current.resume();
   const epoch=++generation.current;
   setConnection('connecting');setFailure('');setFinished(false);setSeconds(0);setAssistant('');setNotice('Solicitando acesso ao microfone…');
-  setMicMuted(false);setVoiceMuted(false);audio.current.muted=false;
+  setMicMuted(false);setVoiceMuted(false);setVoiceBlocked(false);audio.current.muted=false;
   delegations.current.clear();cancelClassification();endIntent.current=null;commit({...current.current,heard:''});
   const client=new LiveBrowser({token,audio:audio.current,audioContext:audioCtx.current,mode:'triage',
    onInputLevel:value=>{level.current=value;},
+   onPlaybackBlocked:()=>{if(mounted.current&&epoch===generation.current)setVoiceBlocked(true);},
    onEvent:event=>eventReceived(event,epoch),
    onNotice:text=>{if(mounted.current&&epoch===generation.current)setNotice(text);},
    onEnded:()=>{
@@ -161,7 +166,17 @@ export default function TriageBoard(){
   commit(createTriage());setFinished(false);setFailure('');setNotice('Quadro limpo. Pronto para uma nova triagem.');
  }
  function toggleMic(){const next=!micMuted;live.current?.setMicMuted(next);setMicMuted(next);}
- function toggleVoice(){const next=!voiceMuted;if(audio.current)audio.current.muted=next;setVoiceMuted(next);}
+ function toggleVoice(){
+  const element=audio.current,epoch=generation.current;
+  if(!element)return;
+  const next=voiceBlocked?false:!voiceMuted;
+  element.muted=next;setVoiceMuted(next);
+  if(!next)void element.play().then(()=>{
+   if(mounted.current&&epoch===generation.current&&live.current?.active){setVoiceBlocked(false);setNotice('Áudio da assistente ativado.');}
+  }).catch(()=>{
+   if(mounted.current&&epoch===generation.current&&live.current?.active){setVoiceBlocked(true);setNotice('Use o controle de áudio para permitir a reprodução.');}
+  });
+ }
  function route(id:number,team:Team){
   const next=resolveReview(current.current,id,team);
   commit(next);
@@ -172,6 +187,15 @@ export default function TriageBoard(){
  const pending=pendingReport(board);
  const active=connection==='active';
  const saved=board.cards.length>0||board.queue.length>0;
+ let voiceControl='Mutar a voz da assistente';
+ if(voiceBlocked)voiceControl='Permitir áudio da assistente';
+ else if(voiceMuted)voiceControl='Ativar a voz da assistente';
+ let StartIcon=Mic;
+ if(saved)StartIcon=Play;
+ if(connection==='connecting')StartIcon=LoaderCircle;
+ let micStatus='Encerrando';
+ if(active)micStatus='Ouvindo a sala';
+ if(micMuted)micStatus='Microfone mudo';
  return <MotionConfig reducedMotion="user"><LayoutGroup><SignalBackdrop voiceLevel={level}/><main className="triage">
   <a className="skip" href="#board">Pular para o quadro</a>
   <header className="topbar">
@@ -190,13 +214,13 @@ export default function TriageBoard(){
     <label htmlFor="tri-token">Código de acesso da demo local (não é a chave OpenAI)</label>
     <input id="tri-token" type="password" autoComplete="off" value={token} maxLength={256} disabled={connection!=='idle'} onChange={e=>setToken(e.target.value)}/>
     <label className="review-check"><input type="checkbox" checked={consent} disabled={connection!=='idle'} onChange={e=>setConsent(e.target.checked)}/><span>Entendi o envio de áudio e texto à OpenAI e estou autorizada a usar a API com custo nesta demo. Dados fictícios.</span></label>
-    <button className="primary start" disabled={!enabled||!consent||token.length<32||connection!=='idle'} onClick={()=>void start()}>{connection==='connecting'?<LoaderCircle size={17} className="spin"/>:saved?<Play size={17}/>:<Mic size={17}/>}{saved?'Retomar triagem':'Iniciar triagem ao vivo'}</button>
-    {saved&&<div className="tri-resume"><span><Inbox size={15}/>Quadro salvo: {board.cards.length} chamados{board.queue.length?`, ${board.queue.length} na fila`:''}.</span><button className="text-button" disabled={connection!=='idle'} onClick={newTriage}><RotateCcw size={15}/>Nova triagem</button></div>}
+    <button className="primary start" disabled={!enabled||!consent||token.length<32||connection!=='idle'} onClick={()=>void start()}><StartIcon size={17} className={connection==='connecting'?'spin':undefined}/>{saved?'Retomar triagem':'Iniciar triagem ao vivo'}</button>
+    {saved&&<div className="tri-resume"><span><Inbox size={15}/>{storageFailed?'Quadro nesta página':'Quadro salvo'}: {board.cards.length} chamados{board.queue.length?`, ${board.queue.length} na fila`:''}.</span><button className="text-button" disabled={connection!=='idle'} onClick={newTriage}><RotateCcw size={15}/>Nova triagem</button></div>}
    </div>:<div className="tri-live">
     <div className={'live-voice'+(active&&!micMuted?' is-listening':'')+(micMuted?' is-muted':'')}>
      <button type="button" className={'live-voice-icon'+(micMuted?' is-off':'')} aria-pressed={micMuted} aria-label={micMuted?'Ativar meu microfone':'Mutar meu microfone'} title={micMuted?'Ativar meu microfone':'Mutar meu microfone'} disabled={!active} onClick={toggleMic}>{micMuted?<MicOff size={22}/>:<Mic size={22}/>}</button>
-     <span className="live-voice-copy"><strong>{micMuted?'Microfone mudo':active?'Ouvindo a sala':'Encerrando'}</strong><small>{micMuted?'Clique no microfone para voltar a ouvir':'Diga “registra” para classificar'}</small></span>
-     <button type="button" className={'live-voice-icon is-speaker'+(voiceMuted?' is-off':'')} aria-pressed={voiceMuted} aria-label={voiceMuted?'Ativar a voz da assistente':'Mutar a voz da assistente'} title={voiceMuted?'Ativar a voz da assistente':'Mutar a voz da assistente'} disabled={!active} onClick={toggleVoice}>{voiceMuted?<VolumeX size={22}/>:<Volume2 size={22}/>}</button>
+     <span className="live-voice-copy"><strong>{micStatus}</strong><small>{micMuted?'Clique no microfone para voltar a ouvir':'Diga “registra” para classificar'}</small></span>
+     <button type="button" className={'live-voice-icon is-speaker'+(voiceMuted?' is-off':'')} aria-pressed={voiceMuted} aria-label={voiceControl} title={voiceControl} disabled={!active} onClick={toggleVoice}>{voiceMuted?<VolumeX size={22}/>:<Volume2 size={22}/>}</button>
     </div>
     <div className="tri-stats">
      <span aria-label={`${board.cards.length} chamados`}><NumberFlow value={board.cards.length} aria-hidden="true"/> chamados</span>
@@ -212,6 +236,7 @@ export default function TriageBoard(){
    </div>}
    <audio ref={audio} autoPlay aria-label="Áudio da triagem"/>
    <p role="status" className="tri-notice">{notice}</p>
+   {storageFailed&&<p role="status" className="notice attention">Não foi possível salvar o quadro neste navegador. Ele continua nesta página; alterações podem ser perdidas ao recarregar.</p>}
    {failure&&<p role="alert" className="notice error">{failure}</p>}
    <FlowRail stage={active?stage:'idle'}/>
   </section>

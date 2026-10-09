@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useReducer, useRef, useState, type CSSProperties } from 'react';
-import { ArrowDown, ArrowRight, ArrowUpRight, AudioLines, Check, CheckCheck, ChevronDown, CircleHelp, Code2, FileText, Headphones, Info, LoaderCircle, LockKeyhole, MessageSquareText, Play, Radio, RotateCcw, ShieldCheck, Sparkles, Ticket, Volume2, VolumeX, X } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUpRight, AudioLines, Check, CheckCheck, ChevronDown, CircleHelp, Code2, FileText, Headphones, Info, LoaderCircle, LockKeyhole, MessageSquareText, Play, Radio, RotateCcw, ShieldCheck, Sparkles, Ticket, Volume2, VolumeX } from 'lucide-react';
 import { canCreate, createDesk, deskReducer, mockDecision, SCENARIOS, TEAMS, type ScenarioId, type Team } from '../domain/service-desk';
 
 import { Confetti, TicketId } from './celebrate';
