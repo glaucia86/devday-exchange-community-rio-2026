@@ -28,7 +28,7 @@ await page.route('**/api/live',async route=>{
  const request=route.request();
  if(request.method()==='GET')return route.fulfill({json:{enabled}});
  const data=request.postDataJSON();calls.push(data);
- if(data.action==='start')return route.fulfill({json:{sessionId:'session_browser_fixture',sdp:'v=0\r\ntest-answer',maxSeconds:120}});
+ if(data.action==='start')return route.fulfill({json:{sessionId:'session_browser_fixture',sdp:'v=0\r\ntest-answer',maxSeconds:600}});
  if(data.action==='close'){if(closeRace){await page.evaluate(()=>window.__emit({type:'session.closed',usage:{seconds:2}}));return route.fulfill({status:409,json:{error:'Already closed in sideband fixture'}});}return route.fulfill({json:{confirmed:true}});}
  if(data.action==='decide'){
   await new Promise(resolve=>setTimeout(resolve,decisionDelay));

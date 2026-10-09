@@ -1,12 +1,20 @@
 'use client';
-import { useEffect, useReducer, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState, type CSSProperties } from 'react';
 import { ArrowDown, ArrowRight, ArrowUpRight, AudioLines, Check, CheckCheck, ChevronDown, CircleHelp, Code2, FileText, Headphones, Info, LoaderCircle, LockKeyhole, MessageSquareText, Play, Radio, RotateCcw, ShieldCheck, Sparkles, Ticket, Volume2, VolumeX, X } from 'lucide-react';
 import { canCreate, createDesk, deskReducer, mockDecision, SCENARIOS, TEAMS, type ScenarioId, type Team } from '../domain/service-desk';
 
+import { Confetti, TicketId } from './celebrate';
 import LiveDesk from './live-desk';
 import MonitoringNote from './monitoring-note';
+import SignalBackdrop from './signal-backdrop';
 import { getSpokenReply } from '../domain/spoken-reply';
 
+const FLOW = [['Relato',MessageSquareText],['Decisions sugere',Sparkles],['Você revisa',ShieldCheck],['Ticket criado',Ticket]] as const;
+function flowStep(state:{status:string;reviewed:boolean}){
+  if(state.status==='created')return 4;
+  if(state.status==='review')return state.reviewed?3:2;
+  return state.status==='ready'?0:1;
+}
 const STATUS = {ready:'Pronto para começar','needs-analysis':'Relato recebido',analyzing:'Analisando o relato',review:'Pronto para revisar',clarify:'Precisamos esclarecer',unsupported:'Texto livre não analisado',created:'Ticket criado',error:'Tente novamente'};
 export default function ServiceDesk(){
   const [state,dispatch]=useReducer(deskReducer,undefined,()=>createDesk());
@@ -19,6 +27,7 @@ export default function ServiceDesk(){
   const [simulateFailure,setSimulateFailure]=useState(false);
   const [voiceReady,setVoiceReady]=useState(false);
   const spoken=useRef('');
+  const liveVoiceLevel=useRef(0);
   const end=useRef<HTMLDivElement>(null);
   const incident=useRef<HTMLTextAreaElement>(null);
   useEffect(()=>{
@@ -53,7 +62,8 @@ export default function ServiceDesk(){
   const active=state.status!=='ready';
   const unsupported=state.status==='unsupported';
   const locked=state.ticket?'Ticket já criado. Use Recomeçar para outro relato.':undefined;
-  return <main className={stage?'stage':undefined}>
+  const step=showLive?0:flowStep(state);
+  return <><SignalBackdrop voiceLevel={liveVoiceLevel}/><main className={stage?'stage':undefined}>
     <a className="skip" href="#conversation">Pular para a conversa</a>
     <header className="topbar">
       <a className="brand" href="/" aria-label="Alô, TI, início"><span className="brand-mark"><AudioLines size={23}/></span><span>Alô,<span className="brand-light"> TI</span></span></a>
@@ -61,7 +71,7 @@ export default function ServiceDesk(){
       <a className="docs-link" href="https://developers.openai.com/api/docs/guides/decisions" target="_blank" rel="noreferrer">Documentação <ArrowUpRight size={15}/></a>
     </header>
     <section className="intro">
-      <div><p className="eyebrow"><span/>LAB / DECISIONS API</p><h1>Uma conversa.<br/><span>O próximo passo.</span></h1><p className="intro-copy">Do relato à equipe certa. Acompanhe a decisão,<br className="desktop-break"/> ajuste o contexto e confirme cada encaminhamento.</p></div>
+      <div><p className="eyebrow"><span/>LAB / DECISIONS API</p><h1>Uma conversa.<br/><span>O próximo passo.</span></h1><p className="intro-copy">Do relato à equipe certa. Acompanhe a decisão,<br className="desktop-break"/> ajuste o contexto e confirme cada encaminhamento.</p><ol className="flow-pills" aria-label="Fluxo da demo">{FLOW.map(([label,Icon],i)=>{const n=i+1;const phase=n<step?'done':n===step?'current':'';return <li key={label} className={phase} aria-current={phase==='current'?'step':undefined}><Icon size={14}/>{label}</li>;})}</ol></div>
       <div className="intro-note"><span className="note-icon"><ShieldCheck size={22}/></span><p>A inteligência sugere.<br/><strong>Você decide.</strong></p><span className="note-rule"/></div>
     </section>
     <div className="workspace-label"><span><span className="status-dot"/>SERVICE DESK FICTÍCIO</span><span>FEITO PARA EXPLORAR, CORRIGIR E APRENDER</span></div>
@@ -70,7 +80,7 @@ export default function ServiceDesk(){
         <div className="mode-switch"><button className={!showLive?"mode-selected":""} onClick={()=>setShowLive(false)}><Radio size={14}/>Simulado</button><button className={showLive?"mode-selected":""} onClick={()=>{stopAudio();setSound(false);setShowLive(!showLive);}} aria-expanded={showLive}><LockKeyhole size={13}/>OpenAI ao vivo <ChevronDown size={13}/></button></div>
         {!showLive&&<div className="toolbar-actions"><button onClick={()=>setStage(!stage)} aria-pressed={stage}><span>{stage?'Palco ligado':'Modo palco'}</span></button><button onClick={()=>{stopAudio();setSound(!sound);}} aria-pressed={sound} title="Reprodução com voz local do dispositivo, quando disponível">{sound?<Volume2 size={17}/>:<VolumeX size={17}/>}<span>{sound?'Som ligado':'Som desligado'}</span></button><button onClick={reset}><RotateCcw size={16}/><span>Recomeçar</span></button></div>}
       </div>
-      {showLive&&<LiveDesk/>}
+      {showLive&&<LiveDesk onInputLevel={level=>{liveVoiceLevel.current=level;}}/>}
       {!showLive&&<div className="workspace-grid">
         <section className="conversation" id="conversation" tabIndex={-1} aria-label="Conversa e transcrição">
           <div className="panel-heading"><div><span className="step-label">01 / O RELATO</span><h2>Vamos conversar</h2></div><span className={'conversation-state '+(speaking?'speaking ':'')+(unsupported?'attention':'')}>{speaking?<AudioLines size={14}/>:<span className="small-dot"/>}{speaking?'Reproduzindo voz local':STATUS[state.status]}</span></div>
@@ -90,9 +100,9 @@ export default function ServiceDesk(){
         <aside className="decision-panel" aria-label="Análise e revisão do ticket">
           <div className="panel-heading"><div><span className="step-label">02 / O ENCAMINHAMENTO</span><h2>Um passo de cada vez</h2></div><span className="panel-symbol"><Ticket size={19}/></span></div>
           <div className="decision-content">
-            <div className={'suggestion '+(state.analysis?'has-result':'')+(unsupported?' unsupported':'')}><div className="suggestion-heading"><span>{unsupported?'SEM ENCAMINHAMENTO':'EQUIPE SUGERIDA'}</span>{state.analysis||unsupported?null:<CircleHelp size={15}/>}</div><h3>{state.analysis?TEAMS[state.analysis.team]:unsupported?'Nenhuma equipe sugerida':'Ainda estamos ouvindo'}</h3><p>{state.analysis?state.analysis.explanation:unsupported?(state.messages.at(-1)?.text??''):'A sugestão aparece depois que o relato estiver pronto para análise.'}</p>{state.analysis&&<div className="human-reminder"><ShieldCheck size={13}/>A revisão humana continua necessária</div>}</div>
+            <div key={state.analysis?`${state.session}-${state.revision}`:'empty'} className={'suggestion '+(state.analysis?'has-result':'')+(unsupported?' unsupported':'')}><div className="suggestion-heading"><span>{unsupported?'SEM ENCAMINHAMENTO':'EQUIPE SUGERIDA'}</span>{state.analysis||unsupported?null:<CircleHelp size={15}/>}</div><h3>{state.analysis?TEAMS[state.analysis.team]:unsupported?'Nenhuma equipe sugerida':'Ainda estamos ouvindo'}</h3><p>{state.analysis?state.analysis.explanation:unsupported?(state.messages.at(-1)?.text??''):'A sugestão aparece depois que o relato estiver pronto para análise.'}</p>{state.analysis&&<div className="confidence"><span>Confiança</span><span className="confidence-track"><i style={{'--value':Math.min(1,Math.max(0,state.analysis.confidence))} as CSSProperties}/></span><strong>{Math.round(state.analysis.confidence*100)}%</strong></div>}{state.analysis&&<div className="human-reminder"><ShieldCheck size={13}/>A revisão humana continua necessária</div>}</div>
             <div className="flow-connector"><ArrowDown size={16}/></div>
-            {state.ticket?<div className="ticket-created"><span className="ticket-check"><CheckCheck size={25}/></span><p className="step-label">TICKET SIMULADO CRIADO</p><h3>{state.ticket.id}</h3><h4>{state.ticket.title}</h4><p>{state.ticket.description}</p><div><span>Equipe confirmada</span><strong>{TEAMS[state.ticket.team]}</strong></div><div><span>Origem</span><strong>Demo local · versão {state.ticket.revision}</strong></div><p className="ticket-footnote">Nenhum sistema externo recebeu este ticket.</p><MonitoringNote insight={state.insight} history={state.history}/></div>:<div className="ticket-draft"><div className="draft-heading"><span><FileText size={16}/>Prévia do ticket</span><span className="draft-badge">RASCUNHO</span></div><label htmlFor="ticket-title">Título</label><input id="ticket-title" value={state.title} placeholder="O que precisa ser resolvido?" disabled={!active} onChange={e=>dispatch({type:'TITLE',value:e.target.value})}/><label htmlFor="ticket-team">Equipe responsável</label><select id="ticket-team" value={state.team} disabled={state.status!=='review'} onChange={e=>dispatch({type:'TEAM',value:e.target.value as Team})}>{Object.entries(TEAMS).map(([id,label])=><option value={id} key={id}>{label}</option>)}</select><label className="review-check"><input type="checkbox" checked={state.reviewed} disabled={state.status!=='review'} onChange={e=>dispatch({type:'REVIEW',checked:e.target.checked})}/><span>Revisei o relato e a equipe responsável.</span></label><button className="create-button" disabled={!canCreate(state)} onClick={()=>dispatch({type:'CREATE'})}><Check size={16}/>Confirmar e criar ticket simulado</button><p className="draft-caption"><LockKeyhole size={11}/>Nada é criado sem a sua confirmação.</p></div>}
+            {state.ticket?<div className="ticket-created"><Confetti/><span className="ticket-check"><CheckCheck size={25}/></span><p className="step-label">TICKET SIMULADO CRIADO</p><TicketId id={state.ticket.id}/><h4>{state.ticket.title}</h4><p>{state.ticket.description}</p><div><span>Equipe confirmada</span><strong>{TEAMS[state.ticket.team]}</strong></div><div><span>Origem</span><strong>Demo local · versão {state.ticket.revision}</strong></div><p className="ticket-footnote">Nenhum sistema externo recebeu este ticket.</p><MonitoringNote insight={state.insight} history={state.history}/></div>:<div className="ticket-draft"><div className="draft-heading"><span><FileText size={16}/>Prévia do ticket</span><span className="draft-badge">RASCUNHO</span></div><label htmlFor="ticket-title">Título</label><input id="ticket-title" value={state.title} placeholder="O que precisa ser resolvido?" disabled={!active} onChange={e=>dispatch({type:'TITLE',value:e.target.value})}/><label htmlFor="ticket-team">Equipe responsável</label><select id="ticket-team" value={state.team} disabled={state.status!=='review'} onChange={e=>dispatch({type:'TEAM',value:e.target.value as Team})}>{Object.entries(TEAMS).map(([id,label])=><option value={id} key={id}>{label}</option>)}</select><label className="review-check"><input type="checkbox" checked={state.reviewed} disabled={state.status!=='review'} onChange={e=>dispatch({type:'REVIEW',checked:e.target.checked})}/><span>Revisei o relato e a equipe responsável.</span></label><button className="create-button" disabled={!canCreate(state)} onClick={()=>dispatch({type:'CREATE'})}><Check size={16}/>Confirmar e criar ticket simulado</button><p className="draft-caption"><LockKeyhole size={11}/>Nada é criado sem a sua confirmação.</p></div>}
             {!!state.notice&&<p className={'notice '+(state.status==='error'?'error':unsupported?'attention':'')} role="status">{state.notice}</p>}
           </div>
         </aside>
@@ -103,5 +113,5 @@ export default function ServiceDesk(){
     </section>
     {(voiceNotice||(sound&&!voiceReady))&&<p className="audio-note" role="status"><Info size={14}/>{voiceNotice||'Ative uma voz local em português no dispositivo para ouvir o cenário. O modo simulado não usa áudio OpenAI.'}</p>}
     <footer className="site-footer"><p>Um experimento para aprender fazendo.<br/><span>DevDay Exchange Community · Rio de Janeiro, 2026</span></p><p>Modo simulado: respostas preparadas, sem modelo e sem microfone.<br/><span>Material da comunidade. Este não é um produto oficial da OpenAI.</span></p></footer>
-  </main>;
+  </main></>;
 }

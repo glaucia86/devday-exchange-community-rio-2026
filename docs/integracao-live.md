@@ -176,7 +176,7 @@ Somente loopback HTTP, com Host/Origin correspondentes e autenticação por cód
 
 Uma sessão por processo, até três inicializações e 30 análises por dez minutos. Corpo máximo de 64 KiB, SDP de até 60 mil caracteres e relato limitado a 8 mil caracteres. A transcrição da interface tem limite total de 8 mil caracteres.
 
-Cliente e servidor pedem fechamento após dois minutos. Perda do sideband bloqueia novas inferências e tenta uma reconexão limitada, exclusivamente para fechar a mesma sessão. Uma finalização confirmada é idempotente. Timeouts não são tratados como sucesso, e resultados incertos bloqueiam novos inícios no processo.
+Cliente e servidor pedem fechamento após dez minutos. Perda do sideband bloqueia novas inferências e tenta uma reconexão limitada, exclusivamente para fechar a mesma sessão. Uma finalização confirmada é idempotente. Timeouts não são tratados como sucesso, e resultados incertos bloqueiam novos inícios no processo.
 
 Esses controles não são um teto financeiro: queda do processo ou da rede pode impedir o encerramento remoto. Reiniciar o processo também reinicia contadores em memória. Não use esta demo como serviço público ou controle de gastos de produção.
 

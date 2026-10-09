@@ -45,9 +45,9 @@ export type LiveEvent =
  | {type:'session.input_transcript.delta'|'session.output_transcript.delta';delta:string}
  | {type:'session.delegation.created';delegation:{id:string}}
  | {type:'session.started'}
- | {type:'session.closed';usage?:{seconds:number}}
+ | {type:'session.closed';usage?:{seconds:number};reason?:string}
  | {type:'session.usage.updated';usage:{seconds:number}}
- | {type:'error'}
+ | {type:'error';code?:string;clientEventId?:string}
  | {type:'response.function_call';callId:string;name:string;arguments:string};
 export function parseLiveEvent(raw:string):LiveEvent|null {
   if(raw.length>65536)return null;
@@ -58,8 +58,17 @@ export function parseLiveEvent(raw:string):LiveEvent|null {
     return typeof value.delta==='string'&&value.delta.length<=8000?{type,delta:value.delta}:null;
   }
   if(type==='session.delegation.created')return object(value.delegation)&&typeof value.delegation.id==='string'&&/^[a-zA-Z0-9_-]{1,200}$/.test(value.delegation.id)?{type,delegation:{id:value.delegation.id}}:null;
-  if(type==='session.started'||type==='error')return {type};
-  if(type==='session.closed')return {type,...(object(value.usage)&&between(value.usage.seconds,86400)?{usage:{seconds:value.usage.seconds}}:{})};
+  if(type==='session.started')return {type};
+  if(type==='error'){
+    const detail=object(value.error)?value.error:{};
+    const code=typeof detail.code==='string'&&/^[a-zA-Z0-9_.-]{1,80}$/.test(detail.code)?detail.code:undefined;
+    const clientEventId=typeof detail.client_event_id==='string'&&/^[a-zA-Z0-9_-]{1,200}$/.test(detail.client_event_id)?detail.client_event_id:undefined;
+    return {type,...(code?{code}:{}),...(clientEventId?{clientEventId}:{})};
+  }
+  if(type==='session.closed'){
+    const reason=typeof value.reason==='string'&&/^[a-z_]{1,40}$/.test(value.reason)?value.reason:undefined;
+    return {type,...(object(value.usage)&&between(value.usage.seconds,86400)?{usage:{seconds:value.usage.seconds}}:{}),...(reason?{reason}:{})};
+  }
   if(type==='session.usage.updated'&&object(value.usage)&&between(value.usage.seconds,86400))return {type,usage:{seconds:value.usage.seconds}};
   const tool=readToolCall(value);
   if(tool)return {type:'response.function_call',callId:tool.callId,name:tool.name,arguments:tool.arguments};

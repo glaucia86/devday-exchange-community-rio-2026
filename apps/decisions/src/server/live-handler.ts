@@ -84,14 +84,14 @@ export function createLiveHandler(env:Env,fetcher:Fetcher,openGuard:GuardFactory
     const value=await upstream('live/sessions',liveSessionBody(body.sdp));
     if(!object(value)||!object(value.session)||typeof value.session.id!=='string'||!/^[a-zA-Z0-9_-]{1,200}$/.test(value.session.id)||!object(value.transport)||value.transport.type!=='webrtc'||typeof value.transport.sdp!=='string'||value.transport.sdp.length>60000)throw Error('contract');
     id=value.session.id;
-    const active:Active={revision:-1,busy:false,expires:Date.now()+120000,guard:null,closed:false,usable:true};sessions.set(id,active);
+    const active:Active={revision:-1,busy:false,expires:Date.now()+600000,guard:null,closed:false,usable:true};sessions.set(id,active);
     const sessionId=id;
-    active.timer=setTimeout(()=>{void terminate(sessionId,active);},120000);
+    active.timer=setTimeout(()=>{void terminate(sessionId,active);},600000);
     active.timer.unref();
     active.guard=await openGuard(id,env.OPENAI_API_KEY!);
-    void active.guard.finalized.then(ok=>{if(ok)confirmClosed(sessionId,active);else {active.usable=false;blocked=true;void terminate(sessionId,active,true);}});
+    void active.guard.finalized.then(ok=>{if(ok)confirmClosed(sessionId,active);else {console.warn(`[live] sideband perdido após ${Math.round((Date.now()-(active.expires-600000))/1000)} s; encerrando a sessão por segurança.`);active.usable=false;blocked=true;void terminate(sessionId,active,true);}});
     if(request.signal.aborted){await terminate(sessionId,active);return error(409,'Conexão cancelada.');}
-    return reply({sessionId:id,sdp:value.transport.sdp,maxSeconds:120});
+    return reply({sessionId:id,sdp:value.transport.sdp,maxSeconds:600});
    }catch{
     if(id){const active=sessions.get(id);if(active){active.usable=false;await terminate(id,active,true);}blocked=!confirmedClosed.has(id);return error(502,'A sessão foi criada, mas a proteção de encerramento falhou. Finalização não confirmada; verifique a sessão na plataforma antes de reiniciar o servidor.');}
     // A timeout can occur after upstream creation. Do not auto-retry paid initialization.

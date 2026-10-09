@@ -9,10 +9,15 @@ import { planCancelledAnalysis, planEditedAnalysisTurn } from '../domain/live-tu
 import { watchAssistantAudio } from '../client/assistant-audio';
 import { LiveBrowser } from '../client/live-browser';
 import MonitoringNote from './monitoring-note';
+import { Confetti, TicketId } from './celebrate';
 
 const QUIET_MS = 900;
+const TRANSCRIPT_CHARS = 8000;
+const MAX_CALLS = 120;
 
-export default function LiveDesk(){
+type Props = { onInputLevel?: (level: number) => void };
+
+export default function LiveDesk({onInputLevel}:Props){
  const [state,setState]=useState(()=>createDesk(1,'live'));
  const current=useRef(state);
  const [enabled,setEnabled]=useState<boolean|null>(null);
@@ -25,6 +30,7 @@ export default function LiveDesk(){
  const [log,setLog]=useState<CommandLogEntry[]>([]);
  const transcript=useRef<TranscriptLine[]>([]);
  const [seconds,setSeconds]=useState(0);
+ const [inputLevel,setInputLevel]=useState(0);
  const audio=useRef<HTMLAudioElement>(null);
  const live=useRef<LiveBrowser|null>(null);
  const mounted=useRef(true);
@@ -124,7 +130,7 @@ export default function LiveDesk(){
  function onTool(event:Extract<LiveEvent,{type:'response.function_call'}>,epoch:number){
   if(seenCalls.current.has(event.callId))return;
   seenCalls.current.add(event.callId);
-  if(seenCalls.current.size>40){setNotice('Limite de comandos atingido.');void stop();return;}
+  if(seenCalls.current.size>MAX_CALLS){setNotice('Limite de comandos atingido.');void stop();return;}
   const interrupts=event.name==='registrar_relato'||event.name==='corrigir_relato'||event.name==='recomecar';
   if(interrupts)abandonInflight('O relato mudou durante a análise. Nenhum ticket foi criado.');
   const effect=applyVoiceCommand(current.current,{name:event.name,arguments:event.arguments});
@@ -147,7 +153,10 @@ export default function LiveDesk(){
    if(role==='user')stamp('user_speech');
    const next=transcript.current.map(line=>({...line}));
    if(next.at(-1)?.role===role)next[next.length-1].text+=event.delta;else next.push({role,text:event.delta});
-   if(next.reduce((sum,line)=>sum+line.text.length,0)>8000){setNotice('Limite de transcrição atingido. Encerrando.');void stop();return;}
+   // Keep the newest ~8k characters on screen instead of ending a long conversation.
+   let total=next.reduce((sum,line)=>sum+line.text.length,0);
+   while(total>TRANSCRIPT_CHARS&&next.length>1){total-=next[0].text.length;next.shift();}
+   if(total>TRANSCRIPT_CHARS)next[0].text=next[0].text.slice(-TRANSCRIPT_CHARS);
    transcript.current=next;setLines(next);
    return;
   }
@@ -155,7 +164,7 @@ export default function LiveDesk(){
    const id=event.delegation.id;
    if(delegations.current.has(id))return;
    delegations.current.add(id);
-   if(delegations.current.size>40){setNotice('Limite de delegações atingido.');void stop();return;}
+   if(delegations.current.size>MAX_CALLS){setNotice('Limite de delegações atingido.');void stop();return;}
    return;
   }
   if(event.type==='response.function_call')onTool(event,epoch);
@@ -169,7 +178,7 @@ export default function LiveDesk(){
   if(insightTimer.current)clearTimeout(insightTimer.current);
   insightSaid.current='';
   apply({type:'RESET'});transcript.current=[];setLines([]);setLog([]);delegations.current.clear();seenCalls.current.clear();inflight.current=null;resetSpeechClock();setSeconds(0);
-  const client=new LiveBrowser({token,audio:audio.current,onEvent:event=>eventReceived(event,epoch),
+  const client=new LiveBrowser({token,audio:audio.current,audioContext:audioCtx.current,onInputLevel:level=>{if(mounted.current&&epoch===generation.current){setInputLevel(level);onInputLevel?.(level);}},onEvent:event=>eventReceived(event,epoch),
    onNotice:text=>{if(mounted.current&&epoch===generation.current)setNotice(text);},
    onEnded:()=>{if(mounted.current&&epoch===generation.current){setConnection('idle');pending.current?.abort();pending.current=null;inflight.current=null;}}});
   live.current=client;
@@ -195,13 +204,18 @@ export default function LiveDesk(){
  return <section className="live-lab" aria-label="OpenAI ao vivo">
   <div className="panel-heading"><div><span className="step-label">GPT-LIVE + DECISIONS</span><h2>Conversa real, ticket simulado</h2></div><span className="example-badge">INTEGRAÇÃO EXPERIMENTAL</span></div>
   <p>O áudio do microfone e o relato serão enviados à OpenAI. GPT-Live conversa e pede funções; o aplicativo executa os mesmos passos dos botões. Decisions sugere a equipe. Use somente dados fictícios. A chave da OpenAI fica no servidor.</p>
-  <p className="notice">Código integrado, ainda sem ensaio com a API e áudio reais. Voz: bossa. Sessões de voz e análises têm custo separado. Limite local: dois minutos por conversa. Se o microfone ou a API não estiverem disponíveis, use a aba Simulado: o monitoramento aparece na tela depois do ticket.</p>
+    <p className="notice">Código integrado, ainda sem ensaio com a API e áudio reais. Voz: bossa. Sessões de voz e análises têm custo separado. Limite local: dez minutos por conversa. Se o microfone ou a API não estiverem disponíveis, use a aba Simulado: o monitoramento aparece na tela depois do ticket.</p>
   {enabled===false&&<p role="status" className="notice">Ao vivo desativado no servidor. Plano B: aba Simulado, sem microfone. Ativação exige configuração segura, acesso aos modelos e autorização de custo.</p>}
   <div className="live-access">
    <label htmlFor="demo-token">Código de acesso da demo local (não é a chave OpenAI)</label>
    <input id="demo-token" type="password" autoComplete="off" value={token} maxLength={256} disabled={connection!=='idle'} onChange={e=>setToken(e.target.value)}/>
    <label className="review-check"><input type="checkbox" checked={consent} disabled={connection!=='idle'} onChange={e=>setConsent(e.target.checked)}/><span>Entendi o envio de áudio e texto à OpenAI e estou autorizada a usar a API com custo nesta demo.</span></label>
    <div className="input-actions"><button className="primary" disabled={!enabled||!consent||token.length<32||connection!=='idle'} onClick={()=>void start()}>{connection==='connecting'?<LoaderCircle size={16} className="spin"/>:<Mic size={16}/>}Iniciar conversa real</button><button className="text-button" disabled={connection==='idle'||connection==='closing'} onClick={()=>void stop()}><MicOff size={16}/>Encerrar conversa</button><span>{Math.ceil(seconds)} s informados pela API</span></div>
+  <div className={'live-voice '+(connection==='active'?'is-listening':'')} aria-label={connection==='active'?'Microfone ouvindo':'Microfone inativo'}>
+   <span className="live-voice-icon"><Mic size={22}/></span>
+   <span className="live-wave" aria-hidden="true">{[.62,.88,1.15,1.35,1.08,.82,.58].map((factor,index)=><i key={index} style={{height:`${10+Math.round(inputLevel*factor*38)}px`}}/>)}</span>
+   <span className="live-voice-copy"><strong>{connection==='active'?'Ouvindo você':'Microfone em espera'}</strong><small>{connection==='active'?'Fale normalmente':'A onda reage à sua voz'}</small></span>
+  </div>
    <audio ref={audio} autoPlay controls aria-label="Áudio da conversa OpenAI"/>
    <p role="status">{notice}</p>{failure&&<p role="alert" className="notice error">{failure}</p>}
   </div>
@@ -216,7 +230,7 @@ export default function LiveDesk(){
    </section>
    <aside className="decision-panel" aria-label="Revisão ao vivo"><div className="panel-heading"><h3>Revisão humana</h3><ShieldCheck size={20}/></div><div className="decision-content">
     <div className="suggestion"><span className="example-badge">{state.analysis?'OPENAI · DECISIONS':'SEM ANÁLISE'}</span><h3>{state.analysis?TEAMS[state.analysis.team]:'Aguardando relato'}</h3><p>{state.analysis?.explanation??'Nenhuma sugestão foi aplicada.'}</p>{state.analysis&&<p>Contexto: {state.analysis.probability.toFixed(2)} · Confiança da escolha: {state.analysis.confidence.toFixed(2)} · Impacto: {state.analysis.score.toFixed(2)} / 2 (não é prioridade)</p>}</div>
-    {state.ticket?<div className="ticket-created"><p>TICKET SIMULADO</p><h3>{state.ticket.id}</h3><h4>{state.ticket.title}</h4><p>{state.ticket.description}</p><strong>{TEAMS[state.ticket.team]}</strong><p>Nenhum sistema externo recebeu este ticket.</p><MonitoringNote insight={state.insight} history={state.history}/></div>:<div className="ticket-draft"><label htmlFor="live-title">Título do ticket ao vivo</label><input id="live-title" maxLength={200} value={state.title} onChange={e=>apply({type:'TITLE',value:e.target.value})}/><label htmlFor="live-team">Equipe sugerida ao vivo</label><select id="live-team" value={state.team} disabled={state.status!=='review'} onChange={e=>apply({type:'TEAM',value:e.target.value as Team})}>{Object.entries(TEAMS).map(([id,label])=><option key={id} value={id}>{label}</option>)}</select><label className="review-check"><input type="checkbox" checked={state.reviewed} disabled={state.status!=='review'} onChange={e=>apply({type:'REVIEW',checked:e.target.checked})}/><span>Revisei este relato ao vivo e a equipe.</span></label><button className="create-button" disabled={!canCreate(state)} onClick={confirm}>Confirmar ticket simulado ao vivo</button></div>}
+    {state.ticket?<div className="ticket-created"><Confetti/><p>TICKET SIMULADO</p><TicketId id={state.ticket.id}/><h4>{state.ticket.title}</h4><p>{state.ticket.description}</p><strong>{TEAMS[state.ticket.team]}</strong><p>Nenhum sistema externo recebeu este ticket.</p><MonitoringNote insight={state.insight} history={state.history}/></div>:<div className="ticket-draft"><label htmlFor="live-title">Título do ticket ao vivo</label><input id="live-title" maxLength={200} value={state.title} onChange={e=>apply({type:'TITLE',value:e.target.value})}/><label htmlFor="live-team">Equipe sugerida ao vivo</label><select id="live-team" value={state.team} disabled={state.status!=='review'} onChange={e=>apply({type:'TEAM',value:e.target.value as Team})}>{Object.entries(TEAMS).map(([id,label])=><option key={id} value={id}>{label}</option>)}</select><label className="review-check"><input type="checkbox" checked={state.reviewed} disabled={state.status!=='review'} onChange={e=>apply({type:'REVIEW',checked:e.target.checked})}/><span>Revisei este relato ao vivo e a equipe.</span></label><button className="create-button" disabled={!canCreate(state)} onClick={confirm}>Confirmar ticket simulado ao vivo</button></div>}
     {state.notice&&<p className="notice" role="status">{state.notice}</p>}
    </div></aside>
   </div>

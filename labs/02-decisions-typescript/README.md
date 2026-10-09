@@ -75,7 +75,7 @@ O guia de ativação inclui a criação de `.env.local`, um arquivo local de con
 - Confirme acesso aos modelos e um orçamento de ensaio na sua conta; não basta possuir uma chave
 - Siga o guia local para configurar o segredo no servidor e habilitar o modo ao vivo. Não cole a chave na interface, no chat ou em capturas
 - Abra **OpenAI ao vivo**. Informe apenas o código local da demo. Leia o consentimento sobre envio de áudio/texto e custo; somente se concordar e tiver autorizado esse gasto, marque a caixa **Entendi o envio de áudio e texto à OpenAI e estou autorizada a usar a API com custo nesta demo.**
-- Use fones e um ambiente silencioso. A sessão tem limite local de dois minutos; ele não é um teto financeiro. Faça a explicação e a preparação antes de começar a captura
+- Use fones e um ambiente silencioso. A sessão tem limite local de dez minutos; ele não é um teto financeiro. Faça a explicação e a preparação antes de começar a captura
 
 ### Use os mesmos relatos da apresentação
 
