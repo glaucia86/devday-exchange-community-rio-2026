@@ -4,6 +4,8 @@ import { TEAMS, type Decision, type Team } from './service-desk.ts';
 export const COLUMNS: Team[] = ['access', 'applications', 'infrastructure', 'human'];
 const MAX_HEARD = 4000;
 const MAX_SUMMARY = 1500;
+const MAX_QUEUE = 20;
+const MAX_CARDS = 200;
 const COMMAND = /[\s,.;:!?-]*(?:ok[\s,]*)?(?:registra|registre|registrar|classifica|classifique|classificar|pr[oó]ximo chamado)\b[\s\S]*$/i;
 
 export type TriageCard = {
@@ -11,10 +13,33 @@ export type TriageCard = {
   probability: number; confidence: number; score: number;
   decidedBy: 'decisions' | 'human'; at: number;
 };
-export type TriageState = { cards: TriageCard[]; heard: string; calls: number; last: Decision | null };
+export type TriageState = { cards: TriageCard[]; heard: string; calls: number; last: Decision | null; queue: string[] };
 
 export function createTriage(): TriageState {
-  return { cards: [], heard: '', calls: 0, last: null };
+  return { cards: [], heard: '', calls: 0, last: null, queue: [] };
+}
+
+/** Rebuilds a saved board, dropping anything that does not look like one. */
+export function restoreTriage(raw: unknown): TriageState {
+  const empty = createTriage();
+  if (!raw || typeof raw !== 'object') return empty;
+  const value = raw as Partial<TriageState>;
+  const teams = new Set<string>(COLUMNS);
+  const cards = Array.isArray(value.cards) ? value.cards.filter((card): card is TriageCard =>
+    !!card && typeof card === 'object' && Number.isInteger(card.id) && typeof card.text === 'string'
+    && teams.has(card.team) && teams.has(card.suggested)
+    && [card.probability, card.confidence, card.score, card.at].every(Number.isFinite)
+    && (card.decidedBy === 'decisions' || card.decidedBy === 'human')).slice(-MAX_CARDS) : [];
+  const queue = Array.isArray(value.queue) ? value.queue.filter((text): text is string => typeof text === 'string' && text.trim() !== '').slice(-MAX_QUEUE) : [];
+  const calls = Number.isInteger(value.calls) && value.calls! >= 0 ? value.calls! : 0;
+  return { ...empty, cards, queue, calls };
+}
+
+/** Parks the pending report for later, so the room can keep talking while Decisions is rate-limited. */
+export function enqueue(state: TriageState): TriageState {
+  const text = pendingReport(state);
+  if (!text) return state;
+  return { ...state, queue: [...state.queue, text].slice(-MAX_QUEUE), heard: '' };
 }
 
 /** Appends presenter speech heard since the last card. */
@@ -33,13 +58,17 @@ export function noteCall(state: TriageState): TriageState {
   return { ...state, calls: state.calls + 1 };
 }
 
-export function addCard(state: TriageState, text: string, decision: Decision, at: number): TriageState {
+/** A queued report becomes a card without touching what is being heard right now. */
+export function addCard(state: TriageState, text: string, decision: Decision, at: number, source: 'heard' | 'queue' = 'heard'): TriageState {
   const card: TriageCard = {
     id: (state.cards.at(-1)?.id ?? 0) + 1, text, team: decision.team, suggested: decision.team,
     probability: decision.probability, confidence: decision.confidence, score: decision.score,
     decidedBy: 'decisions', at,
   };
-  return { ...state, cards: [...state.cards, card], heard: '', last: decision };
+  const cards = [...state.cards, card];
+  if (source === 'heard') return { ...state, cards, heard: '', last: decision };
+  const index = state.queue.indexOf(text);
+  return { ...state, cards, last: decision, queue: index < 0 ? state.queue : state.queue.filter((_, i) => i !== index) };
 }
 
 /** Only cards waiting for human review can be routed by a person. */
@@ -86,7 +115,8 @@ export function boardSummary(state: TriageState): string {
     `Quadro da triagem (dados fictícios): ${state.cards.length} chamados.`,
     COLUMNS.map(team => `${TEAMS[team]}: ${counts[team]}`).join('; ') + '.',
     top ? `Equipe com mais chamados: ${TEAMS[top]}.` : 'Ainda não há equipe com chamados.',
-  ].join(' ');
+    state.queue.length ? `${state.queue.length} relatos na fila aguardando classificação (limite do Decisions).` : '',
+  ].filter(Boolean).join(' ');
   const lines: string[] = [];
   for (const card of [...state.cards].reverse()) {
     const line = ` #${card.id} ${TEAMS[card.team]} (${urgencyLabel(card.score)}${card.decidedBy === 'human' ? ', decidido pela apresentadora' : ''}): ${card.text.slice(0, 120)}`;

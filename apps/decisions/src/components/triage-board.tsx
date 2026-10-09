@@ -2,9 +2,9 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { AnimatePresence, LayoutGroup, MotionConfig, motion } from 'motion/react';
 import NumberFlow from '@number-flow/react';
-import { ArrowLeft, AudioLines, Braces, Crown, LoaderCircle, Mic, MicOff, ShieldCheck, Sparkles, Trophy, UserCheck, Volume2, VolumeX } from 'lucide-react';
+import { ArrowLeft, AudioLines, Braces, Crown, Inbox, LoaderCircle, Mic, MicOff, Pause, Play, RotateCcw, ShieldCheck, Sparkles, Trophy, UserCheck, Volume2, VolumeX } from 'lucide-react';
 import { TEAMS, type Team } from '../domain/service-desk';
-import { addCard, boardSummary, cardAnnouncement, COLUMNS, columnCounts, createTriage, hear, noteCall, pendingReport, resolveReview, topTeam, urgencyLabel, type TriageState } from '../domain/triage';
+import { addCard, boardSummary, cardAnnouncement, COLUMNS, columnCounts, createTriage, enqueue, hear, noteCall, pendingReport, resolveReview, restoreTriage, topTeam, urgencyLabel, type TriageState } from '../domain/triage';
 import type { LiveEvent } from '../domain/live-contract';
 import { LiveBrowser } from '../client/live-browser';
 import { Confetti } from './celebrate';
@@ -13,6 +13,7 @@ import { ColumnIcon, ConfidenceRing, FlowRail, UrgencyIcon, type FlowStage } fro
 
 const MAX_DELEGATIONS = 60;
 const PLACED_MS = 2400;
+const STORAGE_KEY = 'devday-triagem-v1';
 const SPRING = { type: 'spring', stiffness: 360, damping: 30 } as const;
 const COLUMN_HINT: Record<Team, string> = {
   access: 'Senha, login e identidade',
@@ -48,7 +49,11 @@ export default function TriageBoard(){
  const busy=useRef(false);
  const delegations=useRef(new Set<string>());
  const generation=useRef(0);
- function commit(next:TriageState){current.current=next;if(mounted.current)setBoard(next);}
+ const endIntent=useRef<'pause'|'finish'|null>(null);
+ function commit(next:TriageState){
+  current.current=next;if(mounted.current)setBoard(next);
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify({cards:next.cards,queue:next.queue,calls:next.calls}));}catch{}
+ }
  function settle(next:FlowStage,after=0){
   if(stageTimer.current)clearTimeout(stageTimer.current);
   if(after)stageTimer.current=setTimeout(()=>{if(mounted.current)setStage(next);},after);
@@ -56,41 +61,56 @@ export default function TriageBoard(){
  }
  useEffect(()=>{
   mounted.current=true;
+  try{const saved=localStorage.getItem(STORAGE_KEY);if(saved){const restored=restoreTriage(JSON.parse(saved));current.current=restored;setBoard(restored);}}catch{}
   const abort=new AbortController();
   fetch('/api/live',{signal:abort.signal}).then(r=>r.json()).then(data=>{if(mounted.current)setEnabled(data.enabled===true);}).catch(()=>{if(mounted.current)setEnabled(false);});
   return()=>{mounted.current=false;generation.current++;abort.abort();if(stageTimer.current)clearTimeout(stageTimer.current);void audioCtx.current?.close();void live.current?.stop();};
  },[]);
- async function classify(delegationId:string|null){
+ async function classify(delegationId:string|null,queued?:string):Promise<boolean>{
   const client=live.current,epoch=generation.current;
-  if(!client?.active)return;
-  const text=pendingReport(current.current);
-  if(!text){client.send('Ainda não ouvi um relato novo. Peça para a apresentadora descrever o problema antes de registrar.',delegationId,false);return;}
-  if(busy.current){client.send('Ainda estou classificando o chamado anterior. Já volto com o resultado.',delegationId,false);return;}
+  if(!client?.active)return false;
+  const text=queued??pendingReport(current.current);
+  if(!text){client.send('Ainda não ouvi um relato novo. Peça para a apresentadora descrever o problema antes de registrar.',delegationId,false);return false;}
+  if(busy.current){if(!queued)client.send('Ainda estou classificando o chamado anterior. Já volto com o resultado.',delegationId,false);return false;}
   busy.current=true;setClassifying(true);setFailure('');
   commit(noteCall(current.current));
   setFlying({id:(current.current.cards.at(-1)?.id??0)+1,text});settle('deciding');
   try{
    const result=await client.request({action:'decide',sessionId:client.id,revision:current.current.calls,text,transcript:[]});
-   if(epoch!==generation.current||!mounted.current)return;
-   const next=addCard(current.current,text,result.result,Date.now());
+   if(epoch!==generation.current||!mounted.current)return false;
+   const next=addCard(current.current,text,result.result,Date.now(),queued?'queue':'heard');
    // Same render as the new card, so the shared layoutId animates the flight.
    setFlying(null);commit(next);
    settle('placed');settle('listening',PLACED_MS);
    client.send(cardAnnouncement(next.cards.at(-1)!),delegationId,false);
    client.send(boardSummary(next),null,true);
+   return true;
   }catch(e){
-   if(epoch!==generation.current)return;
+   if(epoch!==generation.current)return false;
    const message=e instanceof Error?e.message:'A classificação falhou.';
    setFailure(message);setFlying(null);settle('listening');
-   client.send('A classificação falhou e nenhum cartão foi criado. '+message,delegationId,false);
+   if((e as {status?:number}).status===429){
+    if(!queued)commit(enqueue(current.current));
+    setNotice(queued?'O Decisions continua no limite. A fila foi mantida.':'Limite do Decisions: o relato foi para a fila. Siga coletando relatos ou pause a triagem.');
+    client.send(queued?'O Decisions continua no limite de uso. Os relatos seguem na fila, sem classificação.':'O Decisions atingiu o limite de uso. O relato foi guardado na fila, sem classificação. Diga à sala que a fila será classificada depois e que podemos seguir ouvindo novos relatos.',delegationId,false);
+    client.send(boardSummary(current.current),null,true);
+   }else client.send('A classificação falhou e nenhum cartão foi criado. '+message,delegationId,false);
+   return false;
   }finally{busy.current=false;if(mounted.current)setClassifying(false);}
+ }
+ async function drainQueue(){
+  for(const text of [...current.current.queue]){
+   if(!live.current?.active||!await classify(null,text))return;
+  }
  }
  function eventReceived(event:LiveEvent,epoch:number){
   if(!mounted.current||epoch!==generation.current)return;
   if(event.type==='session.started'){
-   setConnection('active');settle('listening');setNotice('Microfone ativo. Repita o relato da plateia e diga “registra” para classificar.');
-   live.current?.send(boardSummary(current.current),null,true);
-   live.current?.send('Cumprimente a sala em uma frase e diga que a triagem ao vivo está pronta para o primeiro relato.',null,false);
+   const saved=current.current,resumed=saved.cards.length>0||saved.queue.length>0;
+   setConnection('active');settle('listening');
+   setNotice(resumed?`Triagem retomada com ${saved.cards.length} chamados no quadro${saved.queue.length?` e ${saved.queue.length} na fila`:''}.`:'Microfone ativo. Repita o relato da plateia e diga “registra” para classificar.');
+   live.current?.send(boardSummary(saved),null,true);
+   live.current?.send(resumed?'Diga em uma frase que a triagem foi retomada e quantos chamados já estão no quadro. Depois aguarde o próximo relato.':'Cumprimente a sala em uma frase e diga que a triagem ao vivo está pronta para o primeiro relato.',null,false);
    return;
   }
   if(event.type==='session.usage.updated'||event.type==='session.closed'){if(event.usage)setSeconds(event.usage.seconds);return;}
@@ -112,17 +132,27 @@ export default function TriageBoard(){
   const epoch=++generation.current;
   setConnection('connecting');setFailure('');setFinished(false);setSeconds(0);setAssistant('');setNotice('Solicitando acesso ao microfone…');
   setMicMuted(false);setVoiceMuted(false);audio.current.muted=false;
-  delegations.current.clear();busy.current=false;commit(createTriage());
+  delegations.current.clear();busy.current=false;endIntent.current=null;commit({...current.current,heard:''});
   const client=new LiveBrowser({token,audio:audio.current,audioContext:audioCtx.current,mode:'triage',
    onInputLevel:value=>{level.current=value;},
    onEvent:event=>eventReceived(event,epoch),
    onNotice:text=>{if(mounted.current&&epoch===generation.current)setNotice(text);},
-   onEnded:()=>{if(mounted.current&&epoch===generation.current){setConnection('idle');settle('idle');setFlying(null);setFinished(current.current.cards.length>0);}}});
+   onEnded:()=>{
+    if(!mounted.current||epoch!==generation.current)return;
+    const intent=endIntent.current;endIntent.current=null;
+    setConnection('idle');settle('idle');setFlying(null);
+    setFinished(intent==='finish'&&current.current.cards.length>0);
+    if(intent==='pause')setNotice('Triagem pausada. O quadro foi mantido; clique em “Retomar triagem” para continuar.');
+   }});
   live.current=client;
   try{await client.start();}
   catch(e){if(mounted.current&&epoch===generation.current)setFailure(e instanceof Error?e.message:'Falha na conexão.');await client.stop();}
  }
- async function stop(){setConnection('closing');await live.current?.stop();if(mounted.current)setConnection('idle');}
+ async function stop(intent:'pause'|'finish'='finish'){endIntent.current=intent;setConnection('closing');await live.current?.stop();if(mounted.current)setConnection('idle');}
+ function newTriage(){
+  if(!window.confirm('Apagar o quadro atual e começar uma nova triagem?'))return;
+  commit(createTriage());setFinished(false);setFailure('');setNotice('Quadro limpo. Pronto para uma nova triagem.');
+ }
  function toggleMic(){const next=!micMuted;live.current?.setMicMuted(next);setMicMuted(next);}
  function toggleVoice(){const next=!voiceMuted;if(audio.current)audio.current.muted=next;setVoiceMuted(next);}
  function route(id:number,team:Team){
@@ -134,6 +164,7 @@ export default function TriageBoard(){
  const top=topTeam(board);
  const pending=pendingReport(board);
  const active=connection==='active';
+ const saved=board.cards.length>0||board.queue.length>0;
  return <MotionConfig reducedMotion="user"><LayoutGroup><SignalBackdrop voiceLevel={level}/><main className="triage">
   <a className="skip" href="#board">Pular para o quadro</a>
   <header className="topbar">
@@ -152,7 +183,8 @@ export default function TriageBoard(){
     <label htmlFor="tri-token">Código de acesso da demo local (não é a chave OpenAI)</label>
     <input id="tri-token" type="password" autoComplete="off" value={token} maxLength={256} disabled={connection!=='idle'} onChange={e=>setToken(e.target.value)}/>
     <label className="review-check"><input type="checkbox" checked={consent} disabled={connection!=='idle'} onChange={e=>setConsent(e.target.checked)}/><span>Entendi o envio de áudio e texto à OpenAI e estou autorizada a usar a API com custo nesta demo. Dados fictícios.</span></label>
-    <button className="primary start" disabled={!enabled||!consent||token.length<32||connection!=='idle'} onClick={()=>void start()}>{connection==='connecting'?<LoaderCircle size={17} className="spin"/>:<Mic size={17}/>}Iniciar triagem ao vivo</button>
+    <button className="primary start" disabled={!enabled||!consent||token.length<32||connection!=='idle'} onClick={()=>void start()}>{connection==='connecting'?<LoaderCircle size={17} className="spin"/>:saved?<Play size={17}/>:<Mic size={17}/>}{saved?'Retomar triagem':'Iniciar triagem ao vivo'}</button>
+    {saved&&<div className="tri-resume"><span><Inbox size={15}/>Quadro salvo: {board.cards.length} chamados{board.queue.length?`, ${board.queue.length} na fila`:''}.</span><button className="text-button" disabled={connection!=='idle'} onClick={newTriage}><RotateCcw size={15}/>Nova triagem</button></div>}
    </div>:<div className="tri-live">
     <div className={'live-voice'+(active&&!micMuted?' is-listening':'')+(micMuted?' is-muted':'')}>
      <button type="button" className={'live-voice-icon'+(micMuted?' is-off':'')} aria-pressed={micMuted} aria-label={micMuted?'Ativar meu microfone':'Mutar meu microfone'} title={micMuted?'Ativar meu microfone':'Mutar meu microfone'} disabled={!active} onClick={toggleMic}>{micMuted?<MicOff size={22}/>:<Mic size={22}/>}</button>
@@ -166,7 +198,9 @@ export default function TriageBoard(){
     </div>
     <div className="tri-actions">
      <button className="text-button" disabled={!active||classifying||!pending} onClick={()=>void classify(null)}><Sparkles size={15}/>Classificar agora</button>
-     <button className="primary" disabled={connection!=='active'} onClick={()=>void stop()}><MicOff size={15}/>Encerrar triagem</button>
+     {board.queue.length>0&&<button className="text-button" disabled={!active||classifying} onClick={()=>void drainQueue()}><Inbox size={15}/>Classificar fila ({board.queue.length})</button>}
+     <button className="text-button" disabled={!active} onClick={()=>void stop('pause')}><Pause size={15}/>Pausar</button>
+     <button className="primary" disabled={connection!=='active'} onClick={()=>void stop('finish')}><MicOff size={15}/>Encerrar triagem</button>
     </div>
    </div>}
    <audio ref={audio} autoPlay aria-label="Áudio da triagem"/>
@@ -182,6 +216,11 @@ export default function TriageBoard(){
     <p>{flying.text}</p>
    </motion.div>}</AnimatePresence>
    {assistant&&<p className="tri-assistant"><span>TRIAGEM</span>{assistant}</p>}
+  </section>}
+
+  {board.queue.length>0&&<section className="tri-queue" aria-label="Fila aguardando classificação">
+   <header><Inbox size={16}/><strong>Na fila ({board.queue.length})</strong><small>Aguardando cota do Decisions. Nenhum cartão foi criado para estes relatos.</small></header>
+   <ol>{board.queue.map((text,index)=><li key={index+text}>{text}</li>)}</ol>
   </section>}
 
   <section id="board" className="tri-board" aria-label="Quadro de triagem" tabIndex={-1}>

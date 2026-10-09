@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import type { Decision } from '../src/domain/service-desk.ts';
-import { addCard, boardSummary, cardAnnouncement, columnCounts, createTriage, hear, noteCall, pendingReport, resolveReview, topTeam, urgencyLabel } from '../src/domain/triage.ts';
+import { addCard, boardSummary, cardAnnouncement, columnCounts, createTriage, enqueue, hear, noteCall, pendingReport, resolveReview, restoreTriage, topTeam, urgencyLabel } from '../src/domain/triage.ts';
 
 const decision = (team: Decision['team'], confidence = .9, score = 1.2): Decision =>
   ({ team, probability: .95, confidence, score, explanation: '', source: 'openai' });
@@ -57,6 +57,30 @@ test('announcements never claim a team for review cards', () => {
   assert.match(cardAnnouncement(state.cards[0]), /Revisão humana/);
   assert.match(cardAnnouncement(state.cards[1]), /Infraestrutura/);
   assert.match(cardAnnouncement(state.cards[1]), /fictícios/);
+});
+
+test('a rate-limited report waits in the queue and becomes a card later without eating new speech', () => {
+  let state = enqueue(hear(createTriage(), 'A VPN da filial caiu. Registra.'));
+  assert.deepEqual(state.queue, ['A VPN da filial caiu']);
+  assert.equal(state.heard, '');
+  assert.equal(enqueue(state), state, 'nothing heard, nothing queued');
+  state = hear(state, 'Impressora do RH');
+  state = addCard(state, 'A VPN da filial caiu', decision('infrastructure'), 1, 'queue');
+  assert.deepEqual(state.queue, []);
+  assert.equal(state.heard, 'Impressora do RH');
+  assert.equal(state.cards[0].team, 'infrastructure');
+  assert.match(boardSummary(enqueue(state)), /1 relatos na fila/);
+});
+
+test('a saved board is restored, and anything malformed is dropped', () => {
+  const saved = addCard(createTriage(), 'Senha expirada.', decision('access'), 1);
+  const restored = restoreTriage(JSON.parse(JSON.stringify({ cards: saved.cards, queue: ['x', 3, ''], calls: 4 })));
+  assert.equal(restored.cards.length, 1);
+  assert.deepEqual(restored.queue, ['x']);
+  assert.equal(restored.calls, 4);
+  assert.equal(restored.heard, '');
+  assert.deepEqual(restoreTriage({ cards: [{ id: 1, team: 'root' }], calls: -1 }), createTriage());
+  assert.deepEqual(restoreTriage('lixo'), createTriage());
 });
 
 test('the board summary stays short enough for one context append', () => {

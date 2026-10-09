@@ -37,7 +37,7 @@ export class LiveBrowser {
  async request(body:unknown,signal?:AbortSignal){
   const response=await fetch('/api/live',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+this.options.token},body:JSON.stringify(body),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(20000)]):AbortSignal.timeout(20000)});
   const data=await response.json();
-  if(!response.ok)throw Error(typeof data.error==='string'?data.error:'A solicitação falhou.');
+  if(!response.ok)throw Object.assign(Error(typeof data.error==='string'?data.error:'A solicitação falhou.'),{status:response.status});
   return data;
  }
  start():Promise<void>{this.startup=this.connect();return this.startup;}
