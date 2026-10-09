@@ -64,7 +64,7 @@ export function createPresenterController({ config, gateway, onChange = () => {}
       const note = await gateway.loadNote(user.uid);
       if (destroyed || current !== generation) return;
       const content = note?.content ?? '';
-      if (typeof content !== 'string' || content.length > MAX_NOTE_LENGTH) throw { code: 'invalid-data' };
+      if (typeof content !== 'string' || content.length > MAX_NOTE_LENGTH) throw Object.assign(new Error('Conteúdo de notas inválido.'), { code: 'invalid-data' });
       savedContent = content;
       change({ status: 'ready', content, dirty: false, isBusy: false });
     } catch (error) {

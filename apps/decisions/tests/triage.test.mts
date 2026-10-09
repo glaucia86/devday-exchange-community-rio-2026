@@ -14,6 +14,16 @@ test('the report is the speech heard since the last card, without the spoken com
   assert.equal(pendingReport(createTriage()), '');
 });
 
+test('only a trailing spoken command is removed, preserving verbs inside the report', () => {
+  for (const command of ['Registra.', 'Registre esse chamado.', 'Registrar!', 'Classifica.', 'Classifique esse chamado.', 'Classificar.', 'Próximo chamado.', 'OK, registra esse chamado.']) {
+    const report = 'Não consigo registrar ponto no portal desde as 9h';
+    assert.equal(pendingReport(hear(createTriage(), `${report}. ${command}`)), report, command);
+  }
+  for (const report of ['Não consigo registrar ponto no portal desde as 9h.', 'O sistema classifica pedidos incorretamente.', 'Preciso de ajuda para registrar', 'O portal registra ponto.', 'O portal não registra.', 'Este fluxo nunca classifica.', 'Registra logs mas não confirma o ponto.']) {
+    assert.equal(pendingReport(hear(createTriage(), report)), report);
+  }
+});
+
 test('a card clears the heard text and keeps ids increasing', () => {
   let state = hear(createTriage(), 'Esqueci a senha do portal.');
   state = addCard(state, pendingReport(state), decision('access'), 1);
@@ -21,6 +31,22 @@ test('a card clears the heard text and keeps ids increasing', () => {
   assert.deepEqual(state.cards.map(card => card.id), [1, 2]);
   assert.equal(state.heard, '');
   assert.equal(state.last?.team, 'applications');
+});
+
+test('a completed card consumes only the speech captured before classification', () => {
+  const captured = hear(createTriage(), 'A VPN caiu. Registra.');
+  const latest = hear(captured, ' O portal mostra erro 500.');
+  const next = addCard(latest, pendingReport(captured), decision('infrastructure'), 1, 'heard', captured.heard);
+  assert.equal(next.cards[0].text, 'A VPN caiu');
+  assert.equal(next.heard, ' O portal mostra erro 500.');
+});
+
+test('a rate limit queues the captured report without consuming later speech', () => {
+  const captured = hear(createTriage(), 'A VPN caiu. Registra.');
+  const latest = hear(captured, ' O portal mostra erro 500.');
+  const next = enqueue(latest, captured.heard);
+  assert.deepEqual(next.queue, ['A VPN caiu']);
+  assert.equal(next.heard, ' O portal mostra erro 500.');
 });
 
 test('calls are counted separately from cards, so failures still show in the budget', () => {

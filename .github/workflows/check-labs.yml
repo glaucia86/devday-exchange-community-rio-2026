@@ -78,6 +78,7 @@ jobs:
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:3000 > /dev/null && break; sleep 1; done
           node tests/browser.mjs
+          npm run test:triage-browser
       - name: Guardar telas da aplicação fictícia
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f

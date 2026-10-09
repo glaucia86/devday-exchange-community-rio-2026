@@ -1,6 +1,6 @@
 import { parseLiveEvent, type LiveEvent } from '../domain/live-contract';
 import type { TurnEvent } from '../domain/live-turn';
-type Options={token:string;audio:HTMLAudioElement;audioContext?:AudioContext;mode?:'desk'|'triage';onInputLevel?:(level:number)=>void;onEvent:(event:LiveEvent)=>void;onNotice:(text:string)=>void;onEnded:()=>void};
+type Options={token:string;audio:HTMLAudioElement;audioContext?:AudioContext;mode?:'desk'|'triage';onInputLevel?:(level:number)=>void;onPlaybackBlocked?:()=>void;onEvent:(event:LiveEvent)=>void;onNotice:(text:string)=>void;onEnded:()=>void};
 const CLOSE_REASONS:Record<string,string>={
  expired:'A plataforma encerrou a sessão por limite de duração (expired). ',
  content:'Um filtro de segurança da plataforma encerrou a sessão (content). ',
@@ -47,7 +47,7 @@ export class LiveBrowser {
   if(this.stopped){this.release();return;}
   this.watchInputLevel();
   this.peer=new RTCPeerConnection();
-  this.peer.ontrack=event=>{if(this.stopped)return;this.outputStream=event.streams[0]??new MediaStream([event.track]);this.options.audio.srcObject=this.outputStream;void this.options.audio.play().catch(()=>{if(!this.stopped)this.options.onNotice('Use o controle de áudio para permitir a reprodução.');});};
+  this.peer.ontrack=event=>{if(this.stopped)return;this.outputStream=event.streams[0]??new MediaStream([event.track]);this.options.audio.srcObject=this.outputStream;void this.options.audio.play().catch(()=>{if(!this.stopped){this.options.onPlaybackBlocked?.();this.options.onNotice('Use o controle de áudio para permitir a reprodução.');}});};
   this.peer.onconnectionstatechange=()=>{
    const state=this.peer?.connectionState;
    if(this.stopped||!state)return;

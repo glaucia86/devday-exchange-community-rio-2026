@@ -6,7 +6,9 @@ const MAX_HEARD = 4000;
 const MAX_SUMMARY = 1500;
 const MAX_QUEUE = 20;
 const MAX_CARDS = 200;
-const COMMAND = /[\s,.;:!?-]*(?:ok[\s,]*)?(?:registra|registre|registrar|classifica|classifique|classificar|pr[oó]ximo chamado)\b[\s\S]*$/i;
+const COMMAND = /(?:^|[,.!?;:-]\s*)(?:ok[\s,]*)?(?:registra|registre|classifica|classifique|pr[oó]ximo chamado)(?:\s+(?:esse|este|o)\s+chamado)?[\s,.;:!?-]*$/i;
+// Infinitives also occur in reports ("não consigo registrar"); require a sentence boundary.
+const INFINITIVE_COMMAND = /(?:^|[,.!?;:-]\s*)(?:ok[\s,]*)?(?:registrar|classificar)(?:\s+(?:esse|este|o)\s+chamado)?[\s,.;:!?-]*$/i;
 
 export type TriageCard = {
   id: number; text: string; team: Team; suggested: Team;
@@ -36,10 +38,15 @@ export function restoreTriage(raw: unknown): TriageState {
 }
 
 /** Parks the pending report for later, so the room can keep talking while Decisions is rate-limited. */
-export function enqueue(state: TriageState): TriageState {
-  const text = pendingReport(state);
+export function enqueue(state: TriageState, capturedHeard = state.heard): TriageState {
+  const text = pendingReport({ ...state, heard: capturedHeard });
   if (!text) return state;
-  return { ...state, queue: [...state.queue, text].slice(-MAX_QUEUE), heard: '' };
+  return { ...state, queue: [...state.queue, text].slice(-MAX_QUEUE), heard: remainingHeard(state.heard, capturedHeard) };
+}
+
+/** Consume only the captured prefix; if the bounded buffer has moved on, keep it. */
+function remainingHeard(heard: string, captured: string): string {
+  return heard.startsWith(captured) ? heard.slice(captured.length) : heard;
 }
 
 /** Appends presenter speech heard since the last card. */
@@ -50,7 +57,7 @@ export function hear(state: TriageState, delta: string): TriageState {
 /** The report to classify: what was heard, without the trailing spoken command. */
 export function pendingReport(state: TriageState): string {
   const heard = state.heard.replace(/\s+/g, ' ').trim();
-  const report = heard.replace(COMMAND, '').trim();
+  const report = heard.replace(COMMAND, '').replace(INFINITIVE_COMMAND, '').trim();
   return report || heard;
 }
 
@@ -59,14 +66,14 @@ export function noteCall(state: TriageState): TriageState {
 }
 
 /** A queued report becomes a card without touching what is being heard right now. */
-export function addCard(state: TriageState, text: string, decision: Decision, at: number, source: 'heard' | 'queue' = 'heard'): TriageState {
+export function addCard(state: TriageState, text: string, decision: Decision, at: number, source: 'heard' | 'queue' = 'heard', capturedHeard = state.heard): TriageState {
   const card: TriageCard = {
     id: (state.cards.at(-1)?.id ?? 0) + 1, text, team: decision.team, suggested: decision.team,
     probability: decision.probability, confidence: decision.confidence, score: decision.score,
     decidedBy: 'decisions', at,
   };
   const cards = [...state.cards, card];
-  if (source === 'heard') return { ...state, cards, heard: '', last: decision };
+  if (source === 'heard') return { ...state, cards, heard: remainingHeard(state.heard, capturedHeard), last: decision };
   const index = state.queue.indexOf(text);
   return { ...state, cards, last: decision, queue: index < 0 ? state.queue : state.queue.filter((_, i) => i !== index) };
 }
