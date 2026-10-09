@@ -4,17 +4,25 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const minimum = '24.21.0';
+const minimum = '24.12.0';
+const maximum = '24.21.0';
 
-export function nodeSatisfies(version, required = minimum) {
-  const parse = (value) => value.replace(/^v/, '').split('.').map((part) => Number(part) || 0);
-  const current = parse(version);
-  const floor = parse(required);
+function parseVersion(value) {
+  return String(value).replace(/^v/, '').split('.').map((part) => Number(part) || 0);
+}
+
+function compareVersions(left, right) {
+  const current = parseVersion(left);
+  const required = parseVersion(right);
   for (let index = 0; index < 3; index += 1) {
-    if (current[index] > floor[index]) return true;
-    if (current[index] < floor[index]) return false;
+    if (current[index] > required[index]) return 1;
+    if (current[index] < required[index]) return -1;
   }
-  return true;
+  return 0;
+}
+
+export function nodeSatisfies(version, floor = minimum, ceiling = maximum) {
+  return compareVersions(version, floor) >= 0 && compareVersions(version, ceiling) <= 0;
 }
 
 function fail(message) {
@@ -33,10 +41,14 @@ function run(command, args, cwd) {
 }
 
 function main() {
-  if (!nodeSatisfies(process.versions.node)) {
-    fail(`Node.js ${process.versions.node} é anterior a ${minimum}. O arquivo .nvmrc pede ${minimum}.`);
+  const version = process.versions.node;
+  if (compareVersions(version, minimum) < 0) {
+    fail(`Node.js ${version} é anterior a ${minimum}. A faixa aceita é ${minimum} a ${maximum}. O arquivo .nvmrc recomenda ${maximum}.`);
   }
-  console.log(`Node.js ${process.versions.node} atende a ${minimum}.`);
+  if (compareVersions(version, maximum) > 0) {
+    fail(`Node.js ${version} é posterior a ${maximum}. A faixa aceita é ${minimum} a ${maximum}. O arquivo .nvmrc recomenda ${maximum}.`);
+  }
+  console.log(`Node.js ${version} está na faixa ${minimum} a ${maximum}. O arquivo .nvmrc recomenda ${maximum}.`);
   const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
   const decisions = resolve(root, 'apps/decisions');
   run(npm, ['ci', '--ignore-scripts'], decisions);
@@ -71,7 +83,7 @@ Se for usar o Codex CLI:
   Na pasta apps/decisions:
   codex -m gpt-6-luna -s workspace-write -a on-request
   Se aparecer Trust this folder?, confira o caminho antes de aceitar.
-  Dentro do agente, peça node --version e espere v24.21.0 ou posterior.
+  Dentro do agente, peça node --version e espere v24.21.0, a versão recomendada em .nvmrc.
   Se vier outra versão, saia com /quit e reabra com -c allow_login_shell=false.
 `);
 }

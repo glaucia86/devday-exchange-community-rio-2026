@@ -16,7 +16,7 @@ Se ainda não conseguiu abrir o mock, faça uma das preparações por sistema ab
 
 ## Windows: primeiro execute o mock
 
-Use Node.js 24.21.0 ou posterior, como no arquivo `.nvmrc`. No PowerShell, os comandos npm.cmd evitam o bloqueio comum de npm.ps1, sem alterar a política de execução.
+Use Node.js de 24.12.0 a 24.21.0. O arquivo `.nvmrc` recomenda 24.21.0, a versão da CI. No PowerShell, os comandos npm.cmd evitam o bloqueio comum de npm.ps1, sem alterar a política de execução.
 
 Se ainda não clonou:
 
@@ -49,7 +49,7 @@ Abra http://127.0.0.1:3000. Mantenha o terminal aberto. O mock não usa a chave.
 
 ## Se estiver no macOS ou Linux
 
-Use o mesmo repositório e Node.js 24.21.0 ou posterior. No terminal, na raiz:
+Use o mesmo repositório e Node.js de 24.12.0 a 24.21.0. No terminal, na raiz:
 
 ```sh
 cd apps/decisions
@@ -143,7 +143,7 @@ A frase aparece na tela na hora, com ou sem microfone. A fala usa `session.comme
 
 ## Ensaio de cada comando, sem chave
 
-Na pasta `apps/decisions`, com Node.js 24.21.0 ou posterior:
+Na pasta `apps/decisions`, com Node.js de 24.12.0 a 24.21.0:
 
 ```sh
 node scripts/replay-voice-commands.mts

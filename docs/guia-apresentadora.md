@@ -26,8 +26,8 @@ O CLI mostra a voz no terminal e uma correção curta na Alô, TI. O Cloud conti
 ## Preparação antes do encontro
 
 - Conferir programação e local no Luma
-- Node.js 24.21.0 ou posterior, como em `.nvmrc`. Na véspera, rode `node scripts/prepare-stage.mjs` e deixe `npm start` pronto em `apps/decisions`
-- Se o Codex CLI entrar no ensaio: `npm install -g @openai/codex@0.161.0`, `codex --version` mostra `codex-cli 0.161.0` e `codex login status` confirma a sessão, sem projetar a conta. A abertura do palco é `codex -m gpt-6-luna -s workspace-write -a on-request`, na pasta `apps/decisions`. Antes do projetor, confie a pasta se aparecer `Trust this folder?` e, dentro do agente, peça `node --version`: o esperado é v24.21.0 ou posterior. Se vier outra versão, saia com `/quit` e reabra com `-c allow_login_shell=false`.
+- Node.js de 24.12.0 a 24.21.0; `.nvmrc` recomenda 24.21.0. Na véspera, rode `node scripts/prepare-stage.mjs` e deixe `npm start` pronto em `apps/decisions`
+- Se o Codex CLI entrar no ensaio: `npm install -g @openai/codex@0.161.0`, `codex --version` mostra `codex-cli 0.161.0` e `codex login status` confirma a sessão, sem projetar a conta. A abertura do palco é `codex -m gpt-6-luna -s workspace-write -a on-request`, na pasta `apps/decisions`. Antes do projetor, confie a pasta se aparecer `Trust this folder?` e, dentro do agente, peça `node --version`: o esperado é v24.21.0, versão recomendada em `.nvmrc`. Se vier outra versão, saia com `/quit` e reabra com `-c allow_login_shell=false`.
 - Preparar uma cópia limpa do material e uma cópia separada para cada demonstração; manter soluções de referência para contingência
 - Conferir acesso e login de Dots e Codex sem expor dados pessoais na projeção
 - Publicar o ambiente Cloud em `glaucia86/devday-exchange-community-rio-2026` antes do palco, conferir que `bug-rede.test.mts` ainda falha, enviar a tarefa antes do bloco e deixar o plano B gravado com a data na tela
@@ -48,7 +48,7 @@ node --test apps/decisions/tests/*.test.mts
 node scripts/check-workshop-examples.mjs
 ```
 
-Esperado: Node.js 24.21.0 ou posterior, 72 testes aprovados no conjunto atual e aceitação com falhas didáticas conferidas: starter 8/18, candidata 16/18, solução 18/18. Isso verifica os exemplos locais; os ensaios nos produtos são uma etapa adicional.
+Esperado: Node.js de 24.12.0 a 24.21.0, 72 testes aprovados no conjunto atual e aceitação com falhas didáticas conferidas: starter 8/18, candidata 16/18, solução 18/18. Isso verifica os exemplos locais; os ensaios nos produtos são uma etapa adicional.
 
 ## Abertura e transições
 
@@ -96,7 +96,7 @@ A única espera medida foi de 20 a 45 segundos, em 8 de outubro de 2026, com o c
 
 O encaminhador não entra neste bloco. Ele continua no Cloud. Aqui a plateia vê a voz dentro do terminal, a visão `/agents` e uma correção curta na Alô, TI. Comandos, fontes e o texto falado estão no LAB. A versão fixada continua `codex-cli 0.161.0`. O modelo do palco é `gpt-6-luna`, com `-s workspace-write`.
 
-**Deixar pronto, fora deste relógio:** login ChatGPT já conferido, `Trust this folder?` já respondido para este repositório, `node --version` dentro do agente em v24.21.0 ou posterior (se vier outra versão, reabra com `-c allow_login_shell=false`), microfone ensaiado com `/voice` e `/voice stop`. A Alô, TI deste bloco não usa o `npm start` da véspera: pare esse processo se ele ocupar a porta 3000 e, em `apps/decisions`, deixe `npm run dev` aberto em http://127.0.0.1:3000, aba **Simulado**, página recém-carregada. Fora do relógio, clique **Som desligado** e confira que existe voz local em português; recarregue em seguida, para o palco começar com o som desligado e sem cenário. Tenha uma gravação do ensaio que passou. Cada plano B abaixo é essa gravação: diga “isto é gravação” antes de dar play. Sem gravação, diga que o passo não rodou.
+**Deixar pronto, fora deste relógio:** login ChatGPT já conferido, `Trust this folder?` já respondido para este repositório, `node --version` dentro do agente em v24.21.0, versão recomendada em `.nvmrc` (se vier outra versão, reabra com `-c allow_login_shell=false`), microfone ensaiado com `/voice` e `/voice stop`. A Alô, TI deste bloco não usa o `npm start` da véspera: pare esse processo se ele ocupar a porta 3000 e, em `apps/decisions`, deixe `npm run dev` aberto em http://127.0.0.1:3000, aba **Simulado**, página recém-carregada. Fora do relógio, clique **Som desligado** e confira que existe voz local em português; recarregue em seguida, para o palco começar com o som desligado e sem cenário. Tenha uma gravação do ensaio que passou. Cada plano B abaixo é essa gravação: diga “isto é gravação” antes de dar play. Sem gravação, diga que o passo não rodou.
 
 | Tempo | Ação | Fala | Tela | Plano B GRAVAÇÃO |
 | --- | --- | --- | --- | --- |

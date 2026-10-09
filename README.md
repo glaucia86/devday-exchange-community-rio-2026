@@ -15,7 +15,7 @@
 <a href="https://www.typescriptlang.org/"><img alt="TypeScript 5.9.3" src="https://img.shields.io/badge/TypeScript-5.9.3-3178C6?style=for-the-badge&logo=typescript&logoColor=white"></a>
 </p>
 <p>
-<a href="https://nodejs.org/en/download"><img alt="Node.js 24.21 ou posterior" src="https://img.shields.io/badge/Node.js-24.21%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"></a>
+<a href="https://nodejs.org/en/download"><img alt="Node.js 24.12.0 a 24.21.0" src="https://img.shields.io/badge/Node.js-24.12--24.21.0-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"></a>
 <a href="https://tailwindcss.com/docs"><img alt="Tailwind CSS 4.3.3" src="https://img.shields.io/badge/Tailwind_CSS-4.3.3-0F172A?style=for-the-badge&logo=tailwindcss&logoColor=38BDF8"></a>
 <a href="https://lucide.dev/"><img alt="Lucide 0.468.0" src="https://img.shields.io/badge/Lucide-0.468.0-F56565?style=for-the-badge&logo=lucide&logoColor=white"></a>
 <a href="https://playwright.dev/"><img alt="Playwright 1.63.0" src="https://img.shields.io/badge/Playwright-1.63.0-2EAD33?style=for-the-badge"></a>
@@ -119,20 +119,20 @@ Nos blocos marcados como comandos, copie uma linha, cole no terminal e pressione
 ### Instale apenas o que faltar
 
 1. Execute os três comandos da tabela abaixo. Se uma ferramenta responder com sua versão, ela já está disponível.
-2. Se aparecer “comando não encontrado” ou “não é reconhecido”, abra o link oficial da ferramenta, selecione seu sistema e instale. Para Node.js, use **24.21.0 ou posterior**. O arquivo [`.nvmrc`](.nvmrc) fixa `24.21.0`, a mesma versão da CI.
-3. Feche e abra o terminal de novo, então repita a verificação. Não prossiga com uma versão de Node anterior a 24.21.0. `npm ci` recusa essa instalação: os projetos usam `engine-strict`.
+2. Se aparecer “comando não encontrado” ou “não é reconhecido”, abra o link oficial da ferramenta, selecione seu sistema e instale. Para Node.js, use uma versão de **24.12.0 a 24.21.0**. O arquivo [`.nvmrc`](.nvmrc) recomenda `24.21.0`, a mesma versão da CI. A faixa aceita está no campo `engines`.
+3. Feche e abra o terminal de novo, então repita a verificação. Não prossiga com um Node fora de 24.12.0 a 24.21.0. `npm ci` recusa essa instalação: os projetos usam `engine-strict`.
 4. Editor e navegador são locais à sua escolha. Não é preciso instalar uma extensão de IA no editor.
 
 
 | Ferramenta | Requisito | Para que serve |
 | --- | --- | --- |
-| [Node.js](https://nodejs.org/en/download) | **24.21.0 ou posterior** (`.nvmrc`) | Executar os testes e a aplicação |
+| [Node.js](https://nodejs.org/en/download) | **24.12.0 a 24.21.0** (`.nvmrc` recomenda 24.21.0) | Executar os testes e a aplicação |
 | npm | Incluído no Node.js | Instalar dependências pelo lockfile |
 | [Git](https://git-scm.com/install/) | Disponível no terminal | Clonar o repositório e acompanhar mudanças |
 | Editor e navegador | Seus preferidos, atualizados | Explorar arquivos e usar a demo |
 | Acesso ao produto do LAB | Confira o guia escolhido | Experimentar Dots, CLI ou Cloud |
 
-A CI, a Alô, TI e o portal pedem **Node.js 24.21.0 ou posterior**. As versões da aplicação estão em [package.json](apps/decisions/package.json) e [package-lock.json](apps/decisions/package-lock.json).
+A CI usa **Node.js 24.21.0**, o valor de [`.nvmrc`](.nvmrc). A Alô, TI e o portal aceitam **24.12.0 a 24.21.0** (`engines`). Abaixo de 24.12.0 a instalação ou os testes não passam: o Next.js 16 pede Node 20.9.0, os testes `.mts` só carregam a partir do 22.18 e o Firebase do portal pede 24.12.0. As versões da aplicação estão em [package.json](apps/decisions/package.json) e [package-lock.json](apps/decisions/package-lock.json).
 
 ```sh
 node --version
@@ -140,7 +140,7 @@ npm --version
 git --version
 ```
 
-Como ler a saída: `node --version` começa com `v`, como `v24.21.0`; `npm --version` traz números; `git --version` começa com `git version`. O mínimo deste material é o `v24.21.0` do arquivo `.nvmrc`. Uma versão posterior dessa linha também serve.
+Como ler a saída: `node --version` começa com `v`, como `v24.21.0`; `npm --version` traz números; `git --version` começa com `git version`. O arquivo `.nvmrc` recomenda `v24.21.0` para a CI. A faixa aceita vai de `v24.12.0` a `v24.21.0`.
 
 Os testes offline e o mock não exigem conta OpenAI nem chave de API. Instalar dependências requer acesso ao registro npm. O acesso aos produtos dos LABS deve ser preparado separadamente.
 
@@ -248,7 +248,7 @@ Quando disponível, a interface pode ler respostas com a **voz local do disposit
 <a id="validar"></a>
 ## ✅ Verifique seu ambiente
 
-Na **raiz do repositório**, com Node.js 24.21.0 ou posterior:
+Na **raiz do repositório**, com Node.js de 24.12.0 a 24.21.0:
 
 ```sh
 node --test exercises/ticket-router/starter/router.test.mjs
@@ -311,7 +311,7 @@ Use a [programação](docs/programacao.md) para os detalhes do encontro e as [re
 ### Em casa, quando for praticar
 
 - [ ] Escolhi um LAB e li seus requisitos.
-- [ ] Para os LABS de código: Node.js 24.21.0 ou posterior, npm e Git respondem no terminal.
+- [ ] Para os LABS de código: Node.js de 24.12.0 a 24.21.0, npm e Git respondem no terminal.
 - [ ] Para ensaiar a Alô, TI: `node scripts/prepare-stage.mjs` e, em seguida, `npm start` em `apps/decisions`.
 - [ ] Se o ensaio incluir o Codex CLI: `codex --version` mostra `codex-cli 0.161.0`, `codex login status` confirma a sessão, a abertura usa `-m gpt-6-luna -s workspace-write`, a pasta foi confiada antes do projetor e, dentro do agente, `node --version` mostra v24.21 ou posterior. A Alô, TI desse bloco sobe com `npm run dev` em `apps/decisions`, antes do relógio.
 - [ ] Clonei a branch indicada e executei os testes offline.

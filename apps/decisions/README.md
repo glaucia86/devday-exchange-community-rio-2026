@@ -16,7 +16,7 @@ O [registro de validação](../../docs/validacao.md) distingue cada estágio.
 
 ## Requisitos e versões
 
-Node.js 24.21.0 ou posterior, o mesmo valor de `.nvmrc` e da CI. As dependências diretas e transitivas estão fixadas no package.json e package-lock.json. Versões principais: Next.js 16.4.0, React 19.3.0, Tailwind CSS 4.3.3, TypeScript 5.9.3 e Lucide 0.468.0. `engine-strict` recusa um Node anterior na instalação.
+Node.js de 24.12.0 a 24.21.0. O arquivo `.nvmrc` recomenda 24.21.0, a mesma versão da CI; a faixa aceita está em `engines`. O Next.js 16 pede Node 20.9.0 e os testes `.mts` só carregam a partir do 22.18; a faixa comum com o portal começa em 24.12.0, porque o Firebase de lá pede essa versão. As dependências diretas e transitivas estão fixadas no package.json e package-lock.json. Versões principais: Next.js 16.4.0, React 19.3.0, Tailwind CSS 4.3.3, TypeScript 5.9.3 e Lucide 0.468.0. `engine-strict` recusa um Node fora dessa faixa na instalação.
 
 ## Testar o domínio sem instalar pacotes
 

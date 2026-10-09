@@ -53,7 +53,7 @@ codex -m gpt-6-luna -s workspace-write -a on-request
 
 1. Confirme `codex login status` sem projetar a conta.
 2. Se aparecer `Trust this folder?`, com `1. Trust and continue` e `2. Back to Agent Command Center`, confira o caminho e escolha 1 só se for este repositório. O `git init` não tira essa tela: ela apareceu em 8 de outubro de 2026 na 0.161.0 mesmo depois do commit inicial. A documentação oficial fala num pedido de confiança ao abrir a pasta: [aprovações](https://developers.openai.com/codex/agent-approvals-security.md). Faça isso antes do projetor.
-3. Dentro do agente, peça só isto: `Execute node --version e pare. Não edite arquivos.` O esperado é `v24.21.0` ou posterior, o mesmo piso de `.nvmrc`. Se vier outra versão, o agente está num login shell com outro PATH. Saia com `/quit` e abra de novo com `-c allow_login_shell=false`. A chave `allow_login_shell` está na [configuração avançada](https://developers.openai.com/codex/config-advanced). O flag `-c` está na [referência](https://developers.openai.com/codex/cli/reference).
+3. Dentro do agente, peça só isto: `Execute node --version e pare. Não edite arquivos.` O esperado é `v24.21.0`, a versão recomendada em `.nvmrc`. Se vier outra versão, o agente está num login shell com outro PATH. Saia com `/quit` e abra de novo com `-c allow_login_shell=false`. A chave `allow_login_shell` está na [configuração avançada](https://developers.openai.com/codex/config-advanced). O flag `-c` está na [referência](https://developers.openai.com/codex/cli/reference).
 4. Ligue `/voice`, diga uma frase, ouça o retorno e encerre com `/voice stop`. Confira o microfone no dispositivo que a sala vai ouvir. A 0.161.0 também escolhe microfone, alto-falante e canal em `/voice settings`. Fonte: [release 0.161.0](https://github.com/openai/codex/releases/tag/rust-v0.161.0).
 5. Na pasta `apps/decisions`, pare um `npm start` que esteja na porta 3000 e execute `npm run dev`. Abra http://127.0.0.1:3000 na aba **Simulado**. Clique **Som desligado** e confira que o botão passa a **Som ligado** sem o aviso de voz local em português ausente. Recarregue. A página do palco começa de novo: som desligado, sem cenário. `npm run dev` reescreve `next-env.d.ts`; esse arquivo é gerado e não entra no Git. O `npm start` da véspera continua sendo o servidor do Decisions, depois deste bloco: ele serve a build e não mostra a edição do agente.
 6. Deixe uma gravação do ensaio que passou, fora do repositório. O nome leva a palavra `GRAVAÇÃO` e a data. Sem essa gravação, o plano B é dizer que o passo não rodou.
@@ -85,7 +85,7 @@ Saia com `/quit` antes de rodar o `node --test`.
 
 ## Leve para casa
 
-Uma tarde, com Node.js 24.21.0 ou posterior e o login ChatGPT. Não use chave de API neste exercício: no ensaio de 8 de outubro de 2026, o padrão `gpt-6.1-sol` passou do TPM de uma chave pequena (pedido de 14640 tokens contra limite de 10000), e `gpt-6-luna` nessa mesma chave tinha teto de 50 requisições por dia, compartilhado com a Alô, TI ao vivo. Esses números são daquela organização, não um teto publicado da OpenAI.
+Uma tarde, com Node.js de 24.12.0 a 24.21.0 e o login ChatGPT. `.nvmrc` recomenda 24.21.0. Não use chave de API neste exercício: no ensaio de 8 de outubro de 2026, o padrão `gpt-6.1-sol` passou do TPM de uma chave pequena (pedido de 14640 tokens contra limite de 10000), e `gpt-6-luna` nessa mesma chave tinha teto de 50 requisições por dia, compartilhado com a Alô, TI ao vivo. Esses números são daquela organização, não um teto publicado da OpenAI.
 
 1. Siga [Prepare seu ambiente](../../README.md#preparacao) e entre na pasta `apps/decisions` deste repositório.
 2. Instale a CLI 0.161.0, entre com `codex login` e confira `codex login status`.
@@ -110,7 +110,7 @@ Sem `-s workspace-write`, o exec permanece somente leitura e não edita. Esse ca
 - **`codex` não encontrado:** reabra o terminal e confira `codex --version`. A versão do encontro é `codex-cli 0.161.0`.
 - **Tela pedindo para trocar de modelo:** o slug do palco é `gpt-6-luna`. O catálogo da 0.161.0 não inclui `gpt-5.4-mini`.
 - **`Trust this folder?`:** confira o caminho e confie só neste repositório. A tela pode aparecer com a pasta já versionada.
-- **`node --version` dentro do agente abaixo de v24.21.0:** abra de novo com `-c allow_login_shell=false` ou coloque o Node 24 no PATH do login shell. O `node --version` do terminal, sozinho, não basta.
+- **`node --version` dentro do agente fora de v24.12.0 a v24.21.0:** abra de novo com `-c allow_login_shell=false` ou coloque uma versão compatível do Node no PATH do login shell. O `node --version` do terminal, sozinho, não basta.
 - **`/voice` ausente no menu:** a instalação não é a 0.161.0, ou a build não tem o runtime de voz. Digite o pedido. Não invente outro comando de voz.
 - **Limite de taxa:** pare e volte no dia seguinte, ou use outra conta ChatGPT. Não cole chave no terminal.
 - **O agente commitou:** `git log --oneline` mostra o commit. Não faça push. O pedido pedia para não commitar.

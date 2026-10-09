@@ -18,7 +18,7 @@ Revisar, numa tarefa remota do Codex Cloud, um ajuste pequeno e real na mesa de 
 - Conta GitHub. A de Glaucia já está conectada ao Codex como `glaucia86`
 - O repositório [glaucia86/devday-exchange-community-rio-2026](https://github.com/glaucia86/devday-exchange-community-rio-2026)
 
-Quem só acompanha no navegador não instala Node, Git nem pacotes. O Node.js 24.21.0 do [`.nvmrc`](../../.nvmrc) continua valendo para instalar a Alô, TI e para a CI. Ele não é a porta de entrada deste LAB. No teste de 8 de outubro, o exercício antigo em JavaScript puro rodou no Node 20.19.2; exigir 24.21.0 antes de qualquer tarefa Cloud era mais do que aquele exercício pedia.
+Quem só acompanha no navegador não instala Node, Git nem pacotes. Para instalar a Alô, TI, use Node.js de 24.12.0 a 24.21.0; o [`.nvmrc`](../../.nvmrc) recomenda 24.21.0, a versão da CI. Isso não é a porta de entrada deste LAB. No teste de 8 de outubro, o exercício antigo em JavaScript puro rodou no Node 20.19.2; exigir a faixa da Alô, TI antes de qualquer tarefa Cloud era mais do que aquele exercício pedia.
 
 A reprodução local deste defeito importa TypeScript. `node labs/codex-cloud/run-bug-test.mjs` liga `--experimental-strip-types` quando o Node ainda precisa. Se esse comando falhar na sua máquina, siga pelo navegador mesmo assim.
 
