@@ -17,7 +17,7 @@ export function createFirebaseGateway(config, sdk) {
   sdk.setLogLevel('silent');
 
   function ensureSession() {
-    if (disposed) throw { code: 'cancelled' };
+    if (disposed) throw Object.assign(new Error('Operação cancelada.'), { code: 'cancelled' });
     if (session) return session;
     const app = sdk.initializeApp(config.firebase, `devday-presenter-${gatewayId}-${++sessionNumber}`);
     const auth = sdk.initializeAuth(app, {
@@ -62,7 +62,7 @@ export function createFirebaseGateway(config, sdk) {
     if (disposed || !session || uid !== config.presenterUid
       || session.auth.currentUser?.uid !== config.presenterUid
       || verifiedIdentity?.uid !== config.presenterUid
-      || verifiedIdentity?.signInProvider !== 'github.com') throw { code: 'permission-denied' };
+      || verifiedIdentity?.signInProvider !== 'github.com') throw Object.assign(new Error('Acesso às notas não autorizado.'), { code: 'permission-denied' });
     if (!session.db) session.db = sdk.initializeFirestore(session.app, { localCache: sdk.memoryLocalCache() });
     return session;
   }
@@ -112,15 +112,15 @@ export function createFirebaseGateway(config, sdk) {
       const local = ownerSession(uid);
       const current = identityGeneration;
       const snapshot = await sdk.getDocFromServer(noteReference(local));
-      if (session !== local || current !== identityGeneration || disposed) throw { code: 'cancelled' };
+      if (session !== local || current !== identityGeneration || disposed) throw Object.assign(new Error('Operação cancelada.'), { code: 'cancelled' });
       if (!snapshot.exists()) return null;
       const data = snapshot.data();
       if (typeof data.content !== 'string' || data.content.length > MAX_NOTE_LENGTH
-        || Object.keys(data).length !== 2 || !data.updatedAt || typeof data.updatedAt.toMillis !== 'function') throw { code: 'invalid-data' };
+        || Object.keys(data).length !== 2 || !data.updatedAt || typeof data.updatedAt.toMillis !== 'function') throw Object.assign(new Error('Conteúdo de notas inválido.'), { code: 'invalid-data' });
       return { content: data.content };
     },
     async saveNote(uid, content) {
-      if (typeof content !== 'string' || content.length > MAX_NOTE_LENGTH) throw { code: 'invalid-data' };
+      if (typeof content !== 'string' || content.length > MAX_NOTE_LENGTH) throw Object.assign(new Error('Conteúdo de notas inválido.'), { code: 'invalid-data' });
       const local = ownerSession(uid);
       await sdk.setDoc(noteReference(local), { content, updatedAt: sdk.serverTimestamp() });
     },

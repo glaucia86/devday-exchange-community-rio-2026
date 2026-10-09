@@ -155,3 +155,13 @@ test('repetição de callback Auth recebe nova instância sem cache antigo', asy
   assert.equal(h.events.filter(([kind]) => kind === 'terminate').length, 1);
   assert.notEqual(reads[0][1].db, reads[1][1].db);
 });
+
+test('falhas locais são Errors com códigos estáveis para a interface', async () => {
+  const hasCode = code => error => error instanceof Error && error.code === code;
+  const h = setup();
+  await assert.rejects(h.gateway.loadNote(OWNER), hasCode('permission-denied'));
+  await h.user({ uid: OWNER });
+  await assert.rejects(h.gateway.saveNote(OWNER, 'x'.repeat(16001)), hasCode('invalid-data'));
+  await h.gateway.dispose();
+  await assert.rejects(h.gateway.signIn(), hasCode('cancelled'));
+});
