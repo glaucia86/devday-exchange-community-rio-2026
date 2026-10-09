@@ -6,7 +6,7 @@
 
 Você vai abrir a aplicação no seu computador, contar problemas fictícios de TI pelo microfone e acompanhar a criação de cartões em um quadro. A voz escuta. O Decisions sugere uma equipe. Quando falta contexto ou confiança, o cartão aguarda sua escolha em **Revisão humana**.
 
-No evento, Glaucia conduz a demonstração e o público acompanha. Este LAB é para repetir a experiência em casa, no seu ritmo. Não é preciso ter assistido à apresentação.
+No evento, Glaucia conduz a demonstração e o público acompanha. Este LAB é para repetir a experiência **em casa, depois do evento, no seu ritmo**. Não é preciso ter assistido à apresentação.
 
 **O que você vai entregar:** pelo menos três cartões, uma decisão sua em **Revisão humana** e o encerramento da sessão confirmado. Se não tiver acesso à API, há um caminho offline com resultados próprios. Ao final, anote qual caminho você percorreu.
 
@@ -18,6 +18,7 @@ No evento, Glaucia conduz a demonstração e o público acompanha. Este LAB é p
 
 ### Navegue pelo LAB
 
+- [Acompanhar meu progresso](#meu-progresso)
 - [Preparar ferramentas](#preparar-ferramentas)
 - [Baixar o projeto](#obter-projeto)
 - [Conferir as regras](#verificar-regras)
@@ -35,11 +36,28 @@ No evento, Glaucia conduz a demonstração e o público acompanha. Este LAB é p
 
 | Sua situação | Faça estas partes | Resultado que você poderá comprovar |
 | --- | --- | --- |
-| Quero usar voz e API real e aceito o custo | Preparação, interface, conta, configuração, triagem e encerramento | Fala, áudio, classificação e revisão humana funcionando na sua conta |
-| Quero estudar sem chave ou cobrança de API | Preparação e exercício offline | Contrato e regras locais; sem avaliar microfone, voz ou modelo |
-| Quero conhecer a tela antes de decidir | Preparação e interface | Aplicação local aberta com modo ao vivo desativado |
+| Quero usar voz e API real e aceito o custo | Seções 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 | Fala, áudio, classificação e revisão humana funcionando na sua conta |
+| Quero estudar sem chave ou cobrança de API | Seções 1 → 2 → 3 → 10 | Contrato e regras locais; sem avaliar microfone, voz ou modelo |
+| Quero conhecer a tela antes de decidir | Seções 1 → 2 → 3 → 4; depois posso parar | Aplicação local aberta com modo ao vivo desativado |
 
 Não é preciso criar banco de dados, rodar seed, usar Docker, conectar Jira ou publicar um site. Os cartões desta demo são fictícios. A página `/triagem` não cria tickets em um sistema externo.
+
+<a id="meu-progresso"></a>
+### Como usar os checklists em casa
+
+Faça uma seção por vez. Ao chegar a **Pode avançar?**, marque somente o que você realmente conferiu. A frase **Próximo passo** indica para onde ir.
+
+As caixas são um roteiro de conferência; esta página não salva seu progresso. Para marcar, copie o checklist para suas anotações ou use uma cópia impressa. Use **não se aplica** nos itens condicionais que não pertencem ao seu caminho. Não precisa editar o repositório nem abrir um pull request.
+
+- [ ] Escolhi meu caminho: voz real, offline ou apenas conhecer a interface.
+- [ ] Separei um computador e um lugar para anotar etapa, resultado e dúvidas, sem incluir segredos.
+- [ ] Entendi que só preciso de conta/chave e aceitar custos se escolher a voz real.
+
+**Se algo não conferir:** fique na etapa, leia a saída esperada e consulte [Resolver problemas](#resolver-problemas). Com sessão de voz ativa, encerre e confirme o fechamento antes de parar para investigar. Se faltar acesso à API, o caminho offline continua disponível; registre a mudança de caminho.
+
+**Meu registro:** sistema operacional ___ · versão do Node ___ · commit ___ · caminho escolhido ___ · última etapa concluída ___ · pendência ___. Complete os campos conforme descobrir as informações.
+
+**Comece pela [seção 1](#preparar-ferramentas).** As seções 11 e 12 são consulta e prática opcional, respectivamente.
 
 ### Entenda as palavras do guia
 
@@ -58,6 +76,8 @@ Não é preciso criar banco de dados, rodar seed, usar Docker, conectar Jira ou 
 
 <a id="preparar-ferramentas"></a>
 ## 1 Prepare as ferramentas
+
+**Antes de começar:** tenha um computador com acesso à internet e permissão para instalar as ferramentas que faltarem. Se o computador for gerenciado, siga a orientação de quem o administra.
 
 ### 1.1 Confira o que já está instalado
 
@@ -106,8 +126,18 @@ O npm acompanha a distribuição do Node. Não instale pacotes globais de IA par
 
 **Windows:** os blocos usam `npm.cmd` para evitar o bloqueio comum de `npm.ps1` no PowerShell. Não é necessário mudar a política de execução do Windows.
 
+### Pode avançar? Ferramentas
+
+- [ ] `node --version` respondeu com uma versão de 24.12.0 a 24.21.0.
+- [ ] `npm.cmd --version` no Windows, ou `npm --version` nos outros sistemas, respondeu.
+- [ ] `git --version` respondeu.
+
+**Próximo passo:** com os três itens conferidos, vá para [2. Baixar o projeto](#obter-projeto). Se algum comando falhar, resolva a instalação antes de continuar.
+
 <a id="obter-projeto"></a>
 ## 2 Baixe o projeto e reconheça as pastas
+
+**Antes de começar:** conclua o checklist de ferramentas. Escolha o caso 2.1 ou 2.2; não execute os dois para a mesma cópia.
 
 ### 2.1 Se você ainda não tem uma cópia
 
@@ -186,8 +216,19 @@ O código de referência dos checkpoints é `e7129f3`; commits posteriores podem
 
 O site do evento é um portal de leitura. A aplicação abre em `127.0.0.1`, que significa **este computador**. Abrir o portal público não inicia a aplicação no seu notebook.
 
+### Pode avançar? Projeto
+
+- [ ] Tenho uma cópia do projeto e preservei qualquer trabalho anterior.
+- [ ] Meu terminal está na raiz `devday-exchange-community-rio-2026`, e anotei esse caminho.
+- [ ] Conferi a branch e o commit se usei uma cópia existente.
+- [ ] Sei que o portal é para ler o guia e que a aplicação será aberta no meu computador.
+
+**Próximo passo:** vá para [3. Conferir as regras](#verificar-regras), mantendo o terminal na raiz.
+
 <a id="verificar-regras"></a>
 ## 3 Confira as regras sem usar uma chave
+
+**Antes de começar:** conclua o checklist do projeto. Esta etapa é comum aos três caminhos.
 
 **Onde:** terminal na raiz do repositório.
 
@@ -211,8 +252,18 @@ Se aparecer `Cannot find module`, confira a pasta atual e o caminho copiado. Se 
 
 **Vai estudar somente offline?** Agora vá ao [exercício offline](#contrato-offline). Você já tem tudo de que precisa; não instale a interface nem configure uma chave.
 
+### Pode avançar? Regras
+
+- [ ] Executei o comando de teste na raiz e esperei terminar.
+- [ ] A saída mostra zero falhas; conferi a versão se a contagem diferiu da referência.
+- [ ] Anotei o resultado, sem confundi-lo com um teste de voz ou API real.
+
+**Próximo passo:** para **offline**, vá direto para [10. Exercício offline](#contrato-offline). Para **voz real** ou **conhecer a tela**, vá para [4. Abrir a interface](#instalar-interface). Se houve falha inesperada, investigue antes de avançar.
+
 <a id="instalar-interface"></a>
 ## 4 Abra a interface sem iniciar uma sessão paga
+
+**Antes de começar:** conclua os testes da seção 3. Deixe esse terminal disponível e abra também um navegador no mesmo computador.
 
 ### 4.1 Entre na pasta da aplicação
 
@@ -330,8 +381,20 @@ Abra http://127.0.0.1:3002/triagem. A partir daqui, use essa mesma URL em todas 
 
 Mudar a porta ou trocar `127.0.0.1` por `localhost` muda a origem no navegador. Os dados e permissões daquela origem podem ser diferentes. Use um endereço consistente durante todo o LAB.
 
+### Pode avançar? Interface
+
+- [ ] Instalei as dependências dentro de `apps/decisions`, sem erro.
+- [ ] `typecheck` e `build` terminaram sem erro.
+- [ ] O servidor continua rodando, e anotei a URL e a porta usadas.
+- [ ] Abri `/triagem` e reconheci o título e as quatro colunas.
+- [ ] Em uma cópia sem configuração, vi **Ao vivo desativado no servidor**, sem iniciar sessão.
+
+**Próximo passo:** se quiser **voz real**, siga para [5. Conta e orçamento](#preparar-api). Se veio **apenas conhecer a tela**, pode terminar aqui: sem sessão ativa, pressione Ctrl+C no terminal e preencha o [checklist de conclusão](#conclusao). Se já havia configuração ou dados salvos, confira a [seção 9](#reset-e-retomada) antes de uma nova rodada.
+
 <a id="preparar-api"></a>
 ## 5 Prepare o acesso à API e decida seu orçamento
+
+**Antes de começar:** confira que a interface da seção 4 abriu. Mantenha a sessão de voz desligada enquanto prepara conta, acesso e orçamento.
 
 Esta etapa só é necessária para a triagem por voz real. Você pode encerrá-la a qualquer momento e fazer o exercício offline da seção 10.
 
@@ -402,8 +465,20 @@ Abra o [Usage Dashboard](https://platform.openai.com/settings/organization/usage
 
 Use somente relatos fictícios. Não diga nomes, e-mails, senhas, dados de clientes ou detalhes reais do seu trabalho. Sua voz e o relato serão enviados à OpenAI quando você iniciar a sessão.
 
+### Pode avançar? Conta e orçamento
+
+- [ ] Sei qual organização e projeto serão cobrados.
+- [ ] Conferi o acesso aos dois modelos e os limites da minha conta.
+- [ ] Escolhi um orçamento e conferi os controles de gasto e faturamento, sem presumir que um alerta bloqueia consumo.
+- [ ] Tenho uma chave autorizada guardada em local privado e acesso às informações de consumo.
+- [ ] Preparei somente relatos fictícios e decidi prosseguir com o envio de áudio/texto e o custo.
+
+**Próximo passo:** somente com esses itens conferidos, vá para [6. Configuração local](#configurar-segredos). Se algo faltar ou você não quiser pagar, vá para [10. Exercício offline](#contrato-offline); nenhuma compra é necessária para esse caminho.
+
 <a id="configurar-segredos"></a>
 ## 6 Configure o arquivo local com segurança
+
+**Antes de começar:** conclua o checklist de conta e orçamento. Tenha a chave acessível somente no seu computador; não a coloque nas anotações do LAB.
 
 ### 6.1 Pare o servidor antes de editar
 
@@ -513,8 +588,20 @@ Se escolheu outra porta, repita o comando com `-- -p 3002`, ou com a porta que v
 
 Abra ou atualize a página `/triagem` na sua URL local. O aviso de modo desativado deve desaparecer. Isso confirma que a configuração mínima foi reconhecida; a conta e o microfone ainda serão verificados pela conexão real.
 
+### Pode avançar? Configuração segura
+
+- [ ] Editei `apps/decisions/.env.local`, preservando um arquivo anterior se ele existia.
+- [ ] `git check-ignore` confirmou a proteção, e `.env.local` não aparece no `git status --short`.
+- [ ] Substituí os placeholders localmente; diferencio a chave OpenAI do código local de 32 caracteres.
+- [ ] Habilitei o modo real por escolha minha e reiniciei o servidor na mesma porta.
+- [ ] O aviso de modo desativado desapareceu, sem eu iniciar a sessão ainda.
+
+**Próximo passo:** vá para [7. Primeira triagem](#primeira-triagem). Se a configuração não conferir, não cole segredos para pedir ajuda: use a [seção 11](#resolver-problemas).
+
 <a id="primeira-triagem"></a>
 ## 7 Faça sua primeira triagem por voz
+
+**Antes de começar:** conclua o checklist da seção 6. Leia primeiro as etapas 7.1 a 7.8 para saber como terminar a sessão; depois siga uma por vez.
 
 ### 7.1 Comece com um quadro novo
 
@@ -532,7 +619,11 @@ Use fones, confirme a saída de áudio do computador e prefira um ambiente silen
 4. Se o navegador pedir microfone, permita o acesso apenas se quiser fazer o teste nessa página local.
 5. Espere a indicação de microfone ativo e ouça a saudação. Não clique várias vezes enquanto estiver conectando.
 
-**Checkpoint:** você consegue falar e ouvir. A legenda sozinha não comprova que o áudio de saída funcionou.
+**Pode avançar para o primeiro relato?**
+- [ ] A conexão ficou pronta e consigo falar.
+- [ ] Ouvi a saudação ou uma resposta da voz.
+
+A legenda sozinha não comprova que o áudio de saída funcionou. Se um item não conferir, encerre a sessão, confira a mensagem de fechamento e consulte a seção 11 antes de tentar novamente.
 
 Se a conexão falhar depois de criar uma sessão, pode haver consumo. Siga a mensagem exibida; não reinicie sessões sucessivas sem conferir o estado e o consumo.
 
@@ -615,8 +706,21 @@ O placar ou os cartões na tela não substituem a confirmação de fechamento. S
 
 **Checkpoint da triagem real:** você falou, ouviu resposta, viu cartões oriundos das chamadas ao Decisions, exercitou revisão humana e confirmou o fechamento. Se alguma etapa não aconteceu, registre exatamente qual ficou pendente.
 
+### Pode avançar? Primeira rodada encerrada
+
+- [ ] Vi os cartões dos relatos classificados e conferi as equipes sugeridas, um relato por vez.
+- [ ] Exercitei a escolha em **Revisão humana** e vi **Decidido por você**.
+- [ ] Li a evidência de uma decisão e anotei qualquer divergência.
+- [ ] Usei **Encerrar triagem**, recebi a confirmação de fechamento e conferi o consumo.
+
+**Se a revisão humana não apareceu:** deixe esse item pendente e registre o resultado real. A seção 10 permite estudar a regra sem novas chamadas pagas; não declare que testou esse controle da tela.
+
+**Próximo passo:** com o fechamento confirmado, leia [8. Fila e limites](#fila-e-limites) e depois [9. Encerramento e retomada](#reset-e-retomada). Se faltaram cartões, áudio ou outro resultado, registre a etapa como parcial. Com fechamento não confirmado, não inicie outra sessão; siga a orientação da seção 11.
+
 <a id="fila-e-limites"></a>
 ## 8 Entenda fila limites e pausa
+
+**Antes de começar:** use esta seção como consulta se aparecer um limite durante a seção 7 ou leia depois de encerrar. Não provoque um erro 429 para completar o LAB.
 
 ### Quando aparece um limite 429
 
@@ -667,8 +771,20 @@ Se você pausar antes de criar cartões ou fila, o botão pode continuar se cham
 
 A demo limita uma sessão por processo, até três inícios e 30 análises por janela de dez minutos. Cliente e servidor tentam encerrar a sessão depois de dez minutos. Esses controles locais não substituem os controles financeiros da plataforma. Reiniciar o servidor reinicia parte dos contadores locais; não use isso para contornar limites.
 
+### Pode avançar? Limites e recuperação
+
+- [ ] Sei que o contador registra tentativas, e que ele pode diferir do número de cartões e da cobrança.
+- [ ] Sei distinguir cartão, relato **Na fila** e texto ainda não salvo em **OUVINDO**.
+- [ ] Entendi que retomar abre outra sessão de voz e que mutar não encerra a sessão.
+
+**Se houve 429:** anote quais relatos ficaram na fila, a mensagem exibida e se decidiu aguardar, encerrar ou seguir offline. Só marque como processado um relato que realmente virou cartão.
+
+**Próximo passo:** vá para [9. Terminar e voltar outro dia](#reset-e-retomada). Se não houve limite, basta concluir a leitura; não precisa gerar filas ou gastar em novas tentativas.
+
 <a id="reset-e-retomada"></a>
 ## 9 Termine limpe e volte outro dia
+
+**Antes de começar:** saiba se existe sessão ativa e se há cartões/fila que você quer preservar. Apagar o quadro é opcional; encerrar uma sessão iniciada é necessário.
 
 ### O que fica salvo
 
@@ -714,8 +830,28 @@ Você não precisa clonar nem instalar tudo de novo se não mudou o código ou a
 
 Se editou código, gere a build novamente antes de `npm start`. Se atualizou o repositório e o lockfile mudou, repita a instalação de dependências e a build. `npm run dev` fica para quem estiver editando o código; este percurso usa a build.
 
+### Pode concluir? Encerramento
+
+- [ ] Se iniciei voz real, confirmei o fechamento antes de fechar a aba ou parar o servidor.
+- [ ] Decidi preservar o quadro ou apagá-lo. Se apaguei, confirmei o aviso e as colunas vazias.
+- [ ] Parei o servidor com Ctrl+C ao terminar.
+- [ ] Se configurei o modo real, deixei `MESA_LIVE_ENABLED=false` e mantive os segredos privados.
+
+**Próximo passo:** preencha o [checklist de conclusão](#conclusao). A [seção 10](#contrato-offline) é uma prática adicional sem API; não é obrigatória para repetir uma rodada de voz já concluída.
+
+### Quando voltar outro dia, confira
+
+- [ ] Abri a mesma pasta e conferi se preciso reinstalar dependências ou gerar uma nova build.
+- [ ] Se escolhi voz real, reconferi orçamento/acesso e reativei o modo conscientemente.
+- [ ] Iniciei o servidor e abri a mesma origem e porta.
+- [ ] Escolhi preservar ou limpar o quadro antes de iniciar; sei que retomar cria outra sessão.
+
+**Próximo passo:** volte à [seção 7](#primeira-triagem) para outra rodada ou à [seção 8](#fila-e-limites) para uma fila pendente. Não marque este checklist agora se ainda não fez uma segunda execução.
+
 <a id="contrato-offline"></a>
 ## 10 Faça o exercício offline sem chave
+
+**Antes de começar:** conclua as seções 1, 2 e 3. Se veio da voz real, confira primeiro o fechamento da sessão; não precisa ativar nem manter o modo real para este exercício.
 
 Este caminho exige somente Node na versão aceita e a cópia do projeto. Não exige instalar as dependências da interface, conta de API, servidor ou microfone.
 
@@ -796,8 +932,20 @@ As respostas se relacionam pelo campo `name`, não pela ordem em que aparecem no
 
 **Entrega offline:** registre as saídas completa, incerta e recusada, além do resultado dos nove testes. Escreva: “Executei contrato e regras locais. Não executei voz nem inferência real.”
 
+### Pode concluir? Exercício offline
+
+- [ ] A fixture completa mostrou `team: "applications"`, `score: 1.25` e `ticketCreated: false`.
+- [ ] A fixture incerta mostrou `team: "human"`.
+- [ ] A fixture recusada mostrou `CONTRATO_REJEITADO`; reconheci essa falha esperada.
+- [ ] Os testes de `triage.test.mts` terminaram com zero falhas, e conferi a contagem da minha versão.
+- [ ] Registrei as saídas e respondi às quatro perguntas da seção 10.5.
+
+**Próximo passo:** preencha o [checklist de conclusão](#conclusao). Você concluiu o caminho offline quando esses resultados conferem; microfone, cartões da interface e conta de API não são requisitos desse caminho.
+
 <a id="resolver-problemas"></a>
 ## 11 Resolva problemas sem expor segredos
+
+**Use quando precisar:** localize o sintoma, aplique a orientação e repita somente a verificação da etapa que falhou. Não marque etapas seguintes para compensar uma falha anterior.
 
 | O que você vê | Confira | Próximo passo |
 | --- | --- | --- |
@@ -825,6 +973,8 @@ Ao pedir ajuda, compartilhe a mensagem de erro, a etapa, a versão de Node e o s
 <a id="aprofundar"></a>
 ## 12 Continue praticando
 
+**Opcional:** faça depois de concluir um dos caminhos. Para os experimentos com fixtures abaixo, conclua primeiro a seção 10. Anote uma mudança, sua previsão e a saída antes de experimentar outra.
+
 No [exercício offline de contrato](../../exercises/decisions-contract/README.md), copie `incerto.json` pelo editor para outro arquivo, sem alterar o original. Mude uma coisa por vez e preveja a saída antes de executar:
 
 No arquivo JSON, o separador decimal é **ponto**, mesmo que o texto em português use vírgula. Localize cada resposta pelo campo `name`:
@@ -836,16 +986,39 @@ No arquivo JSON, o separador decimal é **ponto**, mesmo que o texto em portugu�
 
 Anote entrada, previsão e resultado. Depois, se quiser editar a aplicação, experimente um texto de anúncio ou a regra de coluna em `triage.ts` e confira os testes. Não remova os limites de segurança para fazer um exemplo passar.
 
+<a id="conclusao"></a>
 ## Checklist de conclusão
 
-- [ ] Sei em qual pasta executar cada comando.
-- [ ] Diferencio o portal público da aplicação em meu computador.
-- [ ] Completei o caminho real ou o caminho offline e registrei qual foi.
-- [ ] Se usei voz, ouvi resposta real e confirmei o fechamento.
-- [ ] Entendi os campos do contrato e o motivo da revisão humana.
-- [ ] Sei que o quadro pode continuar salvo depois de fechar a página.
-- [ ] Sei retomar ou apagar uma rodada pelo controle correto.
-- [ ] Deixei o modo real desativado ao terminar e protegi minha chave.
+Confira somente o caminho que você escolheu. Nas suas anotações, use **feito**, **pendente** ou **não se aplica**, sem marcar como executado o que apenas leu.
+
+### Para todos os caminhos
+
+- [ ] Registrei meu sistema, versão do Node, commit e caminho escolhido.
+- [ ] Sei em qual pasta executar os comandos e diferencio portal público de aplicação local.
+- [ ] Anotei os resultados e as pendências sem expor credenciais ou dados pessoais.
+
+### Se fiz voz real
+
+- [ ] Completei a seção 7: falei, ouvi resposta real, vi pelo menos três cartões e exercitei **Revisão humana**.
+- [ ] Confirmei o fechamento da sessão e conferi o consumo do projeto.
+- [ ] Entendi o que fica salvo e como preservar ou apagar o quadro.
+- [ ] Parei o servidor, desativei o modo real e protegi minha chave.
+
+Se faltou um resultado, registre **rodada parcial** e o item pendente. O estudo offline pode complementar a compreensão, mas não comprova o controle de voz ou da tela que faltou.
+
+### Se fiz somente offline
+
+- [ ] Completei a seção 10: saídas completa/incerta/recusada, testes locais e respostas sobre o contrato.
+- [ ] Registrei: “Executei contrato e regras locais. Não executei voz nem inferência real.”
+
+Você não precisa configurar chave, provar revisão na tela ou desativar um modo real que nunca configurou.
+
+### Se apenas conheci a interface
+
+- [ ] Completei a seção 4, vi a página `/triagem` e parei o servidor.
+- [ ] Registrei: “Abri a interface local. Ainda não executei a rodada de voz nem o exercício de contrato.”
+
+Isso conclui a exploração da tela; para praticar a classificação, escolha depois o caminho real ou o offline.
 
 
 ## Referências para continuar estudando
