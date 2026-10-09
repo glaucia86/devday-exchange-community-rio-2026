@@ -17,7 +17,7 @@ async function fixture(t) {
   page.on('pageerror', error => errors.push(error.message));
   t.after(() => assert.deepEqual(errors, [], 'no uncaught application errors'));
   await context.addInitScript(() => {
-    window.__triage = { channels: [], stopped: 0, playCalls: 0, blockPlay: false, ignoreAbort: false, settled: 0 };
+    window.__triage = { channels: [], stopped: 0, playCalls: 0, blockPlay: false, ignoreAbort: false, settled: 0, abortEvents: 0 };
     const fixture = window.__triage;
     Object.defineProperty(navigator.mediaDevices, 'getUserMedia', { configurable: true, value: async () => {
       const track = { enabled: true, stop() { fixture.stopped++; } };
@@ -56,6 +56,7 @@ async function fixture(t) {
     const nativeFetch = window.fetch.bind(window);
     window.fetch = async (url, options) => {
       const deciding = options?.body && JSON.parse(options.body).action === 'decide';
+      if (deciding) options.signal?.addEventListener('abort', () => fixture.abortEvents++, { once: true });
       try { return await nativeFetch(url, deciding && fixture.ignoreAbort ? { ...options, signal: undefined } : options); }
       finally { if (deciding) fixture.settled++; }
     };
@@ -129,3 +130,51 @@ test('the classification request keeps an internal registrar verb', async t => {
   f.complete(0);
   await f.page.locator('#board .tri-card').waitFor();
 });
+
+for (const status of [200, 429, 502]) {
+  test(`an old ${status} response cannot release a resumed classification`, async t => {
+    const f = await fixture(t);
+    await f.page.evaluate(() => { window.__triage.ignoreAbort = true; });
+    await f.hear('A VPN caiu. Registra.');
+    await f.delegate('old_a');
+    await f.waitDecision(0);
+    await f.page.getByRole('button', { name: 'Pausar', exact: true }).click();
+    await f.start();
+    await f.hear('O portal mostra erro 500. Registra.');
+    await f.delegate('new_b');
+    await f.waitDecision(1);
+    f.complete(0, status);
+    await f.page.waitForFunction(() => window.__triage.settled === 1);
+    await f.flush();
+    assert.equal(await f.page.getByRole('button', { name: 'Classificar agora', exact: true }).isDisabled(), true, 'B keeps ownership of the classification controls');
+    assert.equal(await f.page.locator('#board .tri-card').count(), 0);
+    assert.equal(await f.page.locator('.tri-queue li').count(), 0);
+    assert.equal(await f.page.getByRole('region', { name: 'Controle da sessão de voz' }).getByRole('alert').count(), 0);
+    await f.delegate('new_b');
+    await f.delegate('while_b_is_busy');
+    await f.flush();
+    assert.equal(f.calls.filter(c => c.action === 'decide').length, 2, 'repeated and overlapping delegations do not submit another request');
+    f.complete(1);
+    await f.page.locator('#board .tri-card').waitFor();
+    assert.equal(await f.page.locator('#board .tri-card p').innerText(), 'O portal mostra erro 500');
+  });
+}
+
+for (const control of ['Pausar', 'Encerrar triagem']) {
+  test(`${control} cancels a pending classification immediately`, async t => {
+    const f = await fixture(t);
+    await f.hear('A VPN caiu. Registra.');
+    await f.delegate('cancel_a');
+    await f.waitDecision(0);
+    await f.page.getByRole('button', { name: control, exact: true }).click();
+    await f.page.getByRole('button', { name: /Iniciar triagem ao vivo|Retomar triagem/ }).waitFor();
+    assert.equal(await f.page.evaluate(() => window.__triage.abortEvents), 1);
+    assert.ok(await f.page.evaluate(() => window.__triage.stopped) > 0);
+    f.complete(0);
+    await f.page.waitForFunction(() => window.__triage.settled === 1);
+    await f.flush();
+    assert.equal(await f.page.locator('#board .tri-card').count(), 0);
+    assert.equal(await f.page.getByRole('region', { name: 'Controle da sessão de voz' }).getByRole('alert').count(), 0);
+  });
+}
+

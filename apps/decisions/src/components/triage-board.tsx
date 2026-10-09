@@ -46,7 +46,7 @@ export default function TriageBoard(){
  const live=useRef<LiveBrowser|null>(null);
  const level=useRef(0);
  const mounted=useRef(true);
- const busy=useRef(false);
+ const classification=useRef<AbortController|null>(null);
  const delegations=useRef(new Set<string>());
  const generation=useRef(0);
  const endIntent=useRef<'pause'|'finish'|null>(null);
@@ -59,12 +59,16 @@ export default function TriageBoard(){
   if(after)stageTimer.current=setTimeout(()=>{if(mounted.current)setStage(next);},after);
   else setStage(next);
  }
+ function cancelClassification(){
+  classification.current?.abort();classification.current=null;
+  setClassifying(false);setFlying(null);
+ }
  useEffect(()=>{
   mounted.current=true;
   try{const saved=localStorage.getItem(STORAGE_KEY);if(saved){const restored=restoreTriage(JSON.parse(saved));current.current=restored;setBoard(restored);}}catch{}
   const abort=new AbortController();
   fetch('/api/live',{signal:abort.signal}).then(r=>r.json()).then(data=>{if(mounted.current)setEnabled(data.enabled===true);}).catch(()=>{if(mounted.current)setEnabled(false);});
-  return()=>{mounted.current=false;generation.current++;abort.abort();if(stageTimer.current)clearTimeout(stageTimer.current);void audioCtx.current?.close();void live.current?.stop();};
+  return()=>{mounted.current=false;generation.current++;abort.abort();classification.current?.abort();classification.current=null;if(stageTimer.current)clearTimeout(stageTimer.current);void audioCtx.current?.close();void live.current?.stop();};
  },[]);
  async function classify(delegationId:string|null,queued?:string):Promise<boolean>{
   const client=live.current,epoch=generation.current;
@@ -72,13 +76,14 @@ export default function TriageBoard(){
   const capturedHeard=current.current.heard;
   const text=queued??pendingReport(current.current);
   if(!text){client.send('Ainda não ouvi um relato novo. Peça para a apresentadora descrever o problema antes de registrar.',delegationId,false);return false;}
-  if(busy.current){if(!queued)client.send('Ainda estou classificando o chamado anterior. Já volto com o resultado.',delegationId,false);return false;}
-  busy.current=true;setClassifying(true);setFailure('');
+  if(classification.current){if(!queued)client.send('Ainda estou classificando o chamado anterior. Já volto com o resultado.',delegationId,false);return false;}
+  const controller=new AbortController();classification.current=controller;
+  setClassifying(true);setFailure('');
   commit(noteCall(current.current));
   setFlying({id:(current.current.cards.at(-1)?.id??0)+1,text});settle('deciding');
   try{
-   const result=await client.request({action:'decide',sessionId:client.id,revision:current.current.calls,text,transcript:[]});
-   if(epoch!==generation.current||!mounted.current)return false;
+   const result=await client.request({action:'decide',sessionId:client.id,revision:current.current.calls,text,transcript:[]},controller.signal);
+   if(controller.signal.aborted||classification.current!==controller||epoch!==generation.current||!mounted.current)return false;
    const next=addCard(current.current,text,result.result,Date.now(),queued?'queue':'heard',capturedHeard);
    // Same render as the new card, so the shared layoutId animates the flight.
    setFlying(null);commit(next);
@@ -87,7 +92,7 @@ export default function TriageBoard(){
    client.send(boardSummary(next),null,true);
    return true;
   }catch(e){
-   if(epoch!==generation.current)return false;
+   if(controller.signal.aborted||classification.current!==controller||epoch!==generation.current||!mounted.current)return false;
    const message=e instanceof Error?e.message:'A classificação falhou.';
    setFailure(message);setFlying(null);settle('listening');
    if((e as {status?:number}).status===429){
@@ -97,7 +102,7 @@ export default function TriageBoard(){
     client.send(boardSummary(current.current),null,true);
    }else client.send('A classificação falhou e nenhum cartão foi criado. '+message,delegationId,false);
    return false;
-  }finally{busy.current=false;if(mounted.current)setClassifying(false);}
+  }finally{if(classification.current===controller){classification.current=null;if(mounted.current)setClassifying(false);}}
  }
  async function drainQueue(){
   for(const text of [...current.current.queue]){
@@ -133,13 +138,14 @@ export default function TriageBoard(){
   const epoch=++generation.current;
   setConnection('connecting');setFailure('');setFinished(false);setSeconds(0);setAssistant('');setNotice('Solicitando acesso ao microfone…');
   setMicMuted(false);setVoiceMuted(false);audio.current.muted=false;
-  delegations.current.clear();busy.current=false;endIntent.current=null;commit({...current.current,heard:''});
+  delegations.current.clear();cancelClassification();endIntent.current=null;commit({...current.current,heard:''});
   const client=new LiveBrowser({token,audio:audio.current,audioContext:audioCtx.current,mode:'triage',
    onInputLevel:value=>{level.current=value;},
    onEvent:event=>eventReceived(event,epoch),
    onNotice:text=>{if(mounted.current&&epoch===generation.current)setNotice(text);},
    onEnded:()=>{
     if(!mounted.current||epoch!==generation.current)return;
+    cancelClassification();
     const intent=endIntent.current;endIntent.current=null;
     setConnection('idle');settle('idle');setFlying(null);
     setFinished(intent==='finish'&&current.current.cards.length>0);
@@ -149,7 +155,7 @@ export default function TriageBoard(){
   try{await client.start();}
   catch(e){if(mounted.current&&epoch===generation.current)setFailure(e instanceof Error?e.message:'Falha na conexão.');await client.stop();}
  }
- async function stop(intent:'pause'|'finish'='finish'){endIntent.current=intent;setConnection('closing');await live.current?.stop();if(mounted.current)setConnection('idle');}
+ async function stop(intent:'pause'|'finish'='finish'){endIntent.current=intent;cancelClassification();setConnection('closing');await live.current?.stop();if(mounted.current)setConnection('idle');}
  function newTriage(){
   if(!window.confirm('Apagar o quadro atual e começar uma nova triagem?'))return;
   commit(createTriage());setFinished(false);setFailure('');setNotice('Quadro limpo. Pronto para uma nova triagem.');
