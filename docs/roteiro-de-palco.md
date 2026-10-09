@@ -10,7 +10,7 @@ Na véspera, na raiz do repositório:
 node scripts/prepare-stage.mjs
 ```
 
-Depois, em `apps/decisions`, `npm start` e http://127.0.0.1:3000. O script aceita Node.js de 24.12.0 a 24.21.0. O arquivo `.nvmrc` recomenda 24.21.0, a versão da CI.
+Depois, em `apps/decisions`, `npm start` e http://127.0.0.1:3000/triagem. O script aceita Node.js de 24.12.0 a 24.21.0. O arquivo `.nvmrc` recomenda 24.21.0, a versão da CI.
 
 ## Camada 1 · o que sempre funciona
 
@@ -27,22 +27,6 @@ Fala: “Teste verde não é o mesmo que contrato cumprido.”
 
 **Plano B:** os dois comandos acima, na máquina local. Se o Cloud não estiver no ar, a caça ao bug já é a demo.
 
-### 2. Alô, TI · a equipe muda
-
-Com o servidor da build aberto, clique **Modo palco**. Fique na aba **Simulado**.
-
-1. **Explorar cenário.** Leia o relato da senha e peça um palpite de equipe.
-2. **Analisar relato.** Aparece Acessos e identidade. O botão de criar ticket continua desligado.
-3. Pergunte: “E se a senha funcionar e o portal cair para o time inteiro?” Clique **Simular uma correção** e analise de novo. **Corrigir o relato** só abre o texto para edição.
-4. A sugestão passa para Aplicações internas. A revisão anterior sai.
-5. Marque a revisão e crie `DEMO-0001`.
-
-O seletor **Simulado** e o rodapé dizem que esta aba usa respostas preparadas. A fala pode repetir isso no fim, depois da virada. Não abra **Por trás da decisão** antes desse momento: é lá que os números aparecem como exemplo.
-
-**Plano B:** se a página não abrir, mostre os testes e as fixtures e diga que não houve conversa.
-
-O miolo desta demonstração, cerca de três minutos no projetor, fica na aba **Simulado**: cenário, análise, correção, nova equipe e ticket. A voz é o fechamento, não o meio. Sem ensaio de áudio, o fechamento é a frase de monitoramento na própria aba simulada, lida em voz alta por você.
-
 ## Camada 2 · só com ensaio feito
 
 Cada bloco abaixo fica de fora se o ensaio da véspera não tiver passado no notebook do projetor. A camada 1 continua de pé.
@@ -52,6 +36,6 @@ Cada bloco abaixo fica de fora se o ensaio da véspera não tiver passado no not
 | **Dots** | No notebook do projetor, com este cenário: o dot abre pelo nome, em `chatgpt.com/dots/<id>`, sem aplicativos e sem computador. O relatório preparado confere com as páginas públicas. A pergunta ao vivo “o que mudou” foi respondida dentro de cerca de 45 s, sem inventar item e sem pedir conexão. O ensaio de 8 de outubro de 2026 usou outro cenário e não libera este bloco. | **Plano B · relatório preparado.** Mostre o relatório conferido antes, ao lado da página pública, e diga que a consulta ao vivo não foi concluída. |
 | **Codex CLI** | `codex --version` mostra `codex-cli 0.161.0`. A abertura é `codex -m gpt-6-luna -s workspace-write -a on-request` em `apps/decisions`. `Trust this folder?` já foi respondido. Dentro do agente, `node --version` mostra v24.21.0, recomendada em `.nvmrc`. `/voice` legenda uma frase e `/agents` abre o centro de agentes. | Diga “isto é gravação” e rode o ensaio etiquetado GRAVAÇÃO. Se não houver gravação, mostre a falha simulada na Alô, TI e diga que o CLI não rodou. |
 | **Codex Cloud** | O ambiente publicado no repositório do evento ainda falha em `bug-rede.test.mts`; a tarefa de correção já foi enviada antes do bloco. O beat ao vivo é revisar o diff e a saída do teste, com teto de **3 minutos**. | Se não houver diff e saída, use a gravação com o letreiro **GRAVADO ANTES · não é ao vivo**. Sem gravação, mostre só o teste vermelho e diga que a tarefa remota não rodou. Sem PR, merge ou deploy. |
-| **Voz** | No notebook do projetor: os cinco comandos aparecem no log, a correção no meio da frase troca a equipe, o ticket só nasce depois de “confirma”, a frase de monitoramento sai uma vez e a sessão encerra. | Fique na Alô, TI simulada. Crie o ticket pelos botões. Aponte a frase de monitoramento na tela e diga que a conversa real não foi executada. |
+| **Triagem ao vivo** | No notebook do projetor, em `/triagem`: “registra” cria um cartão por relato, um relato vago cai em **Revisão humana** e muda de coluna com um clique, “qual o padrão?” é respondido sem nova chamada ao Decisions e a sessão encerra confirmada. O contador cabe nos limites da conta (cerca de uma chamada por relato). | Encerre a sessão e abra a gravação com o letreiro **GRAVADO ANTES · não é ao vivo**. Sem gravação, rode `node --test tests/triage.test.mts` em `apps/decisions` e diga que a triagem ao vivo não rodou. Não há modo simulado neste bloco. |
 
 A versão do Codex fica fixa em `@openai/codex@0.161.0` para o encontro. Na véspera do CLI, antes do projetor: `codex login status` sem mostrar a conta; `codex -m gpt-6-luna -s workspace-write -a on-request` na pasta `apps/decisions`; a pasta confiada se surgir `Trust this folder?`; dentro do agente, `node --version` em v24.21.0, recomendada em `.nvmrc` (se vier outra, reabra com `-c allow_login_shell=false`); `/voice` ensaiado até `/voice stop`. A Alô, TI desse bloco abre com `npm run dev` na mesma pasta, antes do relógio: o `npm start` da véspera serve a build e não mostra a edição do agente. Depois do bloco, o Decisions volta ao `npm start`. O plano B desse bloco é uma gravação etiquetada GRAVAÇÃO.

@@ -168,6 +168,40 @@ test('raw upstream errors never expose credentials or upstream response contents
  const response=await handle(req({action:'start',sdp:'v=0'}));assert.equal(response.status,502);
  assert.equal((await response.text()).includes('sensitive upstream diagnostic'),false);
 });
+test('triage mode starts a client-delegation session with no Responses backend',async()=>{
+ let seenBody:any;
+ const handle=createLiveHandler(env,async(_url,init)=>{seenBody=JSON.parse(String(init?.body));return Response.json({session:{id:'sess_triage'},transport:{type:'webrtc',sdp:'v=0'}});},guard);
+ assert.equal((await handle(req({action:'start',sdp:'v=0',mode:'triage'}))).status,200);
+ assert.deepEqual(seenBody.session.delegation,{type:'client'});
+ assert.equal(JSON.stringify(seenBody).includes('gpt-6-luna'),false,'no backend model request is configured for triage');
+ assert.deepEqual(seenBody.session.client.data_channel.allowed_client_events,['session.close','session.commentary.append','session.thinking.append']);
+ assert.equal(seenBody.session.client.data_channel.allowed_server_events.some((event:any)=>event.type==='response.event'),false);
+ assert.ok(seenBody.session.instructions.startsWith('Você é a Triagem ao vivo da Aurora'));
+ assert.equal(seenBody.session.audio.output.voice,'bossa');
+});
+test('unknown modes fall back to the desk session',async()=>{
+ let seenBody:any;
+ const handle=createLiveHandler(env,async(_url,init)=>{seenBody=JSON.parse(String(init?.body));return Response.json({session:{id:'sess_mode'},transport:{type:'webrtc',sdp:'v=0'}});},guard);
+ await handle(req({action:'start',sdp:'v=0',mode:'anything'}));
+ assert.equal(seenBody.session.delegation.type,'responses');
+});
+test('a Decisions rate limit becomes a 429 with the suggested wait and no upstream text',async()=>{
+ const handle=createLiveHandler(env,async url=>String(url).endsWith('/live/sessions')
+  ?Response.json({session:{id:'sess_rl'},transport:{type:'webrtc',sdp:'v=0'}})
+  :new Response(JSON.stringify({error:{message:'Rate limit reached for gpt-6-luna in organization org-secret on requests per day (RPD): Limit 50, Used 50, Requested 1. Please try again in 28m48s.'}}),{status:429}),guard);
+ await handle(req({action:'start',sdp:'v=0'}));
+ const response=await handle(req({action:'decide',sessionId:'sess_rl',revision:1,text:'Relato fictício',transcript:[]}));
+ assert.equal(response.status,429);
+ const {error}=await response.json();
+ assert.equal(error,'Limite diário do modelo atingido na OpenAI. Tente novamente em 28m48s.');
+ assert.equal(error.includes('org-secret'),false);
+});
+test('a rate-limited session start does not block later starts',async()=>{
+ let calls=0;
+ const handle=createLiveHandler(env,async()=>{calls++;return calls===1?new Response('{}',{status:429}):Response.json({session:{id:'sess_after'},transport:{type:'webrtc',sdp:'v=0'}});},guard);
+ assert.equal((await handle(req({action:'start',sdp:'v=0'}))).status,429);
+ assert.equal((await handle(req({action:'start',sdp:'v=0'}))).status,200);
+});
 
 test('a confirmed live ticket cannot be erased by later speech or corrections',()=>{
  let s=deskReducer(createDesk(1,'live'),{type:'EDIT',value:'Erro 500 geral'});

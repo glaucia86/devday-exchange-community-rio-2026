@@ -15,7 +15,7 @@
 | Interface Chromium | Fluxo mock aprovado, sem erros não capturados no navegador |
 | Capturas desktop e celular | Inspecionadas; sem corte, sobreposição ou overflow horizontal observado |
 | Voz real pelo dispositivo | Ainda não ensaiada; regressão usa simulação da API do navegador |
-| GPT-Live + Decisions | Adaptadores implementados; ensaio com conta e áudio reais pendente |
+| GPT-Live + Decisions | Triagem ao vivo implementada com delegação para o cliente e 11 testes novos (regras do quadro, sessão e limite 429); ensaio com conta e áudio reais pendente |
 | Dots | Cenário antigo executado uma vez em 8 de outubro de 2026; o cenário novo ainda não foi ensaiado |
 | Codex CLI / Codex Cloud | Guias disponíveis; fluxos nos produtos ainda não ensaiados |
 

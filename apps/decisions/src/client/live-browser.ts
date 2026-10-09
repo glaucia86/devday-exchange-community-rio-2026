@@ -1,6 +1,6 @@
 import { parseLiveEvent, type LiveEvent } from '../domain/live-contract';
 import type { TurnEvent } from '../domain/live-turn';
-type Options={token:string;audio:HTMLAudioElement;audioContext?:AudioContext;onInputLevel?:(level:number)=>void;onEvent:(event:LiveEvent)=>void;onNotice:(text:string)=>void;onEnded:()=>void};
+type Options={token:string;audio:HTMLAudioElement;audioContext?:AudioContext;mode?:'desk'|'triage';onInputLevel?:(level:number)=>void;onEvent:(event:LiveEvent)=>void;onNotice:(text:string)=>void;onEnded:()=>void};
 const CLOSE_REASONS:Record<string,string>={
  expired:'A plataforma encerrou a sessão por limite de duração (expired). ',
  content:'Um filtro de segurança da plataforma encerrou a sessão (content). ',
@@ -26,7 +26,11 @@ export class LiveBrowser {
  private inputFrame:number|null=null;
  private closeReason:string|null=null;
  private reconnectGrace:ReturnType<typeof setTimeout>|null=null;
- constructor(options:Options){this.options=options;}
+ constructor(options:Options){
+  const notify=options.onNotice;
+  this.options={...options,onNotice:text=>{this.lastNotice=text;notify(text);}};
+ }
+ private lastNotice='';
  get id(){return this.sessionId;}
  get active(){return this.ready&&!this.stopped;}
  async request(body:unknown,signal?:AbortSignal){
@@ -76,7 +80,7 @@ export class LiveBrowser {
   });
   if(this.stopped){this.release();return;}
   this.initializationAttempted=true;
-  const data=await this.request({action:'start',sdp:this.peer.localDescription?.sdp});
+  const data=await this.request({action:'start',sdp:this.peer.localDescription?.sdp,mode:this.options.mode??'desk'});
   if(typeof data.sessionId!=='string'||typeof data.sdp!=='string')throw Error('Resposta de conexão inválida.');
   this.sessionId=data.sessionId;
   if(this.stopped)return;
@@ -152,7 +156,7 @@ export class LiveBrowser {
    if(this.channel?.readyState==='open'&&!this.closedEvent)this.channel.send(JSON.stringify({type:'session.close'}));
    let confirmed=this.closedEvent;
    if(this.sessionId&&!confirmed){
-    try{const result=await this.request({action:'close',sessionId:this.sessionId});confirmed=result.confirmed===true;}catch{/* session.closed may have arrived concurrently. */}
+    try{const result=await this.request({action:'close',sessionId:this.sessionId,cause:this.lastNotice.slice(0,160)});confirmed=result.confirmed===true;}catch{/* session.closed may have arrived concurrently. */}
    }else if(!this.sessionId)confirmed=!this.initializationAttempted;
    return confirmed||this.closedEvent;
   })();

@@ -4,9 +4,20 @@
 
 ## Estado
 
-Adaptadores implementados para GPT-Live, WebRTC e Decisions. A CI usa transporte simulado e respostas de teste. Ainda não houve ensaio com chave, inferência ou áudio reais. Acesso aos modelos, latência, reconhecimento e saída audível continuam pendentes. O fluxo principal planejado para o palco é voz para voz; os testes offline e o mock são preparação/contingência. Use os mesmos relatos e critérios do [LAB para reproduzir em casa](../labs/02-decisions-typescript/README.md) e do [roteiro da apresentadora](guia-apresentadora.md#decisions-api).
+Adaptadores implementados para GPT-Live, WebRTC e Decisions. A CI usa transporte simulado e respostas de teste. Acesso aos modelos, latência, reconhecimento e saída audível ainda precisam de ensaio completo. A demonstração de palco é a **Triagem ao vivo** (`/triagem`); a aba ao vivo da Alô, TI continua disponível para estudo. Use os mesmos relatos e critérios do [LAB para reproduzir em casa](../labs/02-decisions-typescript/README.md) e do [roteiro da apresentadora](guia-apresentadora.md#decisions-api).
 
-O modo padrão permanece offline. Abrir a aba ao vivo não inicia uma sessão paga nem solicita o microfone.
+O modo padrão permanece offline. Abrir a página ou a aba ao vivo não inicia uma sessão paga nem solicita o microfone.
+
+## Triagem ao vivo: delegação para o cliente
+
+A Triagem usa `delegation: { type: "client" }`, como no guia [Connect voice to Decisions](https://developers.openai.com/api/docs/guides/decisions-voice). GPT-Live não chama um modelo de backend a cada fala. Quando a apresentadora diz “registra”, chega `session.delegation.created`; a página pega a fala ouvida desde o último cartão, envia ao servidor e o servidor faz **uma** chamada a `/v1/decisions`. O resultado volta à voz com `session.commentary.append` e o mesmo `delegation_id`; um resumo do quadro segue por `session.thinking.append`.
+
+- **Custo por execução:** uma sessão `gpt-live-1` e cerca de uma chamada `gpt-6-luna` por relato. Seis relatos usam cerca de seis requisições
+- **Limites da conta:** contas novas podem ter 50 requisições por dia e 10 por minuto por modelo. Confira em Settings → Limits. Quando o limite é atingido, a página mostra “Limite diário do modelo atingido na OpenAI. Tente novamente em …”, sem repassar a mensagem bruta
+- **Canal do navegador:** só envia `session.close`, `session.commentary.append` e `session.thinking.append`
+- **Diagnóstico:** o terminal do servidor registra linhas `[live]`: início da sessão, erros do canal de controle, cada chamada ao Decisions e o motivo do encerramento (`expired`, `connection_lost`, `content`)
+
+Para abrir: em `/triagem`, digite o código `MESA_LIVE_ACCESS_TOKEN`, leia e marque o consentimento e clique **Iniciar triagem ao vivo**.
 
 ## Se você veio do LAB e o mock já abriu
 
@@ -119,7 +130,7 @@ Ao terminar, volte MESA_LIVE_ENABLED para false e reinicie ou encerre o servidor
 - Encerramento: session.close no cliente e sideband autenticado no servidor; confirmação por session.closed
 - O canal do navegador só pode enviar `session.close`, `session.commentary.append`, `session.thinking.append`, `response.item.create` e `response.create`
 
-A delegação é Responses, não a delegação client do guia “Connect voice to Decisions”. Aquele guia escolhe uma ação sem parâmetros (recarregar, voltar, próximo slide). Aqui o comando carrega o relato e um booleano de confirmação. O modelo devolve `response.output_item.done` com `function_call`; o navegador executa e devolve `response.item.create` seguido de `response.create`. A triagem da equipe continua na Decisions. Não há correspondência por palavras-chave na transcrição. A transcrição sozinha não altera o relato.
+A delegação da aba ao vivo da Alô, TI é Responses, não a delegação client usada na Triagem. Aquele guia escolhe uma ação sem parâmetros (recarregar, voltar, próximo slide). Aqui o comando carrega o relato e um booleano de confirmação. O modelo devolve `response.output_item.done` com `function_call`; o navegador executa e devolve `response.item.create` seguido de `response.create`. A triagem da equipe continua na Decisions. Não há correspondência por palavras-chave na transcrição. A transcrição sozinha não altera o relato.
 
 A pergunta de contexto pede se o relato atual diz qual serviço falhou, o que aconteceu e quem foi afetado. Essa redação foi conferida na Decisions real nos três relatos de palco: acesso e conexão instável ficaram acima de 0,8; o relato incompleto ficou em 0. Os limiares 0,8 para contexto e 0,7 para confiança continuam didáticos. Score de 0 a 2 pode ser fracionário; não é prioridade operacional. O texto explicativo é composto pelo aplicativo, não uma justificativa livre gerada por Decisions.
 

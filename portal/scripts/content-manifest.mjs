@@ -8,7 +8,7 @@ export const manifest=[
  {route:'labs/codex-cloud/',sourcePath:'labs/codex-cloud/README.md',lab:'Codex Cloud'},
  {route:'labs/decisions/',sourcePath:'labs/02-decisions-typescript/README.md',lab:'Decisions API'},
  {route:'labs/codex/',sourcePath:'labs/03-codex-cloud-cli/README.md'},
- {route:'alo-ti/',sourcePath:'README.md',title:'Alô, TI: executar localmente',sections:['executar']},
+ {route:'alo-ti/',sourcePath:'README.md',title:'Demos locais: Triagem ao vivo e Alô, TI',sections:['executar']},
  {route:'alo-ti/referencia/',sourcePath:'apps/decisions/README.md'},
  {route:'exercicio/',sourcePath:'exercises/ticket-router/README.md'},
  ...['programacao','referencias','validacao','guia-apresentadora','integracao-live','arquitetura-decisions','roteiro-de-palco'].map(name=>({route:`materiais/${name}/`,sourcePath:`docs/${name}.md`})),

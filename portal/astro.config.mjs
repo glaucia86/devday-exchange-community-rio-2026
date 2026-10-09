@@ -10,7 +10,7 @@ export default defineConfig({
   head:[{tag:'meta',attrs:{name:'color-scheme',content:'light'}}],
   sidebar:[{label:'Início',link:'/'},{label:'Prepare seu ambiente',slug:'prepare-se'},
    {label:'Laboratórios',items:[{label:'Dots',slug:'labs/dots'},{label:'Codex CLI',slug:'labs/codex-cli'},{label:'Codex Cloud',slug:'labs/codex-cloud'},{label:'Decisions API',slug:'labs/decisions'}]},
-   {label:'Alô, TI local',slug:'alo-ti'},{label:'Materiais',slug:'materiais'},
+   {label:'Demos locais',slug:'alo-ti'},{label:'Materiais',slug:'materiais'},
    {label:'Área da apresentadora',link:'/apresentadora/'},
   ],
  })],

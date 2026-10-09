@@ -78,6 +78,41 @@ export const BACKEND_INSTRUCTIONS = [
   'Não afirme que um ticket existe sem o campo ticket no resultado. Não anuncie o monitoramento: a aplicação fala isso depois.',
 ].join('\n');
 
+export const TRIAGE_CLIENT_EVENTS = ['session.close', 'session.commentary.append', 'session.thinking.append'] as const;
+
+export const TRIAGE_INSTRUCTIONS = [
+  'Você é a Triagem ao vivo da Aurora, uma demo fictícia de suporte de TI apresentada num palco. Fale português do Brasil, em frases curtas e calmas.',
+  'A apresentadora repete em voz alta problemas de TI contados pela plateia. Ouça o relato inteiro sem interromper.',
+  'Backchannel policy: Use minimal backchannels. Do not talk over the presenter.',
+  'Interruption policy: Stop speaking when the presenter interrupts. Listen to what she says.',
+  'Delegation policy:',
+  'Delegate to the client when the presenter asks to register, classify or triage the report she just described, for example "registra", "classifica" or "próximo chamado".',
+  'Do not delegate for greetings, small talk or questions about the board.',
+  'Never guess the team, the urgency or the confidence. Wait for the delegation result, then say it in one or two sentences.',
+  'When asked about patterns or the board, answer only from the board context you received. Say that the data is fictitious.',
+  'Speak Portuguese from Brazil.',
+].join('\n');
+
+/** Client delegation: the app routes each report to Decisions, so no Responses backend request is spent. */
+export function triageSessionBody(sdp: string) {
+  return {
+    session: {
+      model: 'gpt-live-1',
+      store: false,
+      instructions: TRIAGE_INSTRUCTIONS,
+      audio: { output: { voice: LIVE_VOICE } },
+      delegation: { type: 'client' },
+      client: {
+        data_channel: {
+          allowed_client_events: [...TRIAGE_CLIENT_EVENTS],
+          allowed_server_events: LIVE_SERVER_EVENTS.filter(event => event.type !== 'response.event'),
+        },
+      },
+    },
+    transport: { type: 'webrtc', sdp },
+  };
+}
+
 export function liveSessionBody(sdp: string) {
   return {
     session: {

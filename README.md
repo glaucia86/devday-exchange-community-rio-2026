@@ -36,7 +36,7 @@
 - [O que você vai encontrar](#material)
 - [Escolha seu LAB](#labs)
 - [Prepare seu ambiente](#preparacao)
-- [Execute a demo Alô, TI](#executar)
+- [Execute as demos locais](#executar)
 - [Roteiro de palco](docs/roteiro-de-palco.md)
 - [Verifique seu ambiente](#validar)
 - [Estado do projeto](#estado)
@@ -69,14 +69,14 @@ Este repositório reúne **material original em português** para acompanhar o e
 
 **No evento, Glaucia conduz as demonstrações e o público acompanha. Os LABS são para fazer em casa depois, reproduzindo as mesmas demonstrações. Não haverá execução coletiva dos exercícios durante a apresentação.**
 
-O fio condutor dos LABS de código e de voz é o suporte fictício da Aurora: revisar os relatos, melhorar o encaminhamento, revisar uma entrega remota e conversar por voz antes de confirmar um ticket simulado. Dots acompanha outra fonte, pública e real: as issues e os pull requests deste repositório. Cada LAB tem o mesmo cenário, pedido e critérios da demonstração correspondente no [guia da apresentadora](docs/guia-apresentadora.md).
+O fio condutor dos LABS de código e de voz é o suporte fictício da Aurora: revisar os relatos, melhorar o encaminhamento, revisar uma entrega remota e, por voz, transformar relatos da plateia num quadro de triagem com revisão humana. Dots acompanha outra fonte, pública e real: as issues e os pull requests deste repositório. Cada LAB tem o mesmo cenário, pedido e critérios da demonstração correspondente no [guia da apresentadora](docs/guia-apresentadora.md).
 
 
 | Se você quer… | Comece por… |
 | --- | --- |
 | Experimentar um dos temas | Os [quatro LABS](#labs), com requisitos, passos e resultados esperados |
 | Praticar uma mudança de código | O [encaminhador de chamados](exercises/ticket-router/README.md), com starter e solução |
-| Explorar uma interface interativa | A demo [Alô, TI](apps/decisions/README.md), demo fictícia do LAB Decisions |
+| Explorar uma interface interativa | A [Triagem ao vivo](apps/decisions/README.md), demo de voz do LAB Decisions, e a Alô, TI usada nos blocos do Codex |
 | Preparar a apresentação | O [roteiro de palco](docs/roteiro-de-palco.md) e o [guia da apresentadora](docs/guia-apresentadora.md) |
 | Entender o que foi verificado | O [registro de validação](docs/validacao.md) |
 | Aprofundar os assuntos | As [referências](docs/referencias.md) |
@@ -84,7 +84,7 @@ O fio condutor dos LABS de código e de voz é o suporte fictício da Aurora: re
 Conhecer o básico de JavaScript/TypeScript, terminal e Git ajuda na parte de código. Cada LAB apresenta sua própria preparação.
 
 > [!IMPORTANT]
-> A demo Alô, TI funciona atualmente em **modo mock**, com cenários fictícios. Os adaptadores GPT-Live + Decisions estão implementados em uma aba separada, desativada por padrão. Ainda não houve ensaio com API e áudio reais; testes com fixtures não comprovam a experiência ponta a ponta.
+> A **Triagem ao vivo** (`/triagem`) usa GPT-Live e a API de Decisions de verdade e fica desativada até você configurar uma chave com segurança. A **Alô, TI** (`/`) continua em modo mock, com cenários fictícios, para os blocos do Codex. Testes com fixtures não comprovam a experiência de voz ponta a ponta.
 
 <a id="labs"></a>
 ## 🧪 Escolha seu LAB
@@ -96,9 +96,9 @@ São **quatro demonstrações, cada uma com um LAB para reproduzir em casa**. Os
 | **Dots** | Atribuir uma responsabilidade contínua e conferir o que mudou nas issues e nos pull requests públicos | [Cenário e passo a passo](labs/01-dots/README.md) |
 | **Codex CLI** | Falar uma correção curta no terminal, ver a tarefa em `/agents` e conferir o diff | [LAB do CLI](labs/codex-cli/README.md) |
 | **Codex Cloud** | Corrigir uma explicação incorreta na Alô, TI e revisar o diff e os testes | [LAB do Cloud](labs/codex-cloud/README.md) |
-| **Decisions API** | Conversar por voz, corrigir o relato e revisar o ticket; com alternativa simulada e exercícios de contrato | [LAB Decisions](labs/02-decisions-typescript/README.md) |
+| **Decisions API** | Repetir relatos por voz, ver o Decisions classificar cada um num quadro e decidir os casos incertos; com exercícios de contrato sem chave | [LAB Decisions](labs/02-decisions-typescript/README.md) |
 
-O CLI pratica o [encaminhador fictício](exercises/ticket-router/README.md). O Cloud revisa um ajuste real na [Alô, TI](apps/decisions/README.md), sem criar outro repositório. A experiência de voz para voz faz parte de **Decisions API**. A [arquitetura proposta](docs/arquitetura-decisions.md) descreve o fluxo e suas etapas pendentes.
+O CLI pratica o [encaminhador fictício](exercises/ticket-router/README.md). O Cloud revisa um ajuste real na [Alô, TI](apps/decisions/README.md), sem criar outro repositório. A voz faz parte de **Decisions API**, na Triagem ao vivo. A [arquitetura proposta](docs/arquitetura-decisions.md) descreve o fluxo e suas etapas pendentes.
 
 <a id="preparacao"></a>
 ## 🧰 Prepare seu ambiente
@@ -196,11 +196,11 @@ Se o PowerShell informar que `npm.ps1` não pode ser carregado, abra o Prompt de
 </details>
 
 <a id="executar"></a>
-## 🚀 Execute a demo Alô, TI
+## 🚀 Execute as demos locais
 
-A demo **Alô, TI** é um service desk fictício. Você escolhe um cenário, analisa o relato, corrige um detalhe e revisa os campos antes de criar um ticket simulado.
+A aplicação local tem duas páginas: a **Triagem ao vivo**, demo de voz do LAB Decisions, e a **Alô, TI**, um service desk fictício usado nos blocos do Codex. Na Triagem, você repete relatos de TI no microfone e o Decisions classifica cada um num quadro.
 
-O fluxo padrão usa fixtures e estado em memória, sem API ou microfone. A integração ao vivo exige configuração segura e autorização de custo. Consulte o [guia Windows e os limites](docs/integracao-live.md).
+A Alô, TI usa fixtures e estado em memória, sem API ou microfone. A Triagem ao vivo exige configuração segura e autorização de custo. Consulte o [guia Windows e os limites](docs/integracao-live.md).
 
 ### Abra sua cópia do material
 
@@ -223,7 +223,7 @@ cd apps/decisions
 npm start
 ```
 
-O script confere o Node, executa `npm ci --ignore-scripts`, os 72 testes, a aceitação do encaminhador e `npm run build`. Ele imprime o endereço local. Se preferir os comandos separados, ainda em `apps/decisions`:
+O script confere o Node, executa `npm ci --ignore-scripts`, os 86 testes, a aceitação do encaminhador e `npm run build`. Ele imprime o endereço local. Se preferir os comandos separados, ainda em `apps/decisions`:
 
 ```sh
 npm ci --ignore-scripts
@@ -231,19 +231,19 @@ npm run build
 npm start
 ```
 
-Execute um comando por vez e deixe o terminal do `npm start` aberto. Acesse **http://127.0.0.1:3000** no navegador.
+Execute um comando por vez e deixe o terminal do `npm start` aberto. Acesse **http://127.0.0.1:3000/triagem** para a Triagem ao vivo e **http://127.0.0.1:3000** para a Alô, TI.
 
 `npm run dev` fica para quem está editando a interface. Esse comando reescreve `next-env.d.ts`. O arquivo é gerado pelo Next.js, está no `.gitignore` e não deve voltar para o Git. O `npm run typecheck` chama `next typegen` antes do TypeScript, então um checkout limpo continua compilando.
 
 ### Confira seu primeiro acesso
 
-1. Escolha um cenário e analise o relato.
-2. Observe os campos sugeridos e corrija o relato.
-3. Analise novamente e revise o encaminhamento.
-4. Marque a revisão humana antes de criar o ticket simulado.
-5. Use **Recomeçar** para limpar o estado e experimentar outro cenário.
+1. Abra `/triagem`, informe o código local da demo e leia o consentimento de custo.
+2. Clique **Iniciar triagem ao vivo** e espere **Microfone ativo**.
+3. Descreva um problema de TI fictício e diga “registra”.
+4. Confira o cartão: equipe sugerida, urgência e confiança. Os casos incertos vão para revisão humana, e quem escolhe a equipe é você.
+5. Clique **Encerrar triagem** e espere **Conversa encerrada. Microfone liberado.**
 
-Quando disponível, a interface pode ler respostas com a **voz local do dispositivo**. Não é áudio OpenAI nem transcrição real. A saída de áudio ainda precisa de ensaio nos dispositivos-alvo. Veja o [README da aplicação](apps/decisions/README.md).
+Sem chave, use a Alô, TI em `/` e os exercícios de contrato do LAB. A voz local do dispositivo, quando ligada na Alô, TI, não é áudio OpenAI. Veja o [README da aplicação](apps/decisions/README.md).
 
 <a id="validar"></a>
 ## ✅ Verifique seu ambiente
@@ -261,7 +261,7 @@ node --test scripts/check-dots-guide.test.mjs
 ```
 
 O `scripts/check-dots-guide.test.mjs` confere o texto do LAB de Dots e não entra nessa contagem.
-O conjunto contém **72 testes**: 3 do starter, 8 da solução, 5 da candidata de revisão, 5 do exercício de contrato e 51 da Alô, TI. Além deles, a verificação pedagógica executa 18 casos de aceitação em cada versão do encaminhador: starter com 10 falhas esperadas, candidata com 2 e solução sem falhas. Consulte a CI do commit atual para o resultado. Testes verdes da candidata não significam que ela já está correta.
+O conjunto contém **86 testes**: 3 do starter, 8 da solução, 5 da candidata de revisão, 5 do exercício de contrato e 65 da aplicação (Alô, TI e Triagem ao vivo). Além deles, a verificação pedagógica executa 18 casos de aceitação em cada versão do encaminhador: starter com 10 falhas esperadas, candidata com 2 e solução sem falhas. Consulte a CI do commit atual para o resultado. Testes verdes da candidata não significam que ela já está correta.
 
 Dentro de **`apps/decisions`**, após instalar as dependências:
 
@@ -283,12 +283,12 @@ A [execução de referência](https://github.com/glaucia86/devday-exchange-commu
 | Área | Situação |
 | --- | --- |
 | Quatro LABS e guia da apresentadora | Disponíveis |
-| Encaminhador e Alô, TI | 72 testes e aceitação red/green; resultado por commit no Actions |
+| Encaminhador, Alô, TI e Triagem ao vivo | 86 testes e aceitação red/green; resultado por commit no Actions |
 | TypeScript e build Next.js | Aprovados na execução de referência |
 | Interface mock em Chromium | Revisão, correção, reset e tratamento de erro verificados |
 | Capturas desktop e celular | Inspecionadas |
 | Voz local do dispositivo | Regressão simulada; áudio real precisa de ensaio |
-| GPT-Live + Decisions | Adaptadores implementados; API e áudio reais ainda sem ensaio |
+| GPT-Live + Decisions | Triagem ao vivo implementada com delegação para o cliente; API e áudio reais ainda sem ensaio completo |
 | Dots | Cenário antigo executado uma vez em 8 de outubro de 2026; o cenário novo ainda não foi ensaiado |
 | Codex CLI e Codex Cloud | Guias disponíveis; ensaio dos fluxos reais pendente |
 

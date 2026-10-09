@@ -17,7 +17,7 @@ O fio condutor dos blocos de código e de voz é o suporte fictício da Aurora. 
 | [Dots](#dots) | Relatório preparado das issues e dos pull requests públicos, pergunta ao vivo sobre o que mudou e revisão na página | [Mesmo cenário e pedidos](../labs/01-dots/README.md) |
 | [Codex CLI](#codex-cli) | Voz no terminal, visão `/agents` e uma correção curta da Alô, TI | [Mesmos comandos e o mesmo pedido](../labs/codex-cli/README.md) |
 | [Codex Cloud](#codex-cloud) | Candidata preparada → regressão → tarefa remota → revisão | [Mesma candidata, contrato e tarefa](../labs/codex-cloud/README.md) |
-| [Decisions API](#decisions-api) | Conversa de voz para voz, correção, revisão e ticket simulado | [Mesmos relatos e sequência de voz](../labs/02-decisions-typescript/README.md), com alternativa simulada identificada |
+| [Decisions API](#decisions-api) | Triagem ao vivo: a plateia conta problemas, a voz escuta, o Decisions classifica cada relato num quadro e Glaucia decide os casos incertos | [Mesmos relatos e sequência de voz](../labs/02-decisions-typescript/README.md), com exercícios de contrato sem chave |
 
 O CLI mostra a voz no terminal e uma correção curta na Alô, TI. O Cloud continua no contrato de encaminhamento. A candidata do Cloud é uma cópia com defeito intencional para estudar revisão; não a apresente como um resultado produzido pela execução anterior do CLI.
 
@@ -48,7 +48,7 @@ node --test apps/decisions/tests/*.test.mts
 node scripts/check-workshop-examples.mjs
 ```
 
-Esperado: Node.js de 24.12.0 a 24.21.0, 72 testes aprovados no conjunto atual e aceitação com falhas didáticas conferidas: starter 8/18, candidata 16/18, solução 18/18. Isso verifica os exemplos locais; os ensaios nos produtos são uma etapa adicional.
+Esperado: Node.js de 24.12.0 a 24.21.0, 86 testes aprovados no conjunto atual e aceitação com falhas didáticas conferidas: starter 8/18, candidata 16/18, solução 18/18. Isso verifica os exemplos locais; os ensaios nos produtos são uma etapa adicional.
 
 ## Abertura e transições
 
@@ -134,7 +134,7 @@ Rótulos podem variar. A documentação oficial ainda diz **Work in → Cloud �
    - Fala: “Teste verde aqui é este arquivo passando. Eu ainda decido se o texto serve.”
 5. **Encerrar.** Sem pull request, merge ou deploy.
 
-**Transição:** “Até aqui, a revisão foi de um diff. Agora a entrada será uma conversa, e a confirmação continua na tela.”
+**Transição:** “Até aqui, a revisão foi de um diff. Agora a entrada vem da sala, por voz, e o caso incerto continua sendo decisão minha.”
 
 **Reset:** nova tarefa no ambiente que ainda falha `bug-rede.test.mts`. Guarde a entrega anterior. A documentação diz que arquivos de uma tarefa não atualizam o ambiente publicado; o risco é a preparação ter corrigido o texto antes de publicar.
 
@@ -144,57 +144,54 @@ Rótulos podem variar. A documentação oficial ainda diz **Work in → Cloud �
 
 ## Decisions API
 
-**Estimativa de palco: 10–12 minutos.** [Reprodução em casa](../labs/02-decisions-typescript/README.md) · [Roteiro de palco](roteiro-de-palco.md)
+**Estimativa de palco: 8–10 minutos.** [Reprodução em casa](../labs/02-decisions-typescript/README.md) · [Roteiro de palco](roteiro-de-palco.md)
 
-**O que entra sem ensaio:** a aba **Simulado**, com **Modo palco**, a virada de Acessos e identidade para Aplicações internas e o ticket `DEMO-0001`. O botão do exemplo pronto é **Simular uma correção**. **Corrigir o relato** abre o texto para a pessoa editar.
+**Triagem ao vivo**, em http://127.0.0.1:3000/triagem. Glaucia repete no microfone um problema de TI contado pela plateia. Ao ouvir “registra”, a voz (GPT-Live) delega para a aplicação, que envia o relato ao Decisions. Um cartão entra no quadro, na coluna da equipe sugerida, com urgência e confiança. Casos com pouco contexto ou confiança baixa vão para **Revisão humana**, e quem escolhe a equipe é Glaucia, na tela. Tudo é ao vivo; não há modo simulado neste bloco.
 
-**Demonstração ao vivo, só depois do ensaio:** voz para voz real com GPT-Live + Decisions. O mock não prova que a conversa real funcionou.
+### Por que este desenho cabe na conta
 
-### Condições para ensaiar e levar ao palco
+A sessão de voz usa **delegação para o cliente**: GPT-Live não chama outro modelo a cada fala. A aplicação faz **uma** chamada ao Decisions (`gpt-6-luna`) por relato. A conta do evento tem 50 requisições por dia e 10 por minuto por modelo; uma execução completa usa cerca de 6 a 8 chamadas. O contador na tela mostra quantas já foram usadas. Confira os limites na plataforma (Settings → Limits) antes do ensaio.
 
-Siga o [guia de ativação local](integracao-live.md). Antes do encontro, confirme no dispositivo-alvo:
+### Condições para levar ao palco
 
-- Acesso aos modelos, orçamento aprovado e configuração segura no servidor
-- Fala reconhecida em português e resposta realmente audível, chegando também ao áudio da plateia sem retorno para o microfone
-- Correção do relato refletida na transcrição e na nova análise
-- Revisão anterior invalidada; confirmação só após nova revisão humana
-- Encerramento remoto confirmado e consumo conferido
+Siga o [guia de ativação local](integracao-live.md). No notebook do projetor, confirme:
 
-Enquanto esses itens estiverem pendentes, o fluxo principal não deve ser anunciado como validado. O aviso atual da interface sobre integração experimental permanece verdadeiro.
+- Acesso a `gpt-live-1` e `gpt-6-luna`, orçamento aprovado e segredo só no servidor
+- Fala reconhecida em português e resposta audível na sala, sem retorno para o microfone
+- “Registra” cria um cartão por relato; um relato vago cai em **Revisão humana**
+- Encerramento confirmado (**Conversa encerrada. Microfone liberado.**) e consumo conferido
+- Gravação do ensaio que passou, com o letreiro **GRAVADO ANTES · não é ao vivo**
+
+Enquanto esses itens estiverem pendentes, não anuncie o bloco como validado.
 
 ### Preparação fora da sessão de voz
 
-Deixe a aplicação local aberta com `npm start`, a partir da build do `node scripts/prepare-stage.mjs`. Na aba **OpenAI ao vivo**, já configurada. Não comece a captura enquanto explica a arquitetura ou ajusta projeção. Sessões têm limite local de dez minutos; esse controle não garante teto de gasto.
+Deixe `npm start` aberto a partir da build do `node scripts/prepare-stage.mjs`, a página `/triagem` carregada, o código local digitado e o consentimento lido. Só clique **Iniciar triagem ao vivo** quando for falar com a voz; a sessão encerra sozinha em dez minutos, o que não é teto de gasto. Tenha dois relatos de reserva no cartão, caso a plateia demore.
 
-Fala sugerida: “Até aqui eu cliquei. Agora eu falo com a Alô, TI. Ela pede uma função, a mesa executa, e o ticket continua fictício até eu confirmar.”
+Fala sugerida: “Agora quem traz o problema são vocês. Eu repito, a voz escuta, o Decisions classifica e eu decido o que ficar incerto.”
 
-O meio da demonstração continua na aba **Simulado**. A voz entra no fechamento. Sem o ensaio de áudio, leia a frase de monitoramento que a aba simulada mostra depois do ticket e diga que a conversa real não rodou.
+### Sequência no palco
 
-### Sequência da conversa
+| Batida | Ação de Glaucia | Esperado na tela |
+| --- | --- | --- |
+| Abrir | **Iniciar triagem ao vivo**, permitir o microfone | **Microfone ativo**; a voz cumprimenta a sala em uma frase |
+| Relato 1 | Pedir um problema à plateia, repetir no microfone e dizer “registra” | A legenda **OUVINDO** mostra o relato; um cartão entra na coluna sugerida; a voz anuncia equipe, urgência e confiança |
+| Relatos 2 a 4 | Repetir com outros problemas | O quadro enche; o contador de chamadas ao Decisions sobe um por relato |
+| Revisão humana | Repetir um relato vago, como “nada funciona aqui” | O cartão vai para **Revisão humana**; Glaucia clica a equipe certa e o cartão ganha **Decidido por você** |
+| Padrão | Perguntar “qual o padrão de hoje?” | A voz responde a partir do quadro, sem nova chamada ao Decisions |
+| Encerrar | **Encerrar triagem** | **Conversa encerrada. Microfone liberado.** e o placar final |
 
-1. **Iniciar:** confira o código local; leia o consentimento e, somente após concordar com o envio e autorizar o custo, marque **Entendi o envio de áudio e texto à OpenAI e estou autorizada a usar a API com custo nesta demo.** Clique **Iniciar conversa real** e espere **Microfone ativo**.
-2. **Registrar:** diga “Registra este relato: a rede da sala de reunião cai durante as chamadas. O restante do escritório funciona.”
-   - Esperado: o log mostra `registrar_relato` e o texto aparece no relato. Ainda não há ticket. A transcrição sozinha não preenche o campo.
-3. **Analisar:** diga “Analisa o relato.”
-   - Esperado: uma fala curta de que está analisando e, em seguida, a equipe sugerida. Se a função não vier, use **Analisar com Decisions** e diga que acionou o botão.
-4. **Interromper:** no meio da resposta, diga “Corrige: na verdade é o time todo e ninguém consegue trabalhar. Não há alternativa.”
-   - Esperado: o log mostra `corrigir_relato`, a análise some e a sugestão anterior não volta.
-5. **Analisar de novo** e, só então, dizer “Confirma e abre o ticket.”
-   - Esperado: `DEMO-0001`. Sem esse pedido explícito o ticket não nasce. A tela mostra o monitoramento de demonstração. Depois de uma pausa, a assistente fala a frase uma vez. Aponte o rótulo de dados de demonstração: não é um painel real.
-6. **Encerrar:** clique **Encerrar conversa** e espere **Conversa encerrada. Microfone liberado.**.
-   - Se aparecer finalização não confirmada, pare os novos inícios e verifique sessão/consumo. Não reinicie em sequência.
+Relatos de reserva: “Esqueci a senha depois das férias e não entro no e-mail.” · “A VPN da filial cai a cada dez minutos e o financeiro parou.” · “O sistema de reembolso mostra erro 500 para todo mundo.”
 
-A conversa curta deve caber no limite local no ensaio; a explicação de arquitetura fica antes ou depois. Latência e duração reais ainda precisam ser medidas. Ao terminar, desative o modo ao vivo e reinicie ou encerre o servidor conforme o guia local.
+Se a voz não delegar ao ouvir “registra”, clique **Classificar agora** e diga que acionou o botão. Se aparecer **Limite diário do modelo atingido**, encerre e passe ao plano B.
 
 ### Explicação após encerrar
 
-Mostre `live-contract.ts`: `predicate` avalia contexto, `choice` escolhe a equipe e `score` aplica a rubrica. A aplicação verifica o contrato e a revisão vigente antes de permitir o ticket. O encaminhador dos LABS CLI/Cloud usa palavras e categorias; ele não compreende negações ou correções como esta conversa pretende compreender. Os limiares são didáticos; score fracionário não vira prioridade automaticamente.
+Abra **Evidência da última decisão**: `predicate` avalia contexto, `choice` escolhe a equipe e `score` aplica a rubrica de impacto. Mostre `live-contract.ts` e `triage.ts`: confiança abaixo de 0,7 ou contexto abaixo de 0,8 manda o cartão para revisão humana. Os limiares são didáticos; score fracionário não vira prioridade automaticamente.
 
-O exercício de editar fixtures e comparar recusas fica no LAB para estudo em casa. Não transforme essa etapa em atividade simultânea da plateia.
+**Reset real:** confirme o encerramento antes de iniciar outra sessão. Recarregar a página limpa o quadro, mas não comprova que a sessão remota terminou.
 
-**Reset real:** confirmar o encerramento e só então iniciar outra sessão autorizada. Não usar “Recomeçar” do mock para inferir que uma sessão remota foi encerrada.
-
-**Plano B no palco:** se uma conversa real foi iniciada, clique **Encerrar conversa** e confirme o fechamento antes de trocar para Simulado. Se a finalização não for confirmada, pare os novos inícios e siga a verificação de sessão/consumo do guia local; trocar de aba não comprova encerramento remoto. Depois, anuncie “Agora vou reproduzir o fluxo com respostas preparadas”. Na aba **Simulado**, clique **Modo palco → Explorar cenário → Analisar relato → Simular uma correção → Analisar relato**, revise e crie `DEMO-0001`. Leia a frase de monitoramento na tela e diga que os registros marcados como demonstração não são chamados reais. O seletor e o rodapé já dizem que esta aba é simulada. Não há microfone nem inferência nesse caminho. Voz local opcional do dispositivo não é GPT-Live. Se nem a interface estiver disponível, mostrar os testes e fixtures, sem dizer que houve conversa.
+**Plano B no palco:** se uma sessão foi iniciada, clique **Encerrar triagem** e confirme o fechamento. Se a finalização não for confirmada, pare os novos inícios e verifique sessão/consumo. Depois, abra a gravação com o letreiro **GRAVADO ANTES · não é ao vivo** e diga a data. Sem gravação, rode `node --test tests/triage.test.mts` em `apps/decisions`, mostre a regra da revisão humana e diga que a triagem ao vivo não rodou.
 
 ## Fechamento
 

@@ -38,7 +38,7 @@ Texto livre no mock entra na conversa e recebe uma resposta explícita de não i
 
 ## Integração OpenAI implementada
 
-O [guia oficial de voz com Decisions](https://developers.openai.com/api/docs/guides/decisions-voice) usa delegação client para escolher uma ação sem parâmetros. Esta mesa usa delegação Responses: o modelo devolve uma função com o relato ou a confirmação, e o navegador executa o redutor. A Decisions continua responsável pela triagem da equipe. O monitoramento final é calculado na mesa e falado com `session.commentary.append`.
+O [guia oficial de voz com Decisions](https://developers.openai.com/api/docs/guides/decisions-voice) usa delegação client para escolher uma ação sem parâmetros. A **Triagem ao vivo** (`/triagem`), demo de palco, segue esse desenho: GPT-Live delega ao ouvir “registra”, a aplicação envia a fala ouvida ao Decisions e devolve o resultado com `session.commentary.append`. Assim, cada relato custa uma chamada ao `gpt-6-luna`, e nenhum modelo de backend é chamado a cada fala. A aba ao vivo da Alô, TI usa delegação Responses: o modelo devolve uma função com o relato ou a confirmação, e o navegador executa o redutor. A Decisions continua responsável pela triagem da equipe. O monitoramento final é calculado na mesa e falado com `session.commentary.append`.
 
 Em 7/10/2026, o exemplo [WebRTC](https://developers.openai.com/api/docs/guides/voice-webrtc?api=live) usa gpt-live-1, e [Decisions](https://developers.openai.com/api/docs/guides/decisions) documenta gpt-6-luna. A disponibilidade na conta ainda não foi verificada.
 

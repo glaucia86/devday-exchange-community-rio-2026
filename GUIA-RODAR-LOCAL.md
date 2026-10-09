@@ -13,7 +13,7 @@ Conferido no box Linux em 8/10/2026 com Node 24.21.0. Windows não foi testado (
 | Git | Qualquer versão recente. |
 | Codex CLI (opcional) | `@openai/codex@0.161.0`, fixado para o evento. |
 | Conta ChatGPT | Dots, Codex CLI (login) e Codex Cloud. |
-| Chave OpenAI (opcional) | Só para a aba **OpenAI ao vivo** da Alô, TI (`gpt-live-1` + `gpt-6-luna`). Testes, mock, Dots, CLI e Cloud não usam chave. |
+| Chave OpenAI (opcional) | Só para a **Triagem ao vivo** (`/triagem`) e a aba **OpenAI ao vivo** da Alô, TI (`gpt-live-1` + `gpt-6-luna`). Testes, mock, Dots, CLI e Cloud não usam chave. |
 
 Instale o Node com um gerenciador, na raiz do repositório (já clonado):
 
@@ -109,7 +109,7 @@ MESA_LIVE_ACCESS_TOKEN=<código gerado acima>
 
 ## 4. Cada demo
 
-### Alô, TI (único app local)
+### Triagem ao vivo e Alô, TI (um só app local)
 
 Modo dev (para editar; recarrega sozinho):
 
@@ -126,14 +126,21 @@ npm run build
 npm start
 ```
 
-- Abra **http://127.0.0.1:3000**. O servidor só escuta em 127.0.0.1.
+- Abra **http://127.0.0.1:3000/triagem** (Triagem ao vivo, demo de Decisions) ou **http://127.0.0.1:3000** (Alô, TI, blocos do Codex). O servidor só escuta em 127.0.0.1.
 - Se a 3000 estiver ocupada, o `npm run dev` passa sozinho para 3001 (mostra no terminal). Já o `npm start` falha com `EADDRINUSE`. Nesse caso, use `npm start -- -p 3002`.
 - Use **um só nome** na aba: `127.0.0.1` ou `localhost`. São origens diferentes para o navegador.
 - `npm run dev` reescreve `next-env.d.ts`. Esse arquivo é gerado e ignorado pelo Git.
 
-**Simulado (sem chave):** aba **Simulado** → **Modo palco** → **Explorar cenário** → **Analisar relato** → **Simular uma correção** → **Analisar relato** → marcar revisão → criar `DEMO-0001`.
+**Alô, TI simulada (sem chave, usada nos blocos do Codex):** aba **Simulado** → **Modo palco** → **Explorar cenário** → **Analisar relato** → **Simular uma correção** → **Analisar relato** → marcar revisão → criar `DEMO-0001`.
 
-**Ao vivo / voz (com chave):**
+**Triagem ao vivo (com chave, demo de Decisions):**
+1. Configure o `.env.local` (seção 3) e reinicie o servidor.
+2. Abra `/triagem` → digite o `MESA_LIVE_ACCESS_TOKEN` (nunca a chave) → marque o consentimento → **Iniciar triagem ao vivo**.
+3. Repita um relato no microfone e diga “registra”. Um cartão entra no quadro. Casos vagos vão para **Revisão humana**: clique a equipe.
+4. Termine com **Encerrar triagem** e espere **Conversa encerrada. Microfone liberado.**
+5. Cada relato usa uma chamada ao Decisions. O contador na tela mostra quantas foram usadas.
+
+**Ao vivo / voz na Alô, TI (com chave):**
 1. Configure o `.env.local` (seção 3) e reinicie o servidor.
 2. Aba **OpenAI ao vivo** → digite o `MESA_LIVE_ACCESS_TOKEN` (nunca a chave).
 3. Marque o consentimento de custo → **Iniciar conversa real**.

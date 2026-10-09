@@ -1,6 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
 import { buildDecisionRequest, parseDecision, type TranscriptLine } from '../domain/live-contract.ts';
-import { liveSessionBody } from '../domain/live-session.ts';
+import { liveSessionBody, triageSessionBody } from '../domain/live-session.ts';
 import type { GuardFactory, SessionGuard } from './live-guard.ts';
 type Env=Record<string,string|undefined>;
 type Fetcher=(url:string|URL|Request,init?:RequestInit)=>Promise<Response>;
@@ -10,6 +10,13 @@ const reply=(body:unknown,status=200)=>Response.json(body,{status,headers:JSON_H
 const error=(status:number,message:string)=>reply({error:message},status);
 const object=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const LOOPBACK=new Set(['127.0.0.1','localhost','[::1]']);
+class UpstreamError extends Error{status:number;detail:string;constructor(status:number,detail:string){super('upstream');this.status=status;this.detail=detail;}}
+/** Turns an OpenAI rate-limit message into a short notice with the suggested wait. */
+export function rateLimitNotice(detail:string):string{
+  const wait=/try again in ((?:\d+h)?(?:\d+m)?(?:\d+(?:\.\d+)?s)?)/i.exec(detail)?.[1]?.replace(/\.\d+s$/,'s');
+  const daily=/per day|RPD/i.test(detail);
+  return (daily?'Limite diário do modelo atingido na OpenAI.':'Limite de requisições do modelo atingido na OpenAI.')+(wait?` Tente novamente em ${wait}.`:' Aguarde e tente novamente.');
+}
 function httpHost(value:string):URL|null{
   try{const parsed=new URL(`http://${value}`);return parsed.username||parsed.password||parsed.pathname!=='/'||parsed.search||parsed.hash?null:parsed;}
   catch{return null;}
@@ -40,7 +47,7 @@ export function createLiveHandler(env:Env,fetcher:Fetcher,openGuard:GuardFactory
  let windowStart=Date.now(),starts=0,decisions=0;
  async function upstream(path:string,body:unknown,signal?:AbortSignal){
    const response=await fetcher('https://api.openai.com/v1/'+path,{method:'POST',headers:{Authorization:'Bearer '+env.OPENAI_API_KEY,'Content-Type':'application/json'},body:JSON.stringify(body),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(15000)]):AbortSignal.timeout(15000)});
-   if(!response.ok)throw Error('upstream');
+   if(!response.ok){let detail='';try{detail=(await response.text()).slice(0,600);}catch{/* Body is optional. */}throw new UpstreamError(response.status,detail);}
    return response.json() as Promise<unknown>;
  }
  function confirmClosed(id:string,active:Active){
@@ -81,9 +88,10 @@ export function createLiveHandler(env:Env,fetcher:Fetcher,openGuard:GuardFactory
    starting=true;starts++;
    let id:string|undefined;
    try{
-    const value=await upstream('live/sessions',liveSessionBody(body.sdp));
+    const value=await upstream('live/sessions',body.mode==='triage'?triageSessionBody(body.sdp):liveSessionBody(body.sdp));
     if(!object(value)||!object(value.session)||typeof value.session.id!=='string'||!/^[a-zA-Z0-9_-]{1,200}$/.test(value.session.id)||!object(value.transport)||value.transport.type!=='webrtc'||typeof value.transport.sdp!=='string'||value.transport.sdp.length>60000)throw Error('contract');
     id=value.session.id;
+    console.info(`[live] sessão iniciada ${id}`);
     const active:Active={revision:-1,busy:false,expires:Date.now()+600000,guard:null,closed:false,usable:true};sessions.set(id,active);
     const sessionId=id;
     active.timer=setTimeout(()=>{void terminate(sessionId,active);},600000);
@@ -92,8 +100,10 @@ export function createLiveHandler(env:Env,fetcher:Fetcher,openGuard:GuardFactory
     void active.guard.finalized.then(ok=>{if(ok)confirmClosed(sessionId,active);else {console.warn(`[live] sideband perdido após ${Math.round((Date.now()-(active.expires-600000))/1000)} s; encerrando a sessão por segurança.`);active.usable=false;blocked=true;void terminate(sessionId,active,true);}});
     if(request.signal.aborted){await terminate(sessionId,active);return error(409,'Conexão cancelada.');}
     return reply({sessionId:id,sdp:value.transport.sdp,maxSeconds:600});
-   }catch{
+   }catch(e){
     if(id){const active=sessions.get(id);if(active){active.usable=false;await terminate(id,active,true);}blocked=!confirmedClosed.has(id);return error(502,'A sessão foi criada, mas a proteção de encerramento falhou. Finalização não confirmada; verifique a sessão na plataforma antes de reiniciar o servidor.');}
+    // A 429 means no session was created, so new starts stay allowed.
+    if(e instanceof UpstreamError&&e.status===429)return error(429,rateLimitNotice(e.detail));
     // A timeout can occur after upstream creation. Do not auto-retry paid initialization.
     blocked=true;return error(502,'A criação não foi confirmada. Não repetimos chamadas pagas automaticamente; confira a plataforma antes de reiniciar o servidor.');
    }finally{starting=false;}
@@ -104,6 +114,7 @@ export function createLiveHandler(env:Env,fetcher:Fetcher,openGuard:GuardFactory
   const active=sessions.get(body.sessionId);
   if(!active)return error(409,'Sessão desconhecida ou já finalizada.');
   if(body.action==='close'){
+    console.info(`[live] navegador pediu encerramento ${body.sessionId}; último aviso: ${typeof body.cause==='string'?body.cause.slice(0,160).replace(/[\r\n]/g,' '):'-'}`);
     const confirmed=await terminate(body.sessionId,active);
     return reply({confirmed},confirmed?200:502);
   }
@@ -116,8 +127,13 @@ export function createLiveHandler(env:Env,fetcher:Fetcher,openGuard:GuardFactory
   try{
     const result=parseDecision(await upstream('decisions',buildDecisionRequest(body.text,body.transcript as TranscriptLine[]),request.signal));
     if(request.signal.aborted||active.closed||!active.usable||active.expires<=Date.now())return error(409,'Análise cancelada ou expirada.');
+    console.info(`[live] decisions ok (${decisions} nesta janela de 10 min)`);
     return reply({sessionId:body.sessionId,revision:body.revision,result});
-  }catch{return error(502,'Decisions não retornou uma resposta válida. Nenhuma sugestão foi aplicada.');}
+  }catch(e){
+    if(e instanceof UpstreamError&&e.status===429){console.warn(`[live] decisions 429: ${e.detail.slice(0,200)}`);return error(429,rateLimitNotice(e.detail));}
+    console.warn(`[live] decisions falhou${e instanceof UpstreamError?` (${e.status})`:''}`);
+    return error(502,'Decisions não retornou uma resposta válida. Nenhuma sugestão foi aplicada.');
+  }
   finally{active.busy=false;}
  };
 }

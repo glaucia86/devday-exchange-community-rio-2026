@@ -11,11 +11,17 @@ export const openSessionGuard:GuardFactory=async(sessionId,key)=>{
   let complete=false,settled=false;
   let finish!:(ok:boolean)=>void;
   const finalized=new Promise<boolean>(resolve=>{finish=ok=>{if(settled)return;settled=true;complete=ok;resolve(ok);};});
+  const opened=Date.now();
+  const elapsed=()=>Math.round((Date.now()-opened)/1000)+' s';
   ws.addEventListener('message',event=>{
-    try{const value=JSON.parse(String(event.data));if(value.type==='session.closed'){finish(true);ws.close();}}catch{/* Ignore non-JSON events. */}
+    try{
+      const value=JSON.parse(String(event.data));
+      if(value.type==='error')console.warn(`[live] ${elapsed()} error code=${value.error?.code??'-'} type=${value.error?.type??'-'} message=${String(value.error?.message??'').slice(0,200)}`);
+      if(value.type==='session.closed'){console.info(`[live] ${elapsed()} session.closed reason=${value.reason??'-'} usage=${value.usage?.seconds??'-'} s`);finish(true);ws.close();}
+    }catch{/* Ignore non-JSON events. */}
   });
-  ws.addEventListener('close',()=>finish(complete));
-  ws.addEventListener('error',()=>finish(false));
+  ws.addEventListener('close',event=>{console.info(`[live] ${elapsed()} sideband fechado code=${event.code} reason=${event.reason||'-'}`);finish(complete);});
+  ws.addEventListener('error',()=>{console.warn(`[live] ${elapsed()} erro no sideband`);finish(false);});
   await new Promise<void>((resolve,reject)=>{
     const timer=setTimeout(()=>{ws.close();reject(Error('Sideband indisponível.'));},8000);
     ws.addEventListener('open',()=>{clearTimeout(timer);resolve();},{once:true});

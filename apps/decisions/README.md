@@ -1,6 +1,9 @@
-# Alô, TI · demo de Decisions
+# Triagem ao vivo e Alô, TI · demos de Decisions
 
-Service desk fictício em Next.js, TypeScript, Tailwind CSS 4 e Lucide. O modo padrão reproduz fixtures e não chama qualquer API.
+Aplicação Next.js, TypeScript, Tailwind CSS 4 e Lucide com duas páginas:
+
+- **`/triagem` · Triagem ao vivo:** demo de voz do LAB Decisions. GPT-Live escuta, a aplicação envia cada relato ao Decisions e um cartão entra num quadro por equipe. Casos incertos vão para **Revisão humana**. Fica desativada até a configuração segura da chave.
+- **`/` · Alô, TI:** service desk fictício usado nos blocos do Codex CLI e Cloud. O modo padrão reproduz fixtures e não chama qualquer API.
 
 ## Estado real
 
@@ -9,7 +12,7 @@ Service desk fictício em Next.js, TypeScript, Tailwind CSS 4 e Lucide. O modo p
 - Fluxo mock testado em Chromium: revisão humana, correção, reset, texto livre, erro e nova tentativa
 - Capturas desktop e celular inspecionadas; sem corte, sobreposição ou overflow horizontal observado
 - Voz: leitura opcional com voz local em português do dispositivo; não é áudio OpenAI ou transcrição real
-- GPT-Live + Decisions: adaptadores implementados; testes usam fixtures. API e áudio reais ainda não foram ensaiados
+- GPT-Live + Decisions: Triagem ao vivo e aba ao vivo da Alô, TI implementadas; testes usam fixtures. API e áudio reais ainda sem ensaio completo
 - Nenhuma chave, sessão ou chamada paga foi utilizada
 
 O [registro de validação](../../docs/validacao.md) distingue cada estágio.
@@ -61,9 +64,19 @@ Escolha um cenário → analise o relato → corrija o texto ou simule uma corre
 
 A espera de 900 ms é parte do mock, não uma medida de latência de API. Probabilidades são fixtures. **Corrigir o relato** abre o texto atual para edição; a nova análise usa esse texto. **Simular uma correção** insere o exemplo pronto do palco. Texto livre fica na conversa, com uma explicação de que o simulado não o encaminha; nunca vira uma sugestão pronta disfarçada de análise.
 
+## Triagem ao vivo (`/triagem`)
+
+A sessão GPT-Live usa **delegação para o cliente**: não há modelo de backend chamado a cada fala. Quando a apresentadora diz “registra”, GPT-Live delega; a página pega a fala ouvida desde o último cartão, retira o comando falado e envia o texto ao servidor, que faz **uma** chamada ao Decisions (`gpt-6-luna`). O resultado volta como cartão e como fala curta (`session.commentary.append`); um resumo do quadro segue como contexto (`session.thinking.append`) para a voz responder “qual o padrão?” sem nova chamada.
+
+- Equipe com contexto abaixo de 0,8 ou confiança abaixo de 0,7 vira **Revisão humana**; só esses cartões aceitam a escolha de equipe na tela
+- **Classificar agora** é a reserva se a voz não delegar
+- O contador mostra as chamadas ao Decisions; limites da conta (por exemplo, 50 por dia) aparecem como aviso com o tempo de espera
+- **Evidência da última decisão** mostra o JSON validado
+- Regras do quadro em `src/domain/triage.ts`, testadas em `tests/triage.test.mts`
+
 ## OpenAI ao vivo: integração experimental
 
-A aba OpenAI ao vivo conecta microfone e áudio por WebRTC. GPT-Live pede uma função (`registrar_relato`, `corrigir_relato`, `analisar`, `confirmar_ticket`, `recomecar`); o navegador executa o mesmo redutor dos botões e devolve o resultado. A transcrição não altera o relato sozinha. `analisar` consulta Decisions no servidor. O ticket simulado só nasce com confirmação explícita, por voz ou pelo botão. Depois do ticket, a tela mostra um monitoramento calculado dos registros de demonstração da semana; com a sessão ativa, essa frase é falada uma vez por `session.commentary.append`, depois de uma pausa.
+A aba OpenAI ao vivo da Alô, TI conecta microfone e áudio por WebRTC. GPT-Live pede uma função (`registrar_relato`, `corrigir_relato`, `analisar`, `confirmar_ticket`, `recomecar`); o navegador executa o mesmo redutor dos botões e devolve o resultado. A transcrição não altera o relato sozinha. `analisar` consulta Decisions no servidor. O ticket simulado só nasce com confirmação explícita, por voz ou pelo botão. Depois do ticket, a tela mostra um monitoramento calculado dos registros de demonstração da semana; com a sessão ativa, essa frase é falada uma vez por `session.commentary.append`, depois de uma pausa.
 
 Sem microfone ou sem API, a aba Simulado repete o fluxo e mostra a mesma frase na tela. O ensaio offline, sem chave, é `node scripts/replay-voice-commands.mts` nesta pasta.
 
