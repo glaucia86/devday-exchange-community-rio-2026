@@ -1,14 +1,19 @@
 'use client';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { ArrowLeft, AudioLines, Braces, LoaderCircle, Mic, MicOff, ShieldCheck, Sparkles, Trophy } from 'lucide-react';
+import { AnimatePresence, LayoutGroup, MotionConfig, motion } from 'motion/react';
+import NumberFlow from '@number-flow/react';
+import { ArrowLeft, AudioLines, Braces, Crown, LoaderCircle, Mic, MicOff, ShieldCheck, Sparkles, Trophy, UserCheck } from 'lucide-react';
 import { TEAMS, type Team } from '../domain/service-desk';
 import { addCard, boardSummary, cardAnnouncement, COLUMNS, columnCounts, createTriage, hear, noteCall, pendingReport, resolveReview, topTeam, urgencyLabel, type TriageState } from '../domain/triage';
 import type { LiveEvent } from '../domain/live-contract';
 import { LiveBrowser } from '../client/live-browser';
 import { Confetti } from './celebrate';
 import SignalBackdrop from './signal-backdrop';
+import { ColumnIcon, ConfidenceRing, FlowRail, UrgencyIcon, type FlowStage } from './triage-visuals';
 
 const MAX_DELEGATIONS = 60;
+const PLACED_MS = 2400;
+const SPRING = { type: 'spring', stiffness: 360, damping: 30 } as const;
 const COLUMN_HINT: Record<Team, string> = {
   access: 'Senha, login e identidade',
   applications: 'Sistemas internos e erros',
@@ -30,6 +35,9 @@ export default function TriageBoard(){
  const [classifying,setClassifying]=useState(false);
  const [finished,setFinished]=useState(false);
  const [showJson,setShowJson]=useState(false);
+ const [stage,setStage]=useState<FlowStage>('idle');
+ const [flying,setFlying]=useState<{id:number;text:string}|null>(null);
+ const stageTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
  const audio=useRef<HTMLAudioElement>(null);
  const audioCtx=useRef<AudioContext|null>(null);
  const live=useRef<LiveBrowser|null>(null);
@@ -39,11 +47,16 @@ export default function TriageBoard(){
  const delegations=useRef(new Set<string>());
  const generation=useRef(0);
  function commit(next:TriageState){current.current=next;if(mounted.current)setBoard(next);}
+ function settle(next:FlowStage,after=0){
+  if(stageTimer.current)clearTimeout(stageTimer.current);
+  if(after)stageTimer.current=setTimeout(()=>{if(mounted.current)setStage(next);},after);
+  else setStage(next);
+ }
  useEffect(()=>{
   mounted.current=true;
   const abort=new AbortController();
   fetch('/api/live',{signal:abort.signal}).then(r=>r.json()).then(data=>{if(mounted.current)setEnabled(data.enabled===true);}).catch(()=>{if(mounted.current)setEnabled(false);});
-  return()=>{mounted.current=false;generation.current++;abort.abort();void audioCtx.current?.close();void live.current?.stop();};
+  return()=>{mounted.current=false;generation.current++;abort.abort();if(stageTimer.current)clearTimeout(stageTimer.current);void audioCtx.current?.close();void live.current?.stop();};
  },[]);
  async function classify(delegationId:string|null){
   const client=live.current,epoch=generation.current;
@@ -53,24 +66,27 @@ export default function TriageBoard(){
   if(busy.current){client.send('Ainda estou classificando o chamado anterior. Já volto com o resultado.',delegationId,false);return;}
   busy.current=true;setClassifying(true);setFailure('');
   commit(noteCall(current.current));
+  setFlying({id:(current.current.cards.at(-1)?.id??0)+1,text});settle('deciding');
   try{
    const result=await client.request({action:'decide',sessionId:client.id,revision:current.current.calls,text,transcript:[]});
    if(epoch!==generation.current||!mounted.current)return;
    const next=addCard(current.current,text,result.result,Date.now());
-   commit(next);
+   // Same render as the new card, so the shared layoutId animates the flight.
+   setFlying(null);commit(next);
+   settle('placed');settle('listening',PLACED_MS);
    client.send(cardAnnouncement(next.cards.at(-1)!),delegationId,false);
    client.send(boardSummary(next),null,true);
   }catch(e){
    if(epoch!==generation.current)return;
    const message=e instanceof Error?e.message:'A classificação falhou.';
-   setFailure(message);
+   setFailure(message);setFlying(null);settle('listening');
    client.send('A classificação falhou e nenhum cartão foi criado. '+message,delegationId,false);
   }finally{busy.current=false;if(mounted.current)setClassifying(false);}
  }
  function eventReceived(event:LiveEvent,epoch:number){
   if(!mounted.current||epoch!==generation.current)return;
   if(event.type==='session.started'){
-   setConnection('active');setNotice('Microfone ativo. Repita o relato da plateia e diga “registra” para classificar.');
+   setConnection('active');settle('listening');setNotice('Microfone ativo. Repita o relato da plateia e diga “registra” para classificar.');
    live.current?.send(boardSummary(current.current),null,true);
    live.current?.send('Cumprimente a sala em uma frase e diga que a triagem ao vivo está pronta para o primeiro relato.',null,false);
    return;
@@ -83,7 +99,7 @@ export default function TriageBoard(){
    if(delegations.current.has(id))return;
    delegations.current.add(id);
    if(delegations.current.size>MAX_DELEGATIONS){setNotice('Limite de pedidos de classificação atingido.');void stop();return;}
-   setAssistant('');
+   setAssistant('');settle('delegated');
    void classify(id);
   }
  }
@@ -98,7 +114,7 @@ export default function TriageBoard(){
    onInputLevel:value=>{level.current=value;},
    onEvent:event=>eventReceived(event,epoch),
    onNotice:text=>{if(mounted.current&&epoch===generation.current)setNotice(text);},
-   onEnded:()=>{if(mounted.current&&epoch===generation.current){setConnection('idle');setFinished(current.current.cards.length>0);}}});
+   onEnded:()=>{if(mounted.current&&epoch===generation.current){setConnection('idle');settle('idle');setFlying(null);setFinished(current.current.cards.length>0);}}});
   live.current=client;
   try{await client.start();}
   catch(e){if(mounted.current&&epoch===generation.current)setFailure(e instanceof Error?e.message:'Falha na conexão.');await client.stop();}
@@ -113,7 +129,7 @@ export default function TriageBoard(){
  const top=topTeam(board);
  const pending=pendingReport(board);
  const active=connection==='active';
- return <><SignalBackdrop voiceLevel={level}/><main className="triage">
+ return <MotionConfig reducedMotion="user"><LayoutGroup><SignalBackdrop voiceLevel={level}/><main className="triage">
   <a className="skip" href="#board">Pular para o quadro</a>
   <header className="topbar">
    <a className="brand" href="/" aria-label="Voltar para a Alô, TI"><span className="brand-mark"><AudioLines size={20}/></span><span>Triagem<span className="brand-light"> ao vivo</span></span></a>
@@ -138,9 +154,9 @@ export default function TriageBoard(){
      <span className="live-voice-copy"><strong>{active?'Ouvindo a sala':'Encerrando'}</strong><small>Diga “registra” para classificar</small></span>
     </div>
     <div className="tri-stats">
-     <span><strong>{board.cards.length}</strong> chamados</span>
-     <span><strong>{board.calls}</strong> chamadas ao Decisions</span>
-     <span><strong>{Math.ceil(seconds)}</strong> s de voz</span>
+     <span aria-label={`${board.cards.length} chamados`}><NumberFlow value={board.cards.length} aria-hidden="true"/> chamados</span>
+     <span aria-label={`${board.calls} chamadas ao Decisions`}><NumberFlow value={board.calls} aria-hidden="true"/> chamadas ao Decisions</span>
+     <span aria-label={`${Math.ceil(seconds)} segundos de voz`}><NumberFlow value={Math.ceil(seconds)} aria-hidden="true"/> s de voz</span>
     </div>
     <div className="tri-actions">
      <button className="text-button" disabled={!active||classifying||!pending} onClick={()=>void classify(null)}><Sparkles size={15}/>Classificar agora</button>
@@ -150,28 +166,32 @@ export default function TriageBoard(){
    <audio ref={audio} autoPlay aria-label="Áudio da triagem"/>
    <p role="status" className="tri-notice">{notice}</p>
    {failure&&<p role="alert" className="notice error">{failure}</p>}
+   <FlowRail stage={active?stage:'idle'}/>
   </section>
 
   {(active||pending||classifying)&&<section className="tri-captions" aria-live="polite" aria-label="Legenda ao vivo">
-   <p><span>OUVINDO</span>{pending||'…'}</p>
-   {classifying&&<p className="tri-thinking"><LoaderCircle size={15} className="spin"/>Decisions analisando o relato…</p>}
+   <p><span>OUVINDO</span>{pending||(flying?'':'…')}<i className="tri-caret" aria-hidden="true"/></p>
+   <AnimatePresence>{flying&&<motion.div key={flying.id} layoutId={`card-${flying.id}`} transition={SPRING} className="tri-card is-flying">
+    <div className="tri-card-head"><span className="tri-id">#{flying.id}</span><span className="tri-thinking"><LoaderCircle size={14} className="spin"/>Decisions analisando…</span></div>
+    <p>{flying.text}</p>
+   </motion.div>}</AnimatePresence>
    {assistant&&<p className="tri-assistant"><span>TRIAGEM</span>{assistant}</p>}
   </section>}
 
   <section id="board" className="tri-board" aria-label="Quadro de triagem" tabIndex={-1}>
    {COLUMNS.map(team=><div key={team} className={'tri-column'+(team==='human'?' is-review':'')} aria-label={TEAMS[team]}>
-    <header><div><h2>{TEAMS[team]}</h2><small>{COLUMN_HINT[team]}</small></div><span className="tri-count">{counts[team]}</span></header>
+    <header><ColumnIcon team={team}/><div><h2>{TEAMS[team]}{top===team&&<Crown size={16} className="tri-crown" aria-label="Equipe com mais chamados"/>}</h2><small>{COLUMN_HINT[team]}</small></div><span className="tri-count" aria-label={`${counts[team]} chamados`}><NumberFlow value={counts[team]} aria-hidden="true"/></span></header>
     <ol>
      {counts[team]===0&&<li className="tri-empty">{team==='human'?'Casos incertos aparecem aqui':'Nenhum chamado ainda'}</li>}
-     {board.cards.filter(card=>card.team===team).reverse().map(card=><li key={card.id} className={'tri-card'+(card.decidedBy==='human'?' by-human':'')}>
-      <div className="tri-card-head"><span className="tri-id">#{card.id}</span><span className="tri-chip">{Math.round(card.confidence*100)}% confiança</span></div>
+     <AnimatePresence initial={false}>{board.cards.filter(card=>card.team===team).reverse().map(card=><motion.li key={card.id} layout layoutId={`card-${card.id}`} transition={SPRING} className={'tri-card'+(card.decidedBy==='human'?' by-human':'')}>
+      <div className="tri-card-head"><span className="tri-id">#{card.id}</span><ConfidenceRing value={card.confidence}/></div>
       <p>{card.text}</p>
-      <div className="tri-urgency"><span>{urgencyLabel(card.score)}</span><span className="tri-bar"><i style={{'--value':Math.min(1,card.score/2)} as CSSProperties}/></span></div>
-      {card.decidedBy==='human'&&<span className="human-reminder"><ShieldCheck size={13}/>Decidido por você</span>}
+      <div className="tri-urgency"><span><UrgencyIcon score={card.score}/>{urgencyLabel(card.score)}</span><span className="tri-bar"><i style={{'--value':Math.min(1,card.score/2)} as CSSProperties}/></span></div>
+      {card.decidedBy==='human'&&<span className="human-reminder is-new"><UserCheck size={13}/>Decidido por você</span>}
       {card.team==='human'&&<div className="tri-route" role="group" aria-label={`Encaminhar chamado ${card.id}`}>
        {COLUMNS.filter(option=>option!=='human').map(option=><button key={option} onClick={()=>route(card.id,option)}>{TEAMS[option]}</button>)}
       </div>}
-     </li>)}
+     </motion.li>)}</AnimatePresence>
     </ol>
    </div>)}
   </section>
@@ -188,5 +208,5 @@ export default function TriageBoard(){
    {showJson&&<pre aria-label="Última resposta do Decisions">{JSON.stringify(board.last??{status:'Aguardando o primeiro chamado'},null,2)}</pre>}
   </section>
   <footer className="site-footer"><p>Triagem ao vivo · GPT-Live + Decisions API<br/><span>DevDay Exchange Community · Rio de Janeiro, 2026</span></p><p>Dados fictícios. A IA sugere, a pessoa decide.<br/><span>Material da comunidade. Este não é um produto oficial da OpenAI.</span></p></footer>
- </main></>;
+ </main></LayoutGroup></MotionConfig>;
 }

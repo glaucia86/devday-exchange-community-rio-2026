@@ -21,7 +21,7 @@ export function Confetti() {
   })}</span>;
 }
 
-// One span per character keeps the heading's accessible name identical to the id.
+// aria-label keeps the heading name intact; the per-letter spans are presentational.
 export function TicketId({ id }: { id: string }) {
-  return <h3 className="ticket-id">{id.split('').map((char, i) => <span key={i} style={{ '--i': i } as CSSProperties}>{char}</span>)}</h3>;
+  return <h3 className="ticket-id" aria-label={id}><span aria-hidden="true">{id.split('').map((char, i) => <span key={i} style={{ '--i': i } as CSSProperties}>{char}</span>)}</span></h3>;
 }

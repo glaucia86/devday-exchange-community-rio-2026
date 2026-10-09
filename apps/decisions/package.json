@@ -14,7 +14,9 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@number-flow/react": "0.6.2",
     "lucide-react": "0.468.0",
+    "motion": "14.0.0",
     "next": "16.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0"
