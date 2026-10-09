@@ -119,3 +119,13 @@ for (const status of [200, 429]) {
     assert.equal(await report.innerText(), 'A VPN caiu');
   });
 }
+
+test('the classification request keeps an internal registrar verb', async t => {
+  const f = await fixture(t);
+  await f.hear('Não consigo registrar ponto no portal desde as 9h. Registra.');
+  await f.delegate('internal_verb');
+  const request = await f.waitDecision(0);
+  assert.equal(request.body.text, 'Não consigo registrar ponto no portal desde as 9h');
+  f.complete(0);
+  await f.page.locator('#board .tri-card').waitFor();
+});

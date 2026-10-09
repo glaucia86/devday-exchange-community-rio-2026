@@ -6,7 +6,9 @@ const MAX_HEARD = 4000;
 const MAX_SUMMARY = 1500;
 const MAX_QUEUE = 20;
 const MAX_CARDS = 200;
-const COMMAND = /[\s,.;:!?-]*(?:ok[\s,]*)?(?:registra|registre|registrar|classifica|classifique|classificar|pr[oó]ximo chamado)\b[\s\S]*$/i;
+const COMMAND = /(?:^|[\s,.;:!?-]+)(?:ok[\s,]*)?(?:registra|registre|classifica|classifique|pr[oó]ximo chamado)(?:\s+(?:esse|este|o)\s+chamado)?[\s,.;:!?-]*$/i;
+// Infinitives also occur in reports ("não consigo registrar"); require a sentence boundary.
+const INFINITIVE_COMMAND = /(?:^|[,.!?;:-]\s*)(?:ok[\s,]*)?(?:registrar|classificar)(?:\s+(?:esse|este|o)\s+chamado)?[\s,.;:!?-]*$/i;
 
 export type TriageCard = {
   id: number; text: string; team: Team; suggested: Team;
@@ -55,7 +57,7 @@ export function hear(state: TriageState, delta: string): TriageState {
 /** The report to classify: what was heard, without the trailing spoken command. */
 export function pendingReport(state: TriageState): string {
   const heard = state.heard.replace(/\s+/g, ' ').trim();
-  const report = heard.replace(COMMAND, '').trim();
+  const report = heard.replace(COMMAND, '').replace(INFINITIVE_COMMAND, '').trim();
   return report || heard;
 }
 

@@ -14,6 +14,16 @@ test('the report is the speech heard since the last card, without the spoken com
   assert.equal(pendingReport(createTriage()), '');
 });
 
+test('only a trailing spoken command is removed, preserving verbs inside the report', () => {
+  for (const command of ['Registra.', 'Registre esse chamado.', 'Registrar!', 'Classifica.', 'Classifique esse chamado.', 'Classificar.', 'Próximo chamado.', 'OK, registra esse chamado.']) {
+    const report = 'Não consigo registrar ponto no portal desde as 9h';
+    assert.equal(pendingReport(hear(createTriage(), `${report}. ${command}`)), report, command);
+  }
+  for (const report of ['Não consigo registrar ponto no portal desde as 9h.', 'O sistema classifica pedidos incorretamente.', 'Preciso de ajuda para registrar', 'O portal registra ponto.', 'Registra logs mas não confirma o ponto.']) {
+    assert.equal(pendingReport(hear(createTriage(), report)), report);
+  }
+});
+
 test('a card clears the heard text and keeps ids increasing', () => {
   let state = hear(createTriage(), 'Esqueci a senha do portal.');
   state = addCard(state, pendingReport(state), decision('access'), 1);
