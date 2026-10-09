@@ -15,6 +15,8 @@ A revisão documental de 9 de outubro alinhou o percurso da Triagem com configur
 
 Para o próximo ensaio, conferir e registrar: instalação limpa; primeira abertura desativada; configuração sem vazamento de segredo; código local e consentimento; áudio de entrada e saída; relatos; revisão humana; fila/limites; pausa e retomada; nova rodada; porta alternativa; encerramento confirmado e comportamento em fechamento incerto. Não provocar limites pagos artificialmente só para testar recuperação; transporte simulado é apropriado para os testes automatizados.
 
+As correções posteriores desta branch têm [registro próprio de regressões e verificações locais](triagem-regressions-2026-10-09.md), incluindo `/triagem` com transporte substituído, falha de persistência e os limites do que foi executado. Esse registro não comprova voz ou API reais nem uma execução posterior de CI.
+
 ## Registros anteriores
 
 Os registros abaixo pertencem às versões e execuções citadas. Contagens e pendências históricas não representam automaticamente a versão atual.
