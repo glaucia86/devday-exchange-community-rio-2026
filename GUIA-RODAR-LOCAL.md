@@ -1,5 +1,7 @@
 # Rodar o devday-exchange-community-rio-2026 na sua máquina
 
+> **Registro histórico:** este documento descreve a base de 8 de outubro indicada abaixo, incluindo PRs, versões e pendências daquele momento. Para executar a Triagem atual, siga o [LAB Decisions passo a passo](labs/02-decisions-typescript/README.md). Não use as contagens ou estados de PR deste registro como estado de `main` hoje.
+
 Base: `main` em `06b297b` (merge do PR #8, voz). PRs #9 (Dots), #10 (Codex CLI) e #11 (Codex Cloud) ainda abertos: onde eles mudam algo, está marcado **[muda no PR #N]**.
 Conferido no box Linux em 8/10/2026 com Node 24.21.0. Windows não foi testado (veja Lacunas 1 e 2).
 

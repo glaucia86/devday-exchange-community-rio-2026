@@ -48,7 +48,7 @@ node --test apps/decisions/tests/*.test.mts
 node scripts/check-workshop-examples.mjs
 ```
 
-Esperado: Node.js de 24.12.0 a 24.21.0, 86 testes aprovados no conjunto atual e aceitação com falhas didáticas conferidas: starter 8/18, candidata 16/18, solução 18/18. Isso verifica os exemplos locais; os ensaios nos produtos são uma etapa adicional.
+Esperado: Node.js de 24.12.0 a 24.21.0, 88 testes no conjunto de referência, cujo resultado deve ser conferido na CI do commit atual e aceitação com falhas didáticas conferidas: starter 8/18, candidata 16/18, solução 18/18. Isso verifica os exemplos locais; os ensaios nos produtos são uma etapa adicional.
 
 ## Abertura e transições
 
@@ -150,7 +150,7 @@ Rótulos podem variar. A documentação oficial ainda diz **Work in → Cloud �
 
 ### Por que este desenho cabe na conta
 
-A sessão de voz usa **delegação para o cliente**: GPT-Live não chama outro modelo a cada fala. A aplicação faz **uma** chamada ao Decisions (`gpt-6-luna`) por relato. A conta do evento tem 50 requisições por dia e 10 por minuto por modelo; uma execução completa usa cerca de 6 a 8 chamadas. O contador na tela mostra quantas já foram usadas. Confira os limites na plataforma (Settings → Limits) antes do ensaio.
+A sessão de voz usa **delegação para o cliente**: GPT-Live não chama outro modelo a cada fala. A aplicação faz **uma** chamada ao Decisions (`gpt-6-luna`) por relato. A quota observada na conta do evento foi de 50 requisições por dia e 10 por minuto por modelo; confira novamente antes de cada ensaio. Outras contas podem ter limites diferentes. Uma execução planejada usa cerca de 6 a 8 classificações, além das tentativas que falharem. O contador na tela mostra quantas já foram usadas. Confira os limites na plataforma (Settings → Limits) antes do ensaio.
 
 ### Condições para levar ao palco
 
@@ -162,11 +162,11 @@ Siga o [guia de ativação local](integracao-live.md). No notebook do projetor, 
 - Encerramento confirmado (**Conversa encerrada. Microfone liberado.**) e consumo conferido
 - Gravação do ensaio que passou, com o letreiro **GRAVADO ANTES · não é ao vivo**
 
-Enquanto esses itens estiverem pendentes, não anuncie o bloco como validado.
+Glaucia informou um ensaio bem-sucedido da nova Triagem em 8 de outubro de 2026. Registre commit, ambiente e quais itens acima foram observados; não generalize esse relato para outros dispositivos ou casos ainda não percorridos.
 
 ### Preparação fora da sessão de voz
 
-Deixe `npm start` aberto a partir da build do `node scripts/prepare-stage.mjs`, a página `/triagem` carregada, o código local digitado e o consentimento lido. Só clique **Iniciar triagem ao vivo** quando for falar com a voz; a sessão encerra sozinha em dez minutos, o que não é teto de gasto. Tenha dois relatos de reserva no cartão, caso a plateia demore.
+Deixe `npm start` aberto com a build conferida, a página `/triagem` carregada, o código local digitado e o consentimento lido. Para Windows, prefira os [comandos diretos de instalação e build](../labs/02-decisions-typescript/README.md#instalar-interface) até o wrapper de palco ser verificado nesse sistema. Confira o quadro: dados de um ensaio anterior podem ser restaurados. Para uma rodada nova, confirme o encerramento e use **Nova triagem** antes de começar. Só clique **Iniciar triagem ao vivo** quando for falar com a voz; a sessão encerra sozinha em dez minutos, o que não é teto de gasto. Tenha dois relatos de reserva no cartão, caso a plateia demore.
 
 Fala sugerida: “Agora quem traz o problema são vocês. Eu repito, a voz escuta, o Decisions classifica e eu decido o que ficar incerto.”
 
@@ -183,13 +183,13 @@ Fala sugerida: “Agora quem traz o problema são vocês. Eu repito, a voz escut
 
 Relatos de reserva: “Esqueci a senha depois das férias e não entro no e-mail.” · “A VPN da filial cai a cada dez minutos e o financeiro parou.” · “O sistema de reembolso mostra erro 500 para todo mundo.”
 
-Se a voz não delegar ao ouvir “registra”, clique **Classificar agora** e diga que acionou o botão. Se aparecer **Limite diário do modelo atingido**, encerre e passe ao plano B.
+Se a voz não delegar ao ouvir “registra”, clique **Classificar agora** e diga que acionou o botão. Em 429 durante a classificação, confira se o relato foi para **Na fila**, ainda sem cartão. Pause/encerre e confirme o fechamento antes de aguardar cota ou passar ao plano B. A fila não é processada sozinha: retomar cria outra sessão e **Classificar fila** exige sessão ativa. Não acumule mais de 20 relatos pendentes.
 
 ### Explicação após encerrar
 
-Abra **Evidência da última decisão**: `predicate` avalia contexto, `choice` escolhe a equipe e `score` aplica a rubrica de impacto. Mostre `live-contract.ts` e `triage.ts`: confiança abaixo de 0,7 ou contexto abaixo de 0,8 manda o cartão para revisão humana. Os limiares são didáticos; score fracionário não vira prioridade automaticamente.
+Abra **Evidência da última decisão**, que mostra o objeto interpretado e validado pelo aplicativo, não a resposta bruta completa: `predicate` avalia contexto, `choice` escolhe a equipe e `score` aplica a rubrica de impacto. Mostre `live-contract.ts` e `triage.ts`: confiança abaixo de 0,7 ou contexto abaixo de 0,8 manda o cartão para revisão humana. Os limiares são didáticos; score fracionário não vira prioridade automaticamente.
 
-**Reset real:** confirme o encerramento antes de iniciar outra sessão. Recarregar a página limpa o quadro, mas não comprova que a sessão remota terminou.
+**Reset real:** espere a análise em andamento terminar, clique **Encerrar triagem** e confira a confirmação de fechamento. **Retomar triagem** abre outra sessão preservando cartões/fila. Para zerar a demonstração, clique **Nova triagem** e confirme a exclusão. Recarregar pode restaurar o quadro e não comprova encerramento remoto. Somente os cartões em **Revisão humana** permitem escolher equipe na tela.
 
 **Plano B no palco:** se uma sessão foi iniciada, clique **Encerrar triagem** e confirme o fechamento. Se a finalização não for confirmada, pare os novos inícios e verifique sessão/consumo. Depois, abra a gravação com o letreiro **GRAVADO ANTES · não é ao vivo** e diga a data. Sem gravação, rode `node --test tests/triage.test.mts` em `apps/decisions`, mostre a regra da revisão humana e diga que a triagem ao vivo não rodou.
 

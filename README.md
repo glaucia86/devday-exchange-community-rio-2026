@@ -215,33 +215,38 @@ cd devday-exchange-community-rio-2026
 
 ### Instale e inicie a interface
 
-No palco e no estudo em casa, use a build. Na raiz, o ensaio completo é:
+Para estudar em casa, use os comandos diretos. **Na raiz**, entre na pasta da aplicação:
 
 ```sh
-node scripts/prepare-stage.mjs
 cd apps/decisions
-npm start
 ```
 
-O script confere o Node, executa `npm ci --ignore-scripts`, os 86 testes, a aceitação do encaminhador e `npm run build`. Ele imprime o endereço local. Se preferir os comandos separados, ainda em `apps/decisions`:
+**Em `apps/decisions`**, execute uma linha por vez:
 
 ```sh
 npm ci --ignore-scripts
+npm run typecheck
 npm run build
 npm start
 ```
 
-Execute um comando por vez e deixe o terminal do `npm start` aberto. Acesse **http://127.0.0.1:3000/triagem** para a Triagem ao vivo e **http://127.0.0.1:3000** para a Alô, TI.
+No PowerShell, use `npm.cmd` no lugar de `npm`. A instalação e a build precisam terminar sem erro; o terminal de `npm start` continua ocupado e deve ficar aberto. Acesse **http://127.0.0.1:3000/triagem** para a Triagem ao vivo e **http://127.0.0.1:3000** para a Alô, TI.
+
+Sem configuração, o aviso **Ao vivo desativado no servidor** é esperado. O [LAB Decisions](labs/02-decisions-typescript/README.md#configurar-segredos) ensina a preparar conta, orçamento, chave e código local antes de iniciar. Se aparecer `EADDRINUSE`, use `npm start -- -p 3002` (ou `npm.cmd start -- -p 3002`) e abra **http://127.0.0.1:3002/triagem**. Mantenha a mesma origem e porta durante o estudo.
+
+**Atalho de ensaio para quem já conferiu o ambiente:** `node scripts/prepare-stage.mjs`, na raiz, instala dependências, executa os 88 testes do conjunto, confere a aceitação do encaminhador e gera a build. Depois, execute `npm start` em `apps/decisions`. O wrapper ainda precisa de verificação específica no Windows; nesse sistema, prefira os comandos diretos acima. Esse atalho não configura acesso à API.
 
 `npm run dev` fica para quem está editando a interface. Esse comando reescreve `next-env.d.ts`. O arquivo é gerado pelo Next.js, está no `.gitignore` e não deve voltar para o Git. O `npm run typecheck` chama `next typegen` antes do TypeScript, então um checkout limpo continua compilando.
 
 ### Confira seu primeiro acesso
 
-1. Abra `/triagem`, informe o código local da demo e leia o consentimento de custo.
-2. Clique **Iniciar triagem ao vivo** e espere **Microfone ativo**.
+1. Depois de seguir a [configuração segura do LAB](labs/02-decisions-typescript/README.md#configurar-segredos), abra `/triagem`, informe o código local da demo e leia o consentimento de custo.
+2. Com o quadro novo, clique **Iniciar triagem ao vivo** e espere **Microfone ativo**. Com dados salvos, escolha entre **Retomar triagem** e **Nova triagem**.
 3. Descreva um problema de TI fictício e diga “registra”.
 4. Confira o cartão: equipe sugerida, urgência e confiança. Os casos incertos vão para revisão humana, e quem escolhe a equipe é você.
 5. Clique **Encerrar triagem** e espere **Conversa encerrada. Microfone liberado.**
+
+Cartões, fila e contador podem continuar salvos no navegador. Recarregar não limpa o quadro. Depois de confirmar o encerramento, use **Nova triagem** para apagá-lo ou **Retomar triagem** para abrir outra sessão com os dados preservados. Veja [fila, reset e retomada](labs/02-decisions-typescript/README.md#reset-e-retomada).
 
 Sem chave, use a Alô, TI em `/` e os exercícios de contrato do LAB. A voz local do dispositivo, quando ligada na Alô, TI, não é áudio OpenAI. Veja o [README da aplicação](apps/decisions/README.md).
 
@@ -261,7 +266,7 @@ node --test scripts/check-dots-guide.test.mjs
 ```
 
 O `scripts/check-dots-guide.test.mjs` confere o texto do LAB de Dots e não entra nessa contagem.
-O conjunto contém **86 testes**: 3 do starter, 8 da solução, 5 da candidata de revisão, 5 do exercício de contrato e 65 da aplicação (Alô, TI e Triagem ao vivo). Além deles, a verificação pedagógica executa 18 casos de aceitação em cada versão do encaminhador: starter com 10 falhas esperadas, candidata com 2 e solução sem falhas. Consulte a CI do commit atual para o resultado. Testes verdes da candidata não significam que ela já está correta.
+O conjunto contém **88 testes**: 3 do starter, 8 da solução, 5 da candidata de revisão, 5 do exercício de contrato e 67 da aplicação (Alô, TI e Triagem ao vivo). Além deles, a verificação pedagógica executa 18 casos de aceitação em cada versão do encaminhador: starter com 10 falhas esperadas, candidata com 2 e solução sem falhas. Consulte a CI do commit atual para o resultado. Testes verdes da candidata não significam que ela já está correta.
 
 Dentro de **`apps/decisions`**, após instalar as dependências:
 
@@ -283,12 +288,12 @@ A [execução de referência](https://github.com/glaucia86/devday-exchange-commu
 | Área | Situação |
 | --- | --- |
 | Quatro LABS e guia da apresentadora | Disponíveis |
-| Encaminhador, Alô, TI e Triagem ao vivo | 86 testes e aceitação red/green; resultado por commit no Actions |
+| Encaminhador, Alô, TI e Triagem ao vivo | 88 testes e aceitação red/green; resultado por commit no Actions |
 | TypeScript e build Next.js | Aprovados na execução de referência |
 | Interface mock em Chromium | Revisão, correção, reset e tratamento de erro verificados |
 | Capturas desktop e celular | Inspecionadas |
 | Voz local do dispositivo | Regressão simulada; áudio real precisa de ensaio |
-| GPT-Live + Decisions | Triagem ao vivo implementada com delegação para o cliente; API e áudio reais ainda sem ensaio completo |
+| GPT-Live + Decisions | Triagem com delegação para o cliente, fila e retomada; ensaio real informado pela apresentadora, com registro detalhado e walkthrough por sistema ainda necessários |
 | Dots | Cenário antigo executado uma vez em 8 de outubro de 2026; o cenário novo ainda não foi ensaiado |
 | Codex CLI e Codex Cloud | Guias disponíveis; ensaio dos fluxos reais pendente |
 
@@ -312,7 +317,7 @@ Use a [programação](docs/programacao.md) para os detalhes do encontro e as [re
 
 - [ ] Escolhi um LAB e li seus requisitos.
 - [ ] Para os LABS de código: Node.js de 24.12.0 a 24.21.0, npm e Git respondem no terminal.
-- [ ] Para ensaiar a Alô, TI: `node scripts/prepare-stage.mjs` e, em seguida, `npm start` em `apps/decisions`.
+- [ ] Para abrir as demos: instalação, tipos, build e `npm start` em `apps/decisions`, conforme os comandos diretos acima.
 - [ ] Se o ensaio incluir o Codex CLI: `codex --version` mostra `codex-cli 0.161.0`, `codex login status` confirma a sessão, a abertura usa `-m gpt-6-luna -s workspace-write`, a pasta foi confiada antes do projetor e, dentro do agente, `node --version` mostra v24.21 ou posterior. A Alô, TI desse bloco sobe com `npm run dev` em `apps/decisions`, antes do relógio.
 - [ ] Clonei a branch indicada e executei os testes offline.
 - [ ] Se vou abrir a Alô, TI, instalei as dependências e conferi o modo Simulado.

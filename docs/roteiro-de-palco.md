@@ -4,13 +4,15 @@
 
 Duas camadas. A primeira cabe no projetor sem conta, chave ou rede de modelo. A segunda só entra depois de um ensaio no mesmo notebook, com áudio e login conferidos.
 
-Na véspera, na raiz do repositório:
+Na véspera, confira a build no notebook do palco. No Windows, prefira os [comandos diretos do LAB](../labs/02-decisions-typescript/README.md#instalar-interface), pois o wrapper abaixo ainda precisa de verificação específica nesse sistema. Nos ambientes em que o wrapper já foi conferido, na raiz do repositório:
 
 ```sh
 node scripts/prepare-stage.mjs
 ```
 
 Depois, em `apps/decisions`, `npm start` e http://127.0.0.1:3000/triagem. O script aceita Node.js de 24.12.0 a 24.21.0. O arquivo `.nvmrc` recomenda 24.21.0, a versão da CI.
+
+Na Triagem, o navegador pode restaurar cartões, fila e contador. Antes de uma rodada nova, confirme o fechamento de qualquer sessão anterior, clique **Nova triagem** e confirme a exclusão. F5 não limpa o quadro. **Retomar triagem** cria outra sessão com os dados preservados; confira custo e limites novamente.
 
 ## Camada 1 · o que sempre funciona
 
