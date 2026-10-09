@@ -205,6 +205,8 @@ O código de referência dos checkpoints é `e7129f3`; commits posteriores podem
 
 ### 2.3 Entenda o mapa que será usado
 
+**Para qualquer cópia:** na raiz, execute `git log -1 --oneline` e anote o código curto do commit no seu registro do LAB. Esse comando já aparece na seção 2.2; quem fez um clone novo também deve conferir a versão.
+
 | Caminho a partir da raiz | O que existe ali |
 | --- | --- |
 | `apps/decisions` | Aplicação local com Triagem e Alô, TI |
@@ -220,7 +222,7 @@ O site do evento é um portal de leitura. A aplicação abre em `127.0.0.1`, que
 
 - [ ] Tenho uma cópia do projeto e preservei qualquer trabalho anterior.
 - [ ] Meu terminal está na raiz `devday-exchange-community-rio-2026`, e anotei esse caminho.
-- [ ] Conferi a branch e o commit se usei uma cópia existente.
+- [ ] Anotei o commit da minha cópia; se ela já existia, também conferi a branch antes de atualizar.
 - [ ] Sei que o portal é para ler o guia e que a aplicação será aberta no meu computador.
 
 **Próximo passo:** vá para [3. Conferir as regras](#verificar-regras), mantendo o terminal na raiz.
@@ -620,6 +622,7 @@ Use fones, confirme a saída de áudio do computador e prefira um ambiente silen
 5. Espere a indicação de microfone ativo e ouça a saudação. Não clique várias vezes enquanto estiver conectando.
 
 **Pode avançar para o primeiro relato?**
+
 - [ ] A conexão ficou pronta e consigo falar.
 - [ ] Ouvi a saudação ou uma resposta da voz.
 
@@ -846,7 +849,7 @@ Se editou código, gere a build novamente antes de `npm start`. Se atualizou o r
 - [ ] Iniciei o servidor e abri a mesma origem e porta.
 - [ ] Escolhi preservar ou limpar o quadro antes de iniciar; sei que retomar cria outra sessão.
 
-**Próximo passo:** volte à [seção 7](#primeira-triagem) para outra rodada ou à [seção 8](#fila-e-limites) para uma fila pendente. Não marque este checklist agora se ainda não fez uma segunda execução.
+**Próximo passo:** para uma rodada com quadro vazio, volte à [seção 7](#primeira-triagem). Para preservar o quadro, use **Retomar triagem** e confirme a conexão antes de acrescentar relatos; se houver fila pendente, siga a [seção 8](#fila-e-limites). Ao terminar, repita o checklist de encerramento. Não marque esta segunda execução como feita se ainda não a realizou.
 
 <a id="contrato-offline"></a>
 ## 10 Faça o exercício offline sem chave
