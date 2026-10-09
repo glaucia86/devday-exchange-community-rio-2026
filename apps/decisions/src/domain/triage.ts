@@ -6,7 +6,7 @@ const MAX_HEARD = 4000;
 const MAX_SUMMARY = 1500;
 const MAX_QUEUE = 20;
 const MAX_CARDS = 200;
-const COMMAND = /(?:^|[\s,.;:!?-]+)(?:ok[\s,]*)?(?:registra|registre|classifica|classifique|pr[oó]ximo chamado)(?:\s+(?:esse|este|o)\s+chamado)?[\s,.;:!?-]*$/i;
+const COMMAND = /(?:^|[,.!?;:-]\s*)(?:ok[\s,]*)?(?:registra|registre|classifica|classifique|pr[oó]ximo chamado)(?:\s+(?:esse|este|o)\s+chamado)?[\s,.;:!?-]*$/i;
 // Infinitives also occur in reports ("não consigo registrar"); require a sentence boundary.
 const INFINITIVE_COMMAND = /(?:^|[,.!?;:-]\s*)(?:ok[\s,]*)?(?:registrar|classificar)(?:\s+(?:esse|este|o)\s+chamado)?[\s,.;:!?-]*$/i;
 

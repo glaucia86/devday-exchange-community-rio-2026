@@ -19,7 +19,7 @@ test('only a trailing spoken command is removed, preserving verbs inside the rep
     const report = 'Não consigo registrar ponto no portal desde as 9h';
     assert.equal(pendingReport(hear(createTriage(), `${report}. ${command}`)), report, command);
   }
-  for (const report of ['Não consigo registrar ponto no portal desde as 9h.', 'O sistema classifica pedidos incorretamente.', 'Preciso de ajuda para registrar', 'O portal registra ponto.', 'Registra logs mas não confirma o ponto.']) {
+  for (const report of ['Não consigo registrar ponto no portal desde as 9h.', 'O sistema classifica pedidos incorretamente.', 'Preciso de ajuda para registrar', 'O portal registra ponto.', 'O portal não registra.', 'Este fluxo nunca classifica.', 'Registra logs mas não confirma o ponto.']) {
     assert.equal(pendingReport(hear(createTriage(), report)), report);
   }
 });
