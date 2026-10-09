@@ -4,7 +4,11 @@
 
 ## Estado
 
-Adaptadores implementados para GPT-Live, WebRTC e Decisions. A CI usa transporte simulado e respostas de teste. Acesso aos modelos, latência, reconhecimento e saída audível ainda precisam de ensaio completo. A demonstração de palco é a **Triagem ao vivo** (`/triagem`); a aba ao vivo da Alô, TI continua disponível para estudo. Use os mesmos relatos e critérios do [LAB para reproduzir em casa](../labs/02-decisions-typescript/README.md) e do [roteiro da apresentadora](guia-apresentadora.md#decisions-api).
+A demonstração de Decisions do evento é a **Triagem ao vivo** (`/triagem`). Para instalar e reproduzir em casa, siga o [LAB completo para iniciantes](../labs/02-decisions-typescript/README.md): ferramentas, pastas, conta/chave, orçamento, primeira rodada, fila, retomada e reset. Este documento complementa o LAB com detalhes técnicos.
+
+A aba **OpenAI ao vivo** da Alô, TI (`/`) é uma trilha adicional de estudo, com delegação e controles diferentes. Não use o roteiro dessa aba para operar a Triagem. Ambas compartilham a configuração segura do servidor.
+
+A CI usa transporte simulado e respostas de teste. Glaucia informou um ensaio bem-sucedido da nova Triagem em 8 de outubro de 2026; o registro de commit, ambiente e casos percorridos ainda deve ser completado. A revisão documental de 9 de outubro não executou voz/API real. Consulte [validação](validacao.md#triagem-2026-10-09) e os critérios do [roteiro da apresentadora](guia-apresentadora.md#decisions-api).
 
 O modo padrão permanece offline. Abrir a página ou a aba ao vivo não inicia uma sessão paga nem solicita o microfone.
 
@@ -13,11 +17,13 @@ O modo padrão permanece offline. Abrir a página ou a aba ao vivo não inicia u
 A Triagem usa `delegation: { type: "client" }`, como no guia [Connect voice to Decisions](https://developers.openai.com/api/docs/guides/decisions-voice). GPT-Live não chama um modelo de backend a cada fala. Quando a apresentadora diz “registra”, chega `session.delegation.created`; a página pega a fala ouvida desde o último cartão, envia ao servidor e o servidor faz **uma** chamada a `/v1/decisions`. O resultado volta à voz com `session.commentary.append` e o mesmo `delegation_id`; um resumo do quadro segue por `session.thinking.append`.
 
 - **Custo por execução:** uma sessão `gpt-live-1` e cerca de uma chamada `gpt-6-luna` por relato. Seis relatos usam cerca de seis requisições
-- **Limites da conta:** contas novas podem ter 50 requisições por dia e 10 por minuto por modelo. Confira em Settings → Limits. Quando o limite é atingido, a página mostra “Limite diário do modelo atingido na OpenAI. Tente novamente em …”, sem repassar a mensagem bruta
+- **Limites da conta:** confira os valores reais em Settings → Limits. A quota da conta da apresentadora não é uma promessa para outras contas. Em 429 de classificação, o relato pode ir para **Na fila**, sem cartão; o aviso pode incluir tempo de espera. Falta de saldo, limite de gasto e rate limit exigem diagnósticos diferentes
 - **Canal do navegador:** só envia `session.close`, `session.commentary.append` e `session.thinking.append`
 - **Diagnóstico:** o terminal do servidor registra linhas `[live]`: início da sessão, erros do canal de controle, cada chamada ao Decisions e o motivo do encerramento (`expired`, `connection_lost`, `content`)
 
-Para abrir: em `/triagem`, digite o código `MESA_LIVE_ACCESS_TOKEN`, leia e marque o consentimento e clique **Iniciar triagem ao vivo**.
+Para abrir: em `/triagem`, digite o código `MESA_LIVE_ACCESS_TOKEN`, leia e marque o consentimento e clique **Iniciar triagem ao vivo**. Se houver cartões ou fila salvos, o botão será **Retomar triagem**.
+
+A página tenta persistir cartões, fila e contador no navegador. Recarregar não limpa esse quadro. **Pausar** pede fechamento da sessão e preserva o estado; retomar abre outra sessão, com custo e limites próprios. Para limpar o quadro, confirme o fechamento e use **Nova triagem**. A fila tem capacidade para 20 relatos; acrescentar mais pode descartar os antigos. **Classificar fila** exige sessão ativa e para na primeira falha. Veja [fila e limites](../labs/02-decisions-typescript/README.md#fila-e-limites) e [reset e privacidade](../labs/02-decisions-typescript/README.md#reset-e-retomada).
 
 ## Se você veio do LAB e o mock já abriu
 
@@ -100,27 +106,32 @@ git check-ignore -v .env.local
 
 Deve aparecer a regra .env.* do .gitignore. Se ela não aparecer, pare antes de inserir o segredo. Depois, abra `.env.local` pelo seu editor. No Windows, `notepad .env.local` abre o arquivo; em outros sistemas, use o editor de texto/código que já tem. Preencha pelo editor, sem colocar o segredo na linha de comando:
 - OPENAI_API_KEY: cole a chave de projeto que você já criou e guardou.
-- MESA_LIVE_ACCESS_TOKEN: escolha uma senha aleatória exclusiva da demo, com pelo menos 32 caracteres entre letras, números, hífen e sublinhado. Esse código é diferente da chave OpenAI; é ele que você digitará na interface.
+- MESA_LIVE_ACCESS_TOKEN: use o [gerador do código local no LAB](../labs/02-decisions-typescript/README.md#configurar-segredos), com 32 caracteres. Esse código é diferente da chave OpenAI; é ele que você digitará na interface.
 - MESA_LIVE_ENABLED: mantenha false até aprovar um teste com custo.
 
-Não use prefixo NEXT_PUBLIC. Não comite .env.local. Confira git status --short antes de qualquer commit: .env.local não deve aparecer. Nenhum comando deste guia deve imprimir o arquivo. O Next.js carrega .env.local no servidor; variáveis com prefixo NEXT_PUBLIC seriam expostas ao navegador. [Documentação do Next.js](https://nextjs.org/docs/app/guides/environment-variables)
+Se já existir uma variável no ambiente do sistema, ela tem precedência sobre .env.local. Confira a origem da configuração sem imprimir credenciais. Não use prefixo NEXT_PUBLIC. Não comite .env.local. Confira git status --short antes de qualquer commit: .env.local não deve aparecer. Nenhum comando deste guia deve imprimir o arquivo. O Next.js carrega .env.local no servidor; variáveis com prefixo NEXT_PUBLIC seriam expostas ao navegador. [Documentação do Next.js](https://nextjs.org/docs/app/guides/environment-variables)
 
-## Primeiro ensaio pago, somente após autorizar custo
+## Primeiro ensaio pago da Triagem
 
-Antes de habilitar:
-1. Confirme o projeto, saldo/limites de uso e acesso a gpt-live-1 e gpt-6-luna na plataforma.
-2. Defina o orçamento do teste e acompanhe o consumo. Saldo em conta não é autorização automática de gasto.
-3. Use somente dados fictícios, de preferência fones de ouvido, e permita o microfone apenas nesta página local.
+Antes de habilitar, siga a [preparação de conta e orçamento](../labs/02-decisions-typescript/README.md#preparar-api). A API tem faturamento separado do ChatGPT. Confira projeto, acesso a `gpt-live-1` e `gpt-6-luna`, quota, consumo e controles financeiros. Existem limites rígidos opcionais de gasto; alertas sozinhos não bloqueiam. O limite local de dez minutos não é um teto financeiro. Veja os [controles oficiais de gasto](https://developers.openai.com/api/docs/guides/spend-limits).
 
-Para habilitar por sua própria ação, altere MESA_LIVE_ENABLED para true no editor e reinicie npm.cmd start. Abra a aba OpenAI ao vivo, digite o código MESA_LIVE_ACCESS_TOKEN (nunca a chave OpenAI), leia o consentimento e, somente se concordar com o envio e tiver autorizado o gasto, marque a caixa “Entendi o envio de áudio e texto à OpenAI e estou autorizada a usar a API com custo nesta demo.”. Então clique em Iniciar conversa real.
+1. Com o servidor parado, altere `MESA_LIVE_ENABLED` para `true` no editor e salve.
+2. Em `apps/decisions`, inicie com `npm.cmd start` no Windows ou `npm start` no macOS/Linux. Se escolheu outra porta, repita a opção `-- -p` com essa porta.
+3. Abra **http://127.0.0.1:3000/triagem**, ou a mesma porta escolhida na instalação. Não abra a aba OpenAI ao vivo da Alô, TI para este ensaio.
+4. Digite o código `MESA_LIVE_ACCESS_TOKEN`, nunca a chave OpenAI. Leia e marque o consentimento apenas se concordar com o envio e o custo.
+5. Clique **Iniciar triagem ao vivo**, permita o microfone e espere a conexão. Com dados salvos, escolha entre retomar o quadro ou começar uma **Nova triagem** com a sessão encerrada.
+6. Siga os [relatos e checkpoints do LAB](../labs/02-decisions-typescript/README.md#primeira-triagem), um de cada vez.
+7. Espere a classificação terminar, clique **Encerrar triagem** e confira a confirmação de fechamento remoto. Consulte o consumo na plataforma.
 
-Faça o ensaio falado da seção abaixo: registrar, analisar, corrigir no meio da frase, analisar de novo, confirmar e ouvir o monitoramento uma vez. Depois clique em Encerrar conversa e espere a confirmação. Confira o consumo na plataforma.
+Se a finalização não for confirmada, não reinicie sessões em sequência. Criar a sessão já pode gerar custo, mesmo se a conexão falhar depois. Ao terminar, volte `MESA_LIVE_ENABLED` para `false` e reinicie ou encerre o servidor. Remover a chave do arquivo local e revogá-la na plataforma são ações diferentes.
 
-Se a finalização não for confirmada, não reinicie sessões em sequência. Verifique a sessão/consumo antes de reiniciar o servidor. Criar a sessão já pode gerar custo, mesmo se a conexão ou o microfone falharem depois.
+## Trilha adicional da Alô TI ao vivo
 
-Ao terminar, volte MESA_LIVE_ENABLED para false e reinicie ou encerre o servidor. Revogar a chave na plataforma, quando necessário, é uma ação separada.
+As próximas seções, até **Limites e segurança**, descrevem a aba **OpenAI ao vivo** da Alô, TI em `/`. Ela usa **Iniciar conversa real**, funções de registrar/corrigir/analisar/confirmar e um ticket fictício. Essa experiência é opcional e não faz parte do percurso da Triagem em `/triagem`.
 
-## Como o código funciona
+Para ensaiá-la depois, com configuração e custo autorizados, abra `/`, escolha **OpenAI ao vivo**, informe o código local, leia e marque o consentimento e clique **Iniciar conversa real**. Siga o ensaio falado específico abaixo e termine com **Encerrar conversa**.
+
+### Como o código funciona
 
 - Navegador: áudio WebRTC, canal oai-events, transcrições e execução das funções pedidas pelo modelo
 - Servidor: POST /v1/live/sessions com gpt-live-1, voz `bossa` e delegação Responses; POST /v1/decisions com gpt-6-luna só na análise
@@ -134,7 +145,7 @@ A delegação da aba ao vivo da Alô, TI é Responses, não a delegação client
 
 A pergunta de contexto pede se o relato atual diz qual serviço falhou, o que aconteceu e quem foi afetado. Essa redação foi conferida na Decisions real nos três relatos de palco: acesso e conexão instável ficaram acima de 0,8; o relato incompleto ficou em 0. Os limiares 0,8 para contexto e 0,7 para confiança continuam didáticos. Score de 0 a 2 pode ser fracionário; não é prioridade operacional. O texto explicativo é composto pelo aplicativo, não uma justificativa livre gerada por Decisions.
 
-## Comandos
+### Comandos
 
 | Função | O que a mesa faz |
 | --- | --- |
@@ -146,13 +157,13 @@ A pergunta de contexto pede se o relato atual diz qual serviço falhou, o que ac
 
 Nome fora dessa lista, argumento inválido ou confirmação em string não mudam a mesa. O log “Comandos da voz” mostra o nome executado ou recusado.
 
-## Monitoramento, o fechamento
+### Monitoramento, o fechamento
 
 Depois que o ticket simulado existe, a mesa calcula uma frase a partir dos registros da semana daquela equipe. Infraestrutura e Aplicações internas já têm dois registros marcados como demonstração, então o primeiro ticket deste ensaio em qualquer uma dessas equipes produz “terceiro problema”. Acessos e identidade tem um, então produz “segundo”. A frase diz que são registros de demonstração. Nenhum painel externo é consultado.
 
 A frase aparece na tela na hora, com ou sem microfone. A fala usa `session.commentary.append` com `delegation_id` null, uma vez por fluxo. Ela espera o áudio da confirmação terminar e, depois disso, 900 ms desde a última atividade real: fala da pessoa, fim do áudio da assistente ou resultado de ferramenta. Assim ela não cobre a confirmação nem quem ainda está falando. `recomeçar` apaga a frase da tela e não a repete.
 
-## Ensaio de cada comando, sem chave
+### Ensaio de cada comando, sem chave
 
 Na pasta `apps/decisions`, com Node.js de 24.12.0 a 24.21.0:
 
@@ -162,9 +173,9 @@ node scripts/replay-voice-commands.mts
 
 O script aplica eventos sintéticos de `response.output_item.done` no redutor. Não abre microfone e não chama a OpenAI. A saída esperada inclui o ticket `DEMO-0001` para Infraestrutura, a recusa sem confirmação, a recusa de `executar_shell` e a frase do terceiro problema.
 
-## Ensaio falado, só com chave e custo autorizados
+### Ensaio falado, só com chave e custo autorizados
 
-Siga a ativação desta página. Fones de ouvido. Dados fictícios. Voz fixa `bossa` (feminina, português do Brasil). `tempo` é a voz masculina; trocar exige outra sessão, no campo `audio.output.voice`.
+Siga a ativação da trilha adicional da Alô, TI desta página. Fones de ouvido. Dados fictícios. Voz fixa `bossa` (feminina, português do Brasil). `tempo` é a voz masculina; trocar exige outra sessão, no campo `audio.output.voice`.
 
 1. Iniciar conversa real e esperar “Microfone ativo”.
 2. “Registra este relato: a rede da sala de reunião cai durante as chamadas. O restante do escritório funciona.” O log mostra `registrar_relato` e o texto entra no relato. Não há ticket.
@@ -177,7 +188,7 @@ Siga a ativação desta página. Fones de ouvido. Dados fictícios. Voz fixa `bo
 
 O botão “Analisar com Decisions” e o botão de confirmar continuam valendo se a delegação não ocorrer.
 
-## Plano B
+### Plano B da Alô TI
 
 Sem microfone, sem chave ou com a sessão recusada: fique na aba Simulado. Explorar cenário, analisar, **Simular uma correção**, analisar de novo, revisar e criar o ticket. **Corrigir o relato** só abre o texto para edição; a análise seguinte usa o que foi escrito. O mesmo monitoramento aparece na tela, sem áudio da OpenAI. Diga que a conversa real não foi executada. A voz local do dispositivo, se estiver ligada, não é GPT-Live.
 
@@ -191,11 +202,11 @@ Cliente e servidor pedem fechamento após dez minutos. Perda do sideband bloquei
 
 Esses controles não são um teto financeiro: queda do processo ou da rede pode impedir o encerramento remoto. Reiniciar o processo também reinicia contadores em memória. Não use esta demo como serviço público ou controle de gastos de produção.
 
-A gravação persistida da sessão é desabilitada com store: false; isso não substitui a política de dados da conta.
+A gravação persistida da sessão é desabilitada com store: false; isso não substitui a política de dados da conta. Separadamente, a Triagem tenta salvar o texto dos cartões/fila e o contador no navegador. A chave OpenAI, o código de acesso digitado, o áudio e a última decisão completa não entram nesse registro local da aplicação.
 
-## O que ainda depende de um ensaio com a API
+## Checklist adicional de API da Alô TI
 
-Não houve chamada real nesta alteração. Conferir no notebook do palco, com custo autorizado:
+Os itens abaixo pertencem à aba da Alô, TI; não são a lista de controles da Triagem. Conferir no notebook escolhido, com custo autorizado, e registrar quais foram realmente executados:
 
 - A sessão aceita `audio.output.voice: "bossa"`, as cinco funções e a lista de `client.data_channel`
 - O modelo escolhe a função certa em português, inclusive a correção no meio da frase

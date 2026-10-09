@@ -2,6 +2,23 @@
 
 [Início](../README.md) · [Guia da apresentadora](guia-apresentadora.md)
 
+<a id="triagem-2026-10-09"></a>
+## Triagem e documentação em 9 de outubro de 2026
+
+Base de código conferida: `e7129f316f5e8830687b658a7384b8d4e47e3fe1`. A [CI desse commit](https://github.com/glaucia86/devday-exchange-community-rio-2026/actions/runs/37888062878) concluiu os jobs de testes offline e build/interface com sucesso. Foram consultados os estados e os passos dessa execução; a revisão de texto não repetiu comandos localmente.
+
+A base declara 67 testes da aplicação, dos quais nove são de Triagem, e 88 nos conjuntos descritos pelo README. Os dois testes novos cobrem fila e restauração. O teste de navegador executado pelo workflow atual visita a rota `/`; os testes de domínio não substituem um walkthrough de navegador da rota `/triagem`.
+
+Glaucia informou ter executado a nova Triagem com sucesso no ensaio de 8 de outubro de 2026. O relato deve ser complementado com commit, sistema, navegador, versões, passos observados, encerramento e limitações. Não implica validação de todos os sistemas operacionais ou dos estados adicionados depois.
+
+A revisão documental de 9 de outubro alinhou o percurso da Triagem com configuração, fila, persistência, pausa, retomada e reset. Não executou microfone, áudio ou chamadas pagas. A CI do commit que receber a documentação e o walkthrough de participante devem ser registrados separadamente.
+
+Para o próximo ensaio, conferir e registrar: instalação limpa; primeira abertura desativada; configuração sem vazamento de segredo; código local e consentimento; áudio de entrada e saída; relatos; revisão humana; fila/limites; pausa e retomada; nova rodada; porta alternativa; encerramento confirmado e comportamento em fechamento incerto. Não provocar limites pagos artificialmente só para testar recuperação; transporte simulado é apropriado para os testes automatizados.
+
+## Registros anteriores
+
+Os registros abaixo pertencem às versões e execuções citadas. Contagens e pendências históricas não representam automaticamente a versão atual.
+
 **7 de outubro de 2026.** Material escrito, comportamento testado e integração real são estágios diferentes.
 
 ## Evidência observada
