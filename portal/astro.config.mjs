@@ -3,6 +3,7 @@ import starlight from '@astrojs/starlight';
 import { BASE, REPOSITORY } from './scripts/content-manifest.mjs';
 export default defineConfig({
  site:'https://glaucia86.github.io',base:BASE,output:'static',trailingSlash:'always',
+ image:{service:{entrypoint:'astro/assets/services/sharp',config:{webp:{lossless:true}}}},
  integrations:[starlight({
   title:'DevDay Exchange Rio',defaultLocale:'root',locales:{root:{label:'Português',lang:'pt-BR'}},
   customCss:['./src/styles/portal.css'],social:[{icon:'github',label:'GitHub',href:REPOSITORY}],

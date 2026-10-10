@@ -10,6 +10,11 @@ try{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(root);await page.waitForLoadState('networkidle');
  assert.equal(await page.locator('h1').count(),1);
+ assert.equal(await page.locator('h1').innerText(),'Da ideia ao código.\nDo Rio para você.');
+ const banner=page.locator('#sobre-o-evento img');
+ await banner.scrollIntoViewIfNeeded();await banner.evaluate(image=>image.decode());
+ assert.equal(await banner.evaluate(image=>image.complete&&image.naturalWidth>0),true);
+ await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
  await page.keyboard.press('Tab');
  const skip=page.getByRole('link',{name:/Pular para o conteúdo/i});
  await skip.press('Enter');

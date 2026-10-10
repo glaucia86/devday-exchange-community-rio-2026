@@ -29,8 +29,10 @@ try{
   });
   const home=await page.goto(expectedRoot,{waitUntil:'networkidle'});
   assert.equal(home.status(),200);
-  assert.match(await page.locator('h1').innerText(),/DevDay Exchange/);
-  const banner=page.locator('img.event-banner');
+  assert.equal(await page.locator('h1').innerText(),'Da ideia ao código.\nDo Rio para você.');
+  const banner=page.locator('#sobre-o-evento img');
+  await banner.scrollIntoViewIfNeeded();
+  await banner.evaluate(image=>image.decode());
   assert.equal(await banner.evaluate(image=>image.complete&&image.naturalWidth>0),true);
   for(const route of ['labs/dots/','alo-ti/','alo-ti/referencia/','prepare-se/']){
     const response=await page.goto(new URL(route,expectedRoot).href);

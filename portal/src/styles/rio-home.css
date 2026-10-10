@@ -1,0 +1,85 @@
+/* Home-only composition: guides keep their existing light theme and styles. */
+.portal-home{background:#f7f9fc;color:#25314a}
+.portal-home .event-header{max-width:none;height:80px;background:#07172e;padding-inline:max(32px,calc((100vw - 1256px)/2));border:0;gap:24px}
+.portal-home .event-brand{color:#fff;font-size:19px;letter-spacing:-.035em}
+.portal-home .event-brand span{color:#9fdce9;font-size:14px;letter-spacing:.02em;margin-top:4px}
+.portal-home #event-nav a{color:#e5eef9;font-size:14px}
+.portal-home .event-hero{position:relative;isolation:isolate;display:block;background:#07172e;min-height:650px;width:100vw;margin-inline:calc(50% - 50vw);padding:0;overflow:hidden}
+.portal-home .hero-copy{position:relative;z-index:2;max-width:1320px;margin:auto;padding:100px 32px 110px;animation:none;pointer-events:none}
+.portal-home .hero-copy a{pointer-events:auto}
+.portal-home .event-hero h1{font-size:clamp(40px,4.3vw,62px);line-height:1.08;letter-spacing:-.055em;color:#fff;max-width:700px;text-shadow:0 2px 18px #06182b40}
+.portal-home .event-hero h1 span{color:#a4f3ff}
+.portal-home .event-hero .eyebrow{font-size:12px;color:#b6d9ea;margin-bottom:20px!important}
+.portal-home .hero-description{color:#edf5ff;font-size:19px;line-height:1.6;margin-top:24px!important;max-width:36ch}
+.portal-home .event-details{color:#d1e0ee;font-size:14px;margin:24px 0 0!important;max-width:50ch}
+.portal-home .event-address{color:#b4cbde;font-size:12px}
+.portal-home .hero-actions{margin-top:28px;gap:24px}
+.portal-home .hero-actions .button{background:#a4f3ff;color:#06233a!important;box-shadow:0 4px 18px #06132225}
+.portal-home .hero-actions .button:hover{background:#ccf9ff}
+.portal-home .hero-actions .text-action{color:#fff;min-height:48px;display:inline-flex;align-items:center}
+.portal-home :is(.event-header,.event-hero) :focus-visible{outline-color:#b7f5ff}
+.rio-scene{position:absolute;inset:0;z-index:0}
+.rio-viewport{position:absolute;inset:0;overflow:hidden}
+.rio-world{position:absolute;width:max(100%,1155px);aspect-ratio:1672/941;left:50%;top:50%;transform:translate(-50%,-50%);--rio-night:0;--rio-sunset:0;--rio-water:.5}
+.rio-world>img,.rio-overlay,.rio-sunset{position:absolute;inset:0;width:100%;height:100%;display:block;max-width:none}
+.rio-world>img{image-rendering:pixelated;object-fit:fill}
+.rio-night{opacity:var(--rio-night)}
+.rio-sunset{opacity:var(--rio-sunset);background:linear-gradient(180deg,#a75748aa 0%,#fb9a5080 35%,#f19a5c22 65%,#e8671d33);mix-blend-mode:multiply;pointer-events:none}
+.rio-reflections{opacity:calc(.05 + var(--rio-water)*.12);mix-blend-mode:screen}
+.rio-scene::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#07172ef5 0%,#07172eea 22%,#07172ec9 38%,#07172e64 52%,#07172e05 72%);pointer-events:none}
+.rio-pause{position:absolute;right:max(32px,calc((100vw - 1256px)/2));bottom:24px;z-index:3;display:inline-flex;gap:9px;align-items:center;min-height:44px;padding:10px 14px;border:1px solid #607991;border-radius:8px;background:#07172e;color:#edf6ff;font:500 12px/1.4 var(--sl-font);cursor:pointer}
+.rio-pause[hidden]{display:none}.rio-pause:disabled{cursor:default;opacity:1;color:#c7d6e6}
+.rio-pause-icon{width:10px;height:12px;border-inline:3px solid currentColor;display:inline-block}
+[data-motion="paused"] .rio-pause-icon{height:0;width:0;border:6px solid transparent;border-left:9px solid currentColor;border-right:0}
+[data-motion="reduced"] .rio-pause-icon{width:10px;height:10px;border:1px solid currentColor}
+.portal-home .prepare-strip{margin-top:28px;background:#eaf0f8;border:1px solid #d5e1f0;border-radius:8px}
+.portal-home .lab-section{padding-top:58px}
+.portal-home .lab-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.portal-home .lab-card{display:block;position:relative;padding:28px 24px 22px;border-radius:8px;background:#fff;transition:none;border-color:#cddbeb;border-top:3px solid #0755df}
+.portal-home .lab-card:hover{transform:none;border-color:#0755df}
+.portal-home .lab-card-1{background:#edf3ff}.portal-home .lab-card-2{background:#eaf7fa}.portal-home .lab-card-3{background:#f0f3f9}
+.portal-home .lab-number{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;background:#e6efff;color:#0755df;border-radius:8px;font:700 23px/1 monospace;padding:0;margin-bottom:22px}
+.portal-home .lab-card-1 .lab-number{background:#dce8ff}.portal-home .lab-card-2 .lab-number{background:#d2edf4}.portal-home .lab-card-3 .lab-number{background:#dfe5f1}
+.portal-home .lab-card h3{font-size:23px;letter-spacing:-.035em}
+.portal-home .lab-card p{font-size:14px;line-height:1.65;margin:16px 0 20px!important}
+.portal-home .lab-card>div{display:flex;flex-direction:column;height:calc(100% - 66px)}
+.portal-home .lab-card a{margin-top:auto;font-size:14px}
+.portal-home .is-revealed,.portal-home .reveal{animation:none}
+.portal-home :is(.button,.lab-card){transition:none}
+@media(min-width:1600px){.portal-home .event-hero{min-height:720px}.rio-world{width:max(100%,1280px)}.portal-home .hero-copy{padding-block:130px}}
+@media(max-width:1100px) and (min-width:900px){.portal-home .event-header{padding-inline:32px}.portal-home #event-nav{gap:16px}.portal-home .event-hero h1{font-size:48px}.portal-home .lab-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1154px) and (min-width:900px){.rio-world{left:100%;transform:translate(-100%,-50%)}}
+@media(max-width:899px){
+ .portal-home .event-header{height:72px;padding-inline:24px;z-index:5}
+ .portal-home .menu-toggle{border-color:#607991;background:#102740;color:#fff}
+ .portal-home #event-nav{background:#0c223b;border-color:#607991;top:71px}
+ .portal-home .event-hero{min-height:0;overflow:visible;display:flex;flex-direction:column;gap:0}
+ .portal-home .hero-copy{padding:44px 24px 36px;pointer-events:auto;order:-1;margin:0;width:100%}
+ .portal-home .event-hero h1{font-size:clamp(35px,6.5vw,52px);max-width:none;line-height:1.12}
+ .portal-home .hero-description{font-size:17px;max-width:none;margin-top:20px!important}
+ .portal-home .event-details{margin-top:20px!important;font-size:13px}
+ .rio-scene{position:relative;height:330px;inset:auto;overflow:hidden;width:100%;flex:none}
+ .rio-world{width:max(100%,587px);left:100%;transform:translate(-100%,-50%)}
+ .rio-scene::after{background:linear-gradient(180deg,#07172e 0%,#07172e70 12%,#07172e00 32%)}
+ .rio-pause{right:20px;bottom:16px;background:#07172ef5}
+ .portal-home .lab-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .portal-home .lab-card{padding:24px}
+ html:not(.js) .portal-home #event-nav{background:#07172e}
+}
+@media(max-width:639px){
+ .portal-home .event-header{padding-inline:20px}.portal-home .event-brand{font-size:17px}
+ .portal-home .hero-copy{padding:36px 20px 32px}
+ .portal-home .event-hero h1{font-size:clamp(30px,8.5vw,42px);letter-spacing:-.05em}
+ .portal-home .event-hero .eyebrow{font-size:10px;margin-bottom:16px!important}
+ .portal-home .hero-actions{gap:20px;margin-top:24px}
+ .portal-home .hero-actions .button{font-size:14px;padding:12px 18px}
+ .portal-home .hero-actions .text-action{font-size:14px}
+ .portal-home .event-address{font-size:11px}
+ .rio-scene{height:290px}.rio-world{width:max(100%,516px)}
+ .portal-home .lab-section{padding-top:40px}
+ .portal-home .lab-grid{grid-template-columns:1fr;gap:16px}
+ .portal-home .lab-card{padding:24px;display:grid;grid-template-columns:44px 1fr;gap:20px}
+ .portal-home .lab-card>div{height:auto}.portal-home .lab-number{margin:0}
+ .portal-home .lab-card h3{font-size:24px}.portal-home .lab-card p{font-size:15px;margin:12px 0!important}
+}
+@media print{.rio-scene{display:none}.portal-home .event-hero{width:100%;margin:0;background:#fff;min-height:0}.portal-home .hero-copy{padding:20px}.portal-home .event-hero :is(h1,h1 span,p,a){color:#111!important;text-shadow:none}}

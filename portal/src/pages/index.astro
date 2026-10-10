@@ -1,8 +1,10 @@
 ---
-import { Picture } from 'astro:assets';
+import RioScene from '../components/RioScene.astro';
+import AuthorPortrait from '../components/AuthorPortrait.astro';
+import EventOverview from '../components/EventOverview.astro';
 import home from '../generated/home.json';
-import banner from '../../../assets/devday-exchange-community-banner.jpg';
 import '../styles/portal.css';
+import '../styles/rio-home.css';
 const base=import.meta.env.BASE_URL;
 const path=(route:string)=>base+route;
 const [eventBrand,eventPlace]=home.event.title.split(' · ');
@@ -21,22 +23,22 @@ const [eventBrand,eventPlace]=home.event.title.split(' · ');
    <a class="event-brand" href={base}>{eventBrand.replace(' Community','')} <span>{eventPlace.replace(' de Janeiro','')}</span></a>
    <button class="menu-toggle" data-menu-toggle aria-expanded="false" aria-controls="event-nav" aria-label="Abrir menu">Menu</button>
    <nav id="event-nav" aria-label="Navegação principal">
-    <a href={path('prepare-se/')}>Comece aqui</a><a href="#labs">Laboratórios</a><a href={path('alo-ti/')}>Demos locais</a><a href={path('materiais/')}>Materiais e busca</a><a href={home.repository}>GitHub ↗</a>
+    <a href={path('prepare-se/')}>Comece aqui</a><a href="#labs">Laboratórios</a><a href={path('alo-ti/')}>Demos locais</a><a href={path('materiais/')}>Materiais e busca</a><a href={home.repository}>GitHub →</a>
    </nav>
   </header>
   <main id="main-content" tabindex="-1">
    <section class="event-hero" aria-labelledby="event-title">
-    <div class="hero-copy"><p class="eyebrow">Comunidade · Rio de Janeiro</p><h1 id="event-title">{eventBrand.replace(' Community','')} <span>{eventPlace.replace(' de Janeiro','')}</span></h1><p class="hero-description">{home.event.slogan}</p><div class="hero-actions"><a class="button" href="#labs">Escolher LAB <span aria-hidden="true">→</span></a><a class="text-action" href={home.event.registration}>Inscreva-se ↗</a></div></div>
-    <Picture src={banner} formats={['avif','webp']} width={1280} height={720} widths={[400,640,960,1280]} sizes="(min-width: 900px) 52vw, 100vw" alt="OpenAI DevDay Exchange Community Event, arte do encontro" loading="eager" fetchpriority="high" class="event-banner" />
+    <RioScene />
+    <div class="hero-copy"><p class="eyebrow">Comunidade · Rio de Janeiro</p><h1 id="event-title">Da ideia ao código.<span>Do Rio para você.</span></h1><p class="hero-description">Demos ao vivo com Glaucia Lemos.<br />Laboratórios para explorar em casa.</p><p class="event-details" id="encontro">{home.event.details}<span class="event-address">{home.event.address}</span></p><div class="hero-actions"><a class="button" href="#labs">Escolher LAB <span aria-hidden="true">→</span></a><a class="text-action" href={home.event.registration}>Inscreva-se →</a></div></div>
    </section>
-   <p class="event-details" id="encontro">{home.event.details}<span class="event-address">{home.event.address}</span></p>
-   <aside class="prepare-strip"><div><span aria-hidden="true">↗</span><strong>Tudo pronto para começar?</strong></div><a href={path('prepare-se/')}>Prepare seu ambiente <span aria-hidden="true">→</span></a></aside>
-   <section class="lab-section reveal" id="labs" aria-labelledby="labs-title"><h2 id="labs-title">Escolha seu laboratório</h2><p class="section-description">Quatro temas independentes para experimentar e revisar uma entrega.</p><div class="lab-grid">{home.labs.map((lab,index)=><article class="lab-card"><span class="lab-number" aria-hidden="true">{String(index+1).padStart(2,'0')}</span><div><h3>{lab.title}</h3><p>{lab.description}</p><a href={path(lab.route)}>Começar <span class="sr-only">{lab.title}</span><span aria-hidden="true">→</span></a></div></article>)}</div></section>
+   <aside class="prepare-strip"><div><span aria-hidden="true">→</span><strong>Tudo pronto para começar?</strong></div><a href={path('prepare-se/')}>Prepare seu ambiente <span aria-hidden="true">→</span></a></aside>
+   <section class="lab-section reveal" id="labs" aria-labelledby="labs-title"><h2 id="labs-title">Escolha seu laboratório</h2><p class="section-description">Quatro temas independentes para experimentar e revisar uma entrega.</p><div class="lab-grid">{home.labs.map((lab,index)=><article class={"lab-card lab-card-"+index}><span class="lab-number" aria-hidden="true">{['✳','>_','☁','↳'][index]}</span><div><h3>{lab.title}</h3><p>{lab.description}</p><a href={path(lab.route)}>Começar <span class="sr-only">{lab.title}</span><span aria-hidden="true">→</span></a></div></article>)}</div></section>
    <section class="local-section reveal" aria-labelledby="local-title"><div><p class="eyebrow">Demo local</p><h2 id="local-title">{home.local.title}</h2><p>{home.local.description}</p><p>{home.local.notice}</p><a class="button" href={path('alo-ti/')}>Executar localmente <span aria-hidden="true">→</span></a></div><div class="local-explanation"><h3>Da voz à revisão humana</h3><ol>{home.local.steps.map(step=><li>{step}</li>)}</ol></div></section>
-   <section class="materials-section reveal" id="material" aria-labelledby="materials-title"><h2 id="materials-title">Continue explorando</h2><div class="material-links">{home.materials.map(item=><a href={path(item.route)}><span>{item.title}</span><span aria-hidden="true">↗</span></a>)}</div></section>
-   <section class="author-section reveal" id="sobre-mim" aria-labelledby="author-title"><img src={home.author.photo} alt={home.author.name} width="170" height="170" loading="lazy" /><div><h2 id="author-title">{home.author.name}</h2><p class="author-role">{home.author.role}</p><p>{home.author.bio}</p><nav class="social-links" aria-label="Redes da Glaucia">{home.author.socials.map(s=><a href={s.url}>{s.label} ↗</a>)}</nav></div></section>
+   <section class="materials-section reveal" id="material" aria-labelledby="materials-title"><h2 id="materials-title">Continue explorando</h2><div class="material-links">{home.materials.map(item=><a href={path(item.route)}><span>{item.title}</span><span aria-hidden="true">→</span></a>)}</div></section>
+   <EventOverview />
+   <section class="author-section reveal" id="sobre-mim" aria-labelledby="author-title"><AuthorPortrait src={home.author.photo} name={home.author.name} /><div><h2 id="author-title">{home.author.name}</h2><p class="author-role">{home.author.role}</p><p>{home.author.bio}</p><nav class="social-links" aria-label="Redes da Glaucia">{home.author.socials.map(s=><a href={s.url}>{s.label} →</a>)}</nav></div></section>
   </main>
-  <footer class="event-footer" id="seguranca"><p>Encontro organizado pela comunidade. Este material não é documentação nem produto oficial da OpenAI.</p><div><a href={home.repository+'/blob/main/LICENSE'}>Licença MIT</a><a href={home.repository+'/blob/main/THIRD_PARTY_NOTICES.md'}>Avisos de terceiros</a><a href={path('apresentadora/')}>Área da apresentadora</a><a href="#topo">Voltar ao início ↑</a></div></footer>
+  <footer class="event-footer" id="seguranca"><p>Encontro organizado pela comunidade. Este material não é documentação nem produto oficial da OpenAI.</p><div><a href={home.repository+'/blob/main/LICENSE'}>Licença MIT</a><a href={home.repository+'/blob/main/THIRD_PARTY_NOTICES.md'}>Avisos de terceiros</a><a href={path('apresentadora/')}>Área da apresentadora</a><a href="#topo">Voltar ao início →</a></div></footer>
   <script>
    document.documentElement.classList.add('js');
    const toggle=document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
@@ -46,7 +48,7 @@ const [eventBrand,eventPlace]=home.event.title.split(' · ');
    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&toggle?.getAttribute('aria-expanded')==='true'){close();toggle.focus();}});
    nav?.addEventListener('click',event=>{if((event.target as HTMLElement).closest('a'))close();});
    document.querySelector('.skip-link')?.addEventListener('click',()=>document.querySelector<HTMLElement>('#main-content')?.focus());
-   if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>{for(const entry of entries){if(entry.isIntersecting){entry.target.classList.add('is-revealed');observer.unobserve(entry.target);}}},{threshold:0.05});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));}
+
   </script>
  </body>
 </html>
