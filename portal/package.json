@@ -11,10 +11,11 @@
     "preview": "astro preview --host 127.0.0.1 --port 4321",
     "dev": "node scripts/with-content.mjs dev",
     "test:site": "node --test tests/site.test.mjs",
-    "test:browser": "node tests/browser.mjs && node tests/rio-browser.mjs && node tests/author-browser.mjs"
+    "test:browser": "node tests/browser.mjs && node tests/rio-browser.mjs && node tests/author-browser.mjs && node tests/refinement-browser.mjs"
   },
   "dependencies": {
     "@astrojs/starlight": "0.42.5",
+    "@lucide/astro": "1.54.0",
     "astro": "7.3.7",
     "firebase": "13.0.0",
     "mdast-util-to-string": "4.0.0",

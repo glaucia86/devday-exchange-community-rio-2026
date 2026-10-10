@@ -1,0 +1,10 @@
+---
+import { Network, Terminal, Cloud, AudioLines } from '@lucide/astro';
+
+interface Props { route: string; size?: number; }
+const { route, size = 24 } = Astro.props;
+const lab = route.split('/')[1];
+const icons = { dots: Network, 'codex-cli': Terminal, 'codex-cloud': Cloud, decisions: AudioLines, codex: Terminal };
+const Icon = icons[lab as keyof typeof icons] ?? Terminal;
+---
+<Icon size={size} stroke-width={2} aria-hidden="true" focusable="false" />

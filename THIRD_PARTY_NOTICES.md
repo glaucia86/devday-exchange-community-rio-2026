@@ -17,3 +17,5 @@ Os repositórios Ignite 2025 e .NET Conf 2025 estão listados em [Referências](
 ## Dependências
 
 A aplicação declara Next.js, React, Tailwind CSS, Lucide e ferramentas TypeScript. Cada pacote mantém sua própria licença. As versões e o lockfile devem ser conferidos durante a preparação do ambiente antes de redistribuição de uma build.
+
+O portal usa `@lucide/astro` para os ícones Network, Terminal, Cloud e AudioLines, renderizados como SVGs estáticos. Os avisos ISC do Lucide e MIT do Feather acompanham o build em `lucide-license.txt` e estão preservados integralmente em [licença dos ícones do portal](portal/public/lucide-license.txt).

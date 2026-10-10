@@ -62,3 +62,24 @@ test('manual, reduced-motion, hidden and offscreen pauses compose without losing
  restored.pause('manual',true);restored.start();assert.equal(callback,null);assert.equal(restored.elapsed,120);
  assert.deepEqual(frames.at(-1),sceneFrame(120));restored.destroy();
 });
+
+test('visible elapsed time follows sparse frames without stretching the approved periods',()=>{
+ let callback;
+ const frames=[];
+ const clock=createSceneClock({render:frame=>frames.push(frame),requestFrame:fn=>{callback=fn;return 1;},cancelFrame:()=>{callback=null;}});
+ clock.start();
+ for(const time of [0,1000,2000,25000,65000,72000])callback(time);
+ assert.equal(clock.elapsed,CYCLE_MS);
+ assert.deepEqual(frames.at(-1),sceneFrame(CYCLE_MS));
+ clock.destroy();
+});
+
+test('a long hidden pause does not count as visible animation time after sparse frames',()=>{
+ let callback;
+ const clock=createSceneClock({render(){},requestFrame:fn=>{callback=fn;return 1;},cancelFrame:()=>{callback=null;}});
+ clock.start();callback(0);callback(1000);
+ clock.pause('hidden',true);assert.equal(callback,null);
+ clock.pause('hidden',false);callback(90000);callback(91000);
+ assert.equal(clock.elapsed,2000);
+ clock.destroy();
+});
