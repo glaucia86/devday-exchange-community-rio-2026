@@ -1,0 +1,45 @@
+/* The server-rendered title scopes this identity to /labs/, including nested guides.
+   Starlight keeps ownership of its layout, navigation, search and heading anchors. */
+:root[data-theme]:has(.lab-guide-title){
+ --sl-color-bg:#edf3fb;
+ --sl-color-bg-nav:#07172e;
+ --sl-color-bg-sidebar:#e8f0fb;
+}
+html:has(.lab-guide-title) header.header{border-bottom-color:#24435e}
+html:has(.lab-guide-title) header .site-title,
+html:has(.lab-guide-title) header .social-icons a{color:#edf6ff}
+html:has(.lab-guide-title) header button[data-open-modal]{background:#102c49;color:#edf6ff;border-color:#607991}
+html:has(.lab-guide-title) header button[data-open-modal]:hover{border-color:#a4f3ff}
+html:has(.lab-guide-title) header button[data-open-modal] kbd{background:#1b3b58;color:#d4e9f5}
+html:has(.lab-guide-title) .sl-menu-button{background:#102c49;color:#edf6ff;border:1px solid #607991}
+html:has(.lab-guide-title) .sl-menu-button:has(~ :popover-open){background:#214b6c;color:#fff}
+html:has(.lab-guide-title) header :focus-visible,
+html:has(.lab-guide-title) .sl-menu-button:focus-visible{outline-color:#a4f3ff}
+html:has(.lab-guide-title) mobile-starlight-toc .display-current{color:#edf6ff}
+html:has(.lab-guide-title) mobile-starlight-toc summary:focus-visible{outline-color:#a4f3ff}
+html:has(.lab-guide-title) .right-sidebar{background:#edf3fb}
+html:has(.lab-guide-title) .main-pane{padding-block:1.5rem}
+html:has(.lab-guide-title) .content-panel{margin-inline:1.25rem;background:#fff;border-inline:1px solid #d2dfef}
+html:has(.lab-guide-title) .content-panel:first-child{border-top:1px solid #d2dfef;border-radius:12px 12px 0 0}
+html:has(.lab-guide-title) .content-panel:last-child{border-bottom:1px solid #d2dfef;border-radius:0 0 12px 12px}
+.lab-guide-title{display:flex;align-items:flex-start;gap:1rem;padding-block:.5rem}
+.lab-guide-title>div{min-width:0}
+.lab-guide-icon{display:inline-flex;align-items:center;justify-content:center;flex:none;width:52px;height:52px;background:#e6efff;color:#0755df;border:1px solid #cdddf5;border-radius:10px}
+.lab-guide-eyebrow{margin:0;color:#395477;font-size:.75rem;font-weight:650;line-height:1.5;letter-spacing:.08em;text-transform:uppercase}
+.lab-guide-title h1{margin-top:.45rem;font-size:clamp(1.8rem,3vw,2.5rem);line-height:1.2;color:#0b1f3d}
+@media(max-width:49.99rem){
+ html:has(.lab-guide-title) .main-pane{padding-block:1rem}
+ html:has(.lab-guide-title) .content-panel{margin-inline:.75rem;padding-inline:1rem}
+ .lab-guide-title{display:grid;grid-template-columns:40px minmax(0,1fr);gap:.75rem}
+ .lab-guide-title>div{display:contents}
+ .lab-guide-title h1{grid-column:1/-1;margin-top:0}
+ .lab-guide-icon{width:40px;height:40px}
+ .lab-guide-icon svg{width:24px;height:24px}
+ .lab-guide-eyebrow{align-self:center;font-size:.65rem;letter-spacing:.05em}
+}
+@media print{
+ :root[data-theme]:has(.lab-guide-title){--sl-color-bg:#fff}
+ html:has(.lab-guide-title) .main-pane{padding:0}
+ html:has(.lab-guide-title) .content-panel{margin:0;border:0;border-radius:0}
+ .lab-guide-icon{display:none}
+}

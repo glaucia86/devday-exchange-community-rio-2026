@@ -38,7 +38,8 @@ export function createSceneClock({render,requestFrame,cancelFrame,initialElapsed
  const running=()=>started&&!destroyed&&!reasons.size;
  const tick=time=>{
   frame=null;if(!running())return;
-  if(last!==null)elapsed+=Math.min(Math.max(time-last,0),100);
+  // Count visible time even when frames are sparse. sync() resets last on pauses.
+  if(last!==null)elapsed+=Math.max(time-last,0);
   last=time;render(sceneFrame(elapsed));frame=requestFrame(tick);
  };
  const sync=()=>{

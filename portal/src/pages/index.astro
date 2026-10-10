@@ -2,6 +2,7 @@
 import RioScene from '../components/RioScene.astro';
 import AuthorPortrait from '../components/AuthorPortrait.astro';
 import EventOverview from '../components/EventOverview.astro';
+import LabIcon from '../components/LabIcon.astro';
 import home from '../generated/home.json';
 import '../styles/portal.css';
 import '../styles/rio-home.css';
@@ -31,12 +32,14 @@ const [eventBrand,eventPlace]=home.event.title.split(' · ');
     <RioScene />
     <div class="hero-copy"><p class="eyebrow">Comunidade · Rio de Janeiro</p><h1 id="event-title">Da ideia ao código.<span>Do Rio para você.</span></h1><p class="hero-description">Demos ao vivo com Glaucia Lemos.<br />Laboratórios para explorar em casa.</p><p class="event-details" id="encontro">{home.event.details}<span class="event-address">{home.event.address}</span></p><div class="hero-actions"><a class="button" href="#labs">Escolher LAB <span aria-hidden="true">→</span></a><a class="text-action" href={home.event.registration}>Inscreva-se →</a></div></div>
    </section>
+   <div class="home-content">
    <aside class="prepare-strip"><div><span aria-hidden="true">→</span><strong>Tudo pronto para começar?</strong></div><a href={path('prepare-se/')}>Prepare seu ambiente <span aria-hidden="true">→</span></a></aside>
-   <section class="lab-section reveal" id="labs" aria-labelledby="labs-title"><h2 id="labs-title">Escolha seu laboratório</h2><p class="section-description">Quatro temas independentes para experimentar e revisar uma entrega.</p><div class="lab-grid">{home.labs.map((lab,index)=><article class={"lab-card lab-card-"+index}><span class="lab-number" aria-hidden="true">{['✳','>_','☁','↳'][index]}</span><div><h3>{lab.title}</h3><p>{lab.description}</p><a href={path(lab.route)}>Começar <span class="sr-only">{lab.title}</span><span aria-hidden="true">→</span></a></div></article>)}</div></section>
+   <section class="lab-section reveal" id="labs" aria-labelledby="labs-title"><h2 id="labs-title">Escolha seu laboratório</h2><p class="section-description">Quatro temas independentes para experimentar e revisar uma entrega.</p><div class="lab-grid">{home.labs.map((lab,index)=><article class={"lab-card lab-card-"+index}><span class="lab-number" aria-hidden="true"><LabIcon route={lab.route} /></span><div><h3>{lab.title}</h3><p>{lab.description}</p><a href={path(lab.route)}>Começar <span class="sr-only">{lab.title}</span><span aria-hidden="true">→</span></a></div></article>)}</div></section>
    <section class="local-section reveal" aria-labelledby="local-title"><div><p class="eyebrow">Demo local</p><h2 id="local-title">{home.local.title}</h2><p>{home.local.description}</p><p>{home.local.notice}</p><a class="button" href={path('alo-ti/')}>Executar localmente <span aria-hidden="true">→</span></a></div><div class="local-explanation"><h3>Da voz à revisão humana</h3><ol>{home.local.steps.map(step=><li>{step}</li>)}</ol></div></section>
    <section class="materials-section reveal" id="material" aria-labelledby="materials-title"><h2 id="materials-title">Continue explorando</h2><div class="material-links">{home.materials.map(item=><a href={path(item.route)}><span>{item.title}</span><span aria-hidden="true">→</span></a>)}</div></section>
    <EventOverview />
    <section class="author-section reveal" id="sobre-mim" aria-labelledby="author-title"><AuthorPortrait src={home.author.photo} name={home.author.name} /><div><h2 id="author-title">{home.author.name}</h2><p class="author-role">{home.author.role}</p><p>{home.author.bio}</p><nav class="social-links" aria-label="Redes da Glaucia">{home.author.socials.map(s=><a href={s.url}>{s.label} →</a>)}</nav></div></section>
+   </div>
   </main>
   <footer class="event-footer" id="seguranca"><p>Encontro organizado pela comunidade. Este material não é documentação nem produto oficial da OpenAI.</p><div><a href={home.repository+'/blob/main/LICENSE'}>Licença MIT</a><a href={home.repository+'/blob/main/THIRD_PARTY_NOTICES.md'}>Avisos de terceiros</a><a href={path('apresentadora/')}>Área da apresentadora</a><a href="#topo">Voltar ao início →</a></div></footer>
   <script>

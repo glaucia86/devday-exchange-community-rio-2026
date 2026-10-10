@@ -1,0 +1,18 @@
+---
+import DefaultPageTitle from '@astrojs/starlight/components/PageTitle.astro';
+import LabIcon from './LabIcon.astro';
+
+const { id } = Astro.locals.starlightRoute;
+const isLab = id.startsWith('labs/');
+---
+{
+ isLab ? (
+  <div class="lab-guide-title">
+   <span class="lab-guide-icon"><LabIcon route={id} size={28} /></span>
+   <div>
+    <p class="lab-guide-eyebrow">Laboratório · Rio 2026</p>
+    <DefaultPageTitle />
+   </div>
+  </div>
+ ) : <DefaultPageTitle />
+}

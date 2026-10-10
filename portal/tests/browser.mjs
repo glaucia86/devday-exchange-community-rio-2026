@@ -4,7 +4,7 @@ import { mkdir } from 'node:fs/promises';
 import { manifest } from '../scripts/content-manifest.mjs';
 const root='http://127.0.0.1:4321/devday-exchange-community-rio-2026/';
 await mkdir('test-results',{recursive:true});
-const browser=await chromium.launch();
+const browser=await chromium.launch(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{});
 try{
  const page=await browser.newPage({viewport:{width:1440,height:1000},permissions:['clipboard-read','clipboard-write']});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));

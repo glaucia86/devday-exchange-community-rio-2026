@@ -1,10 +1,12 @@
 /* Home-only composition: guides keep their existing light theme and styles. */
 .portal-home{background:#f7f9fc;color:#25314a}
+.portal-home #main-content{max-width:none;padding-inline:0}
+.portal-home .home-content{max-width:1320px;margin-inline:auto;padding-inline:32px}
 .portal-home .event-header{max-width:none;height:80px;background:#07172e;padding-inline:max(32px,calc((100vw - 1256px)/2));border:0;gap:24px}
 .portal-home .event-brand{color:#fff;font-size:19px;letter-spacing:-.035em}
 .portal-home .event-brand span{color:#9fdce9;font-size:14px;letter-spacing:.02em;margin-top:4px}
 .portal-home #event-nav a{color:#e5eef9;font-size:14px}
-.portal-home .event-hero{position:relative;isolation:isolate;display:block;background:#07172e;min-height:650px;width:100vw;margin-inline:calc(50% - 50vw);padding:0;overflow:hidden}
+.portal-home .event-hero{position:relative;isolation:isolate;display:block;background:#07172e;min-height:650px;width:100%;margin:0;padding:0;overflow:hidden}
 .portal-home .hero-copy{position:relative;z-index:2;max-width:1320px;margin:auto;padding:100px 32px 110px;animation:none;pointer-events:none}
 .portal-home .hero-copy a{pointer-events:auto}
 .portal-home .event-hero h1{font-size:clamp(40px,4.3vw,62px);line-height:1.08;letter-spacing:-.055em;color:#fff;max-width:700px;text-shadow:0 2px 18px #06182b40}
@@ -35,8 +37,10 @@
 .portal-home .prepare-strip{margin-top:28px;background:#eaf0f8;border:1px solid #d5e1f0;border-radius:8px}
 .portal-home .lab-section{padding-top:58px}
 .portal-home .lab-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-.portal-home .lab-card{display:block;position:relative;padding:28px 24px 22px;border-radius:8px;background:#fff;transition:none;border-color:#cddbeb;border-top:3px solid #0755df}
-.portal-home .lab-card:hover{transform:none;border-color:#0755df}
+.portal-home .lab-card{display:block;position:relative;padding:28px 24px 22px;border-radius:8px;background:#fff;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;border-color:#cddbeb;border-top:3px solid #0755df}
+.portal-home .lab-card:hover{transform:none;border-color:#cddbeb;border-top-color:#0755df;box-shadow:none}
+.portal-home .lab-card:focus-within{transform:translateY(-3px);border-color:#168ba4;box-shadow:0 10px 24px #0a35611c}
+@media(hover:hover) and (pointer:fine){.portal-home .lab-card:hover{transform:translateY(-3px);border-color:#168ba4;box-shadow:0 10px 24px #0a35611c}}
 .portal-home .lab-card-1{background:#edf3ff}.portal-home .lab-card-2{background:#eaf7fa}.portal-home .lab-card-3{background:#f0f3f9}
 .portal-home .lab-number{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;background:#e6efff;color:#0755df;border-radius:8px;font:700 23px/1 monospace;padding:0;margin-bottom:22px}
 .portal-home .lab-card-1 .lab-number{background:#dce8ff}.portal-home .lab-card-2 .lab-number{background:#d2edf4}.portal-home .lab-card-3 .lab-number{background:#dfe5f1}
@@ -45,7 +49,7 @@
 .portal-home .lab-card>div{display:flex;flex-direction:column;height:calc(100% - 66px)}
 .portal-home .lab-card a{margin-top:auto;font-size:14px}
 .portal-home .is-revealed,.portal-home .reveal{animation:none}
-.portal-home :is(.button,.lab-card){transition:none}
+.portal-home .button{transition:none}
 @media(min-width:1600px){.portal-home .event-hero{min-height:720px}.rio-world{width:max(100%,1280px)}.portal-home .hero-copy{padding-block:130px}}
 @media(max-width:1100px) and (min-width:900px){.portal-home .event-header{padding-inline:32px}.portal-home #event-nav{gap:16px}.portal-home .event-hero h1{font-size:48px}.portal-home .lab-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:1154px) and (min-width:900px){.rio-world{left:100%;transform:translate(-100%,-50%)}}
@@ -67,6 +71,7 @@
  html:not(.js) .portal-home #event-nav{background:#07172e}
 }
 @media(max-width:639px){
+ .portal-home .home-content{padding-inline:20px}
  .portal-home .event-header{padding-inline:20px}.portal-home .event-brand{font-size:17px}
  .portal-home .hero-copy{padding:36px 20px 32px}
  .portal-home .event-hero h1{font-size:clamp(30px,8.5vw,42px);letter-spacing:-.05em}
@@ -82,4 +87,5 @@
  .portal-home .lab-card>div{height:auto}.portal-home .lab-number{margin:0}
  .portal-home .lab-card h3{font-size:24px}.portal-home .lab-card p{font-size:15px;margin:12px 0!important}
 }
-@media print{.rio-scene{display:none}.portal-home .event-hero{width:100%;margin:0;background:#fff;min-height:0}.portal-home .hero-copy{padding:20px}.portal-home .event-hero :is(h1,h1 span,p,a){color:#111!important;text-shadow:none}}
+@media(prefers-reduced-motion:reduce){.portal-home .lab-card:is(:hover,:focus-within){transform:none}}
+@media print{.rio-scene{display:none}.portal-home .home-content{padding:0}.portal-home .event-hero{width:100%;margin:0;background:#fff;min-height:0}.portal-home .hero-copy{padding:20px}.portal-home .event-hero :is(h1,h1 span,p,a){color:#111!important;text-shadow:none}}
