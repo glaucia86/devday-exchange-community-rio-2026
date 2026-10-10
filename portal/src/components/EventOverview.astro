@@ -1,0 +1,15 @@
+---
+import {Image} from 'astro:assets';
+import banner from '../../../assets/devday-exchange-community-banner.jpg';
+---
+<section class="event-overview" id="sobre-o-evento" aria-labelledby="event-overview-title">
+ <div><h2 id="event-overview-title">Sobre o evento</h2><p>O DevDay Exchange Community Rio de Janeiro reúne a comunidade para explorar as novidades do OpenAI DevDay 2026. No dia 24 de outubro, no IBMEC Barra, teremos troca de experiências, demonstrações com ferramentas da OpenAI e laboratórios para você reproduzir em casa.</p></div>
+ <Image src={banner} alt="Arte do DevDay Exchange Community Event" width={960} format="webp" loading="lazy" decoding="async" />
+</section>
+<style>
+ .event-overview{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,430px);align-items:center;gap:64px;margin-bottom:64px;padding-top:48px;border-top:1px solid #d5e1f0;}
+ .event-overview p{max-width:58ch;line-height:1.75;margin-top:20px!important;}
+ .event-overview img{display:block;width:100%;height:auto;}
+ @media(max-width:899px){.event-overview{grid-template-columns:minmax(0,1fr) minmax(0,320px);gap:32px;}}
+ @media(max-width:639px){.event-overview{grid-template-columns:1fr;gap:24px;margin-bottom:40px;padding-top:32px;}.event-overview img{max-width:360px;}}
+</style>

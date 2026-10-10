@@ -4,14 +4,14 @@
   "type": "module",
   "scripts": {
     "prepare:content": "node scripts/generate-content.mjs",
-    "test": "node --test tests/content.test.mjs tests/presenter-controller.test.mjs tests/presenter-config.test.mjs tests/presenter-gateway.test.mjs",
+    "test": "node --test tests/content.test.mjs tests/presenter-controller.test.mjs tests/presenter-config.test.mjs tests/presenter-gateway.test.mjs tests/rio-scene.test.mjs tests/author-photo.test.mjs",
     "test:content": "node --test tests/content.test.mjs",
     "check": "node scripts/with-content.mjs check",
     "build": "node scripts/with-content.mjs build",
     "preview": "astro preview --host 127.0.0.1 --port 4321",
     "dev": "node scripts/with-content.mjs dev",
     "test:site": "node --test tests/site.test.mjs",
-    "test:browser": "node tests/browser.mjs"
+    "test:browser": "node tests/browser.mjs && node tests/rio-browser.mjs && node tests/author-browser.mjs"
   },
   "dependencies": {
     "@astrojs/starlight": "0.42.5",

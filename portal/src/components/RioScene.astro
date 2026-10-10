@@ -1,0 +1,38 @@
+---
+import { getImage } from 'astro:assets';
+import day from '../assets/rio-day.png';
+import night from '../assets/rio-night.png';
+// Lossless WebP keeps the exact approved pixels while reducing delivery size.
+const [dayImage,nightImage]=await Promise.all([getImage({src:day,format:'webp'}),getImage({src:night,format:'webp'})]);
+---
+<div class="rio-scene" data-rio-scene>
+ <div class="rio-viewport" aria-hidden="true">
+  <div class="rio-world" data-rio-world>
+   <img class="rio-day" src={dayImage.src} alt="" width="1672" height="941" loading="eager" fetchpriority="high" decoding="async" />
+   <img class="rio-night" src={nightImage.src} alt="" width="1672" height="941" loading="eager" fetchpriority="low" decoding="async" />
+   <div class="rio-sunset"></div>
+   <svg class="rio-overlay" viewBox="0 0 1672 941" fill="none">
+    <g class="rio-reflections" stroke="#bbebed" stroke-width="2">
+     <path d="M810 666h22m80 32h30m80 40h25m80-73h18m90 26h35m-400 32h18m78 64h25m116-4h29m55-42h21m-467 13h17" />
+    </g>
+    {[0,1].map((i)=><g data-rio-cabin transform={i?'translate(1590 432.1)':'translate(1338 282)'}>
+     <path d="M-3-2h6v4h-6zM-1 2h2v10h-2z" fill="#172138" />
+     <g class="rio-cabin-body" shape-rendering="crispEdges">
+      <path d="M-12 10h24v3h3v19h-3v3h-24v-3h-3V13h3z" fill="#112139" />
+      <path d="M-11 13h22v18h-22z" fill={i?'#ffcb58':'#f87945'} />
+      <path d="M-10 14h8v9h-8zM2 14h8v9H2z" fill="#bdf2fb" />
+      <path d="M-9 25H9v3H-9z" fill="#fff1b9" />
+     </g>
+    </g>)}
+   </svg>
+  </div>
+ </div>
+ <button type="button" class="rio-pause" data-rio-pause aria-pressed="false" hidden><span aria-hidden="true" class="rio-pause-icon"></span><span data-rio-label>Pausar animação</span></button>
+</div>
+<script>
+ import { mountRioScene } from '../scene/rio-scene.mjs';
+ let cleanups=[...document.querySelectorAll('[data-rio-scene]')].map(mountRioScene);
+ window.addEventListener('pagehide',()=>{cleanups.forEach(clean=>clean());cleanups=[];});
+ // Reconnect after back-forward cache restoration.
+ window.addEventListener('pageshow',event=>{if(event.persisted)cleanups=[...document.querySelectorAll('[data-rio-scene]')].map(mountRioScene);});
+</script>
