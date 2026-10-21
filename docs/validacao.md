@@ -2,6 +2,59 @@
 
 [Início](../README.md) · [Guia da apresentadora](guia-apresentadora.md)
 
+## Dependências de segurança · 20 de outubro de 2026
+
+Base conferida: `22888fd6b8b923993b129f57756a509cf79add03`. Os checks dessa base estavam aprovados no GitHub, incluindo `offline-tests`, `ui-build` e portal; isso é evidência histórica, não validação desta alteração.
+
+A aplicação passa de Next.js `16.4.0` para `16.4.1` e de React/React DOM `19.3.0` para `19.3.1`, mantendo as mesmas linhas de versão. O [aviso oficial do Next.js](https://nextjs.org/blog/nextjs-security-update-october-14-2026) identifica `16.4.1` como corrigida. Os avisos do React para [RCE em RSC](https://github.com/react/react/security/advisories/GHSA-xqc2-xf4c-x3h3) e [DoS em Server Functions](https://github.com/react/react/security/advisories/GHSA-h3gv-c5rc-p453) indicam `19.3.1` para os pacotes RSC da linha 19.3. O Next distribui implementações RSC internas; atualizar React isoladamente não substitui atualizar o framework.
+
+O lockfile da aplicação foi regenerado pelo npm, incluindo `@next/env`, os oito pacotes SWC de plataforma, URLs e integridades. `sharp` já estava em `0.35.5`, o mínimo indicado pelo aviso do Next, e foi preservado. Os pacotes de tipos React permanecem em `19.3.0`; a compatibilidade foi conferida por typecheck e build. Não houve alteração de lógica, configuração do Next ou dependências do portal.
+
+O código usa App Router. A revisão de fontes e configuração não encontrou `use cache`, Cache Components, Server Actions ou `next/image`. Isso não comprova exploração nem imunidade: as condições específicas não foram reproduzidas e nenhum payload de RCE/DoS foi executado.
+
+### Execução local desta alteração
+
+Ambiente Linux x64, Node.js `24.21.0` (arquivo oficial com SHA-256 conferido) e npm `11.19.0`. Antes da alteração, os 105 testes de domínio, instalação, typecheck e build passaram com o runtime inicialmente disponível, Node `24.19.0`/npm `11.9.0`.
+
+| Verificação após a alteração | Resultado executado |
+| --- | --- |
+| `npm ci --ignore-scripts --no-audit --no-fund` na aplicação | Instalação limpa aprovada; lockfile preservado |
+| `npm ls next react react-dom sharp` | Next `16.4.1`, React/DOM `19.3.1`, Sharp `0.35.5`, sem conflito de peers |
+| `npm run typecheck` e `npm run build` | Aprovados; rotas `/`, `/triagem` e `/api/live` geradas |
+| `node --test apps/decisions/tests/*.test.mts` na raiz | 105 aprovados, zero falhas |
+| `node --test tests/live-origin.mjs` na aplicação | Aprovado contra `next start`, com credenciais fictícias e sem inferência |
+| `node tests/browser.mjs` na aplicação | Fluxo simulado, revisão humana, edição, ticket, mobile e suíte live importada pelo próprio script aprovados |
+| `node --test tests/triage-browser.mjs` na aplicação | 10 aprovados: fila 429, fala concorrente, respostas tardias, pausa/encerramento, autoplay e persistência |
+| Testes de scripts e exercícios | 38 aprovados; aceitação didática, links locais e roteiro CLI aprovados |
+| `npm audit --omit=dev --json` | Zero alertas conhecidos retornados; não é prova de ausência de vulnerabilidades |
+
+O download padrão de Chromium pelo Playwright falhou neste ambiente. Os testes de navegador foram executados com Playwright `1.63.0` e Chromium headless `153.0.8010.0`, obtido de `@sparticuz/chromium@153.0.0` em diretório temporário. Um preload local alterou apenas `chromium.launch` para selecionar esse executável; os testes e suas asserções não foram editados. Servidor e testes rodaram na mesma sessão de execução com `MESA_LIVE_ENABLED=false`. A CI continua usando o Chromium instalado pelo próprio Playwright.
+
+Microfone, WebRTC, áudio e respostas do modelo foram simulados pelos testes. Nenhuma chamada paga foi feita. Permanecem pendentes o ensaio com áudio/API reais e a validação no notebook do evento. Os testes completos do portal não foram repetidos localmente nesta revisão; consultar a CI do SHA proposto, sem transferir a aprovação da base para o PR.
+
+### Node.js: publicação ainda pendente na consulta
+
+O [anúncio oficial](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases) ainda informa publicação em ou após 21/10, com severidade máxima alta para 24.x. A [versão `24.22.0`](https://nodejs.org/en/blog/release/v24.22.0), publicada em 14/10, não foi identificada como a correção anunciada. Nenhuma versão futura foi presumida.
+
+Por isso, `.nvmrc`, a faixa aceita e a CI continuam em `24.21.0`. Isso **não resolve** a atualização pendente do Node. Assim que a versão corrigida for publicada, conferir o aviso e as notas oficiais e atualizar de forma coordenada `.nvmrc`, `engines` dos três manifests e seus lockfiles, o teto e os testes de `scripts/prepare-stage`, todos os pins de CI e os guias. Repetir instalação limpa, testes, typecheck, build e navegador da aplicação e do portal, além do ensaio de palco, antes de adotar o runtime novo para 24/10. Não remover `engine-strict` para contornar a incompatibilidade.
+
+Para reproduzir a atualização do lockfile, em `apps/decisions`, com o Node de `.nvmrc`:
+
+```bash
+npm install --save-exact --package-lock-only --ignore-scripts --no-audit --no-fund next@16.4.1 react@19.3.1 react-dom@19.3.1
+npm ci --ignore-scripts --no-audit --no-fund
+npm run typecheck
+npm test
+npm run build
+node --test tests/live-origin.mjs
+npx playwright install --with-deps chromium
+# Em outro terminal, iniciar npm start; manter o modo live desativado.
+node tests/browser.mjs
+npm run test:triage-browser
+```
+
+As evidências locais acima pertencem aos comandos executados durante a preparação deste patch. O resultado do GitHub Actions deve ser consultado no SHA do PR. Esta revisão não integrou a branch nem publicou aplicações.
+
 <a id="triagem-2026-10-09"></a>
 ## Triagem e documentação em 9 de outubro de 2026
 
