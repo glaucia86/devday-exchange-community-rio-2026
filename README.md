@@ -10,8 +10,8 @@
 <p>24 de outubro de 2026 · IBMEC Barra · Rio de Janeiro<br>Material em português com Glaucia Lemos</p>
 
 <p>
-<a href="https://nextjs.org/docs"><img alt="Next.js 16.4.0" src="https://img.shields.io/badge/Next.js-16.4.0-000000?style=for-the-badge&logo=nextdotjs&logoColor=white"></a>
-<a href="https://react.dev/"><img alt="React 19.3.0" src="https://img.shields.io/badge/React-19.3.0-20232A?style=for-the-badge&logo=react&logoColor=61DAFB"></a>
+<a href="https://nextjs.org/docs"><img alt="Next.js 16.4.1" src="https://img.shields.io/badge/Next.js-16.4.1-000000?style=for-the-badge&logo=nextdotjs&logoColor=white"></a>
+<a href="https://react.dev/"><img alt="React 19.3.1" src="https://img.shields.io/badge/React-19.3.1-20232A?style=for-the-badge&logo=react&logoColor=61DAFB"></a>
 <a href="https://www.typescriptlang.org/"><img alt="TypeScript 5.9.3" src="https://img.shields.io/badge/TypeScript-5.9.3-3178C6?style=for-the-badge&logo=typescript&logoColor=white"></a>
 </p>
 <p>
