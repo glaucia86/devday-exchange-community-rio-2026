@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "prepare:content": "node scripts/generate-content.mjs",
-    "test": "node --test tests/content.test.mjs tests/presenter-controller.test.mjs tests/presenter-config.test.mjs tests/presenter-gateway.test.mjs tests/rio-scene.test.mjs tests/author-photo.test.mjs",
+    "test": "node --test tests/content.test.mjs tests/presenter-controller.test.mjs tests/presenter-config.test.mjs tests/presenter-gateway.test.mjs tests/rio-scene.test.mjs tests/author-photo.test.mjs tests/program-search.test.mjs",
+    "test:program": "node tests/program-browser.mjs",
     "test:content": "node --test tests/content.test.mjs",
     "check": "node scripts/with-content.mjs check",
     "build": "node scripts/with-content.mjs build",

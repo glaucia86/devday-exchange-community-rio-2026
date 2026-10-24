@@ -1,0 +1,45 @@
+import { chromium } from 'playwright';
+import assert from 'node:assert/strict';
+import { mkdir } from 'node:fs/promises';
+
+const root = 'http://127.0.0.1:4321/devday-exchange-community-rio-2026/';
+const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
+try {
+ const page = await browser.newPage();
+ const errors = [];
+ page.on('pageerror', error => errors.push(error.message));
+ await page.goto(root + '#programacao');
+ const input = page.getByRole('searchbox', { name: 'Buscar por tema ou palestrante' });
+ const visible = () => page.locator('[data-program-item]:visible').count();
+ await input.waitFor({state:'visible'});
+ assert.equal(await visible(), 4);
+ await input.fill('  CODEX  ');
+ assert.equal(await visible(), 2);
+ await input.fill('glaucia');
+ assert.equal(await visible(), 4);
+ await input.fill('zzzz-inexistente');
+ assert.equal(await visible(), 0);
+ assert.equal(await page.locator('[data-program-empty]').isVisible(), true);
+ assert.equal(await page.getByRole('status').filter({hasText:'0 demos encontradas.'}).count(), 1);
+ await input.press('Escape');
+ assert.equal(await input.inputValue(), '');
+ assert.equal(await visible(), 4);
+ await input.fill('Dots');
+ assert.equal(await visible(), 1);
+ await page.getByRole('button', { name: 'Limpar busca' }).click();
+ assert.equal(await visible(), 4);
+ assert.equal(await input.evaluate(el => el === document.activeElement), true);
+ await mkdir('test-results', {recursive:true});
+ await page.screenshot({path:'test-results/program-desktop.png',fullPage:true});
+ await page.setViewportSize({width:320,height:844});
+ assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+ await input.fill('Cloud');
+ assert.equal(await visible(), 1);
+ await page.screenshot({path:'test-results/program-mobile.png',fullPage:true});
+ const noJs = await browser.newPage({javaScriptEnabled:false});
+ await noJs.goto(root + '#programacao');
+ assert.equal(await noJs.locator('[data-program-item]:visible').count(), 4);
+ assert.equal(await noJs.locator('[data-program-controls]').isVisible(), false);
+ assert.deepEqual(errors, []);
+ console.log('Programação: busca, palestrante, nenhum resultado, Escape, limpar, mobile e sem JavaScript aprovados.');
+} finally { await browser.close(); }

@@ -1,0 +1,73 @@
+---
+interface Props {
+ demos: { title: string; description: string; route: string }[];
+ speaker: string;
+}
+const { demos, speaker } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+<section class="event-program" id="programacao" aria-labelledby="program-title">
+ <h2 id="program-title">Programação do encontro</h2>
+ <p class="section-description">Quatro demos ao vivo com {speaker}. Explore os temas e encontre o material de cada demonstração.</p>
+ <div class="program-search" data-program-controls hidden>
+  <label for="program-search">Buscar por tema ou palestrante</label>
+  <div class="program-search-row">
+   <input id="program-search" type="search" placeholder="Ex.: Codex ou Glaucia" aria-controls="program-list" />
+   <button type="button" data-program-clear disabled>Limpar busca</button>
+  </div>
+  <p role="status" aria-live="polite" aria-atomic="true" data-program-status>{demos.length} demos encontradas.</p>
+ </div>
+ <ul id="program-list" class="program-list">
+  {demos.map(demo => <li data-program-item data-title={demo.title} data-speaker={speaker}>
+   <h3>{demo.title}</h3><p class="program-speaker">Com {speaker}</p><p>{demo.description}</p>
+   <a href={base + demo.route}>Ver material <span class="sr-only">de {demo.title}</span><span aria-hidden="true"> →</span></a>
+  </li>)}
+ </ul>
+ <p data-program-empty hidden>Nenhuma demo encontrada. Tente outro tema ou nome de palestrante.</p>
+ <a class="program-details" href={base + 'materiais/programacao/'}>Ver informações completas do encontro →</a>
+</section>
+<script>
+ import { matchesProgram } from '../home/program-search.mjs';
+ const section = document.querySelector<HTMLElement>('#programacao');
+ const input = section?.querySelector<HTMLInputElement>('#program-search');
+ const clear = section?.querySelector<HTMLButtonElement>('[data-program-clear]');
+ const status = section?.querySelector<HTMLElement>('[data-program-status]');
+ const empty = section?.querySelector<HTMLElement>('[data-program-empty]');
+ const items = Array.from(section?.querySelectorAll<HTMLElement>('[data-program-item]') ?? []);
+ if (input && clear && status && empty) {
+  const update = () => {
+   let count = 0;
+   for (const item of items) {
+    item.hidden = !matchesProgram(item.dataset.title ?? '', item.dataset.speaker ?? '', input.value);
+    if (!item.hidden) count++;
+   }
+   status.textContent = count === 1 ? '1 demo encontrada.' : `${count} demos encontradas.`;
+   empty.hidden = count > 0;
+   clear.disabled = input.value.length === 0;
+  };
+  const reset = () => { input.value = ''; update(); input.focus(); };
+  input.addEventListener('input', update);
+  input.addEventListener('keydown', event => { if (event.key === 'Escape') { event.preventDefault(); reset(); } });
+  clear.addEventListener('click', reset);
+  section?.querySelector<HTMLElement>('[data-program-controls]')?.removeAttribute('hidden');
+ }
+</script>
+<style>
+ .event-program{padding-top:58px;}
+ .program-search{margin-block:24px;max-width:650px;}
+ .program-search label{display:block;font-weight:650;margin-bottom:10px;}
+ .program-search-row{display:flex;gap:12px;}
+ .program-search input{min-width:0;flex:1;width:100%;min-height:48px;padding:12px 14px;border:1px solid #8498b3;border-radius:8px;background:#fff;color:#25314a;font:inherit;}
+ .program-search button{min-height:48px;padding:10px 16px;border:1px solid #8498b3;border-radius:8px;background:#fff;color:#25314a;font:inherit;cursor:pointer;}
+ .program-search button:disabled{opacity:.55;cursor:default;}
+ .program-search [role="status"]{margin-top:12px!important;font-size:14px;color:#53647d;}
+ .program-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;list-style:none;padding:0;margin:24px 0;}
+ .program-list li{min-width:0;padding:24px;border:1px solid #cddbeb;border-radius:8px;background:#fff;}
+ .program-list li[hidden]{display:none;}
+ .program-list h3{font-size:24px;}
+ .program-list p{margin-top:12px!important;line-height:1.65;}
+ .program-list .program-speaker{font-weight:650;font-size:14px;color:#53647d;}
+ .program-list a,.program-details{display:inline-block;margin-top:18px;min-height:44px;font-weight:650;}
+ [data-program-empty]{padding:24px;background:#eaf0f8;border-radius:8px;}
+ @media(max-width:639px){.event-program{padding-top:40px;}.program-list{grid-template-columns:1fr;}.program-search-row{flex-direction:column;}}
+</style>
