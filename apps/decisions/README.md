@@ -1,5 +1,7 @@
 # Triagem ao vivo e Alô, TI · demos de Decisions
 
+> **Evolução das demos:** a aplicação completa Alô, TI + Triagem agora evolui em [decisions-ai-demos](https://github.com/glaucia86/decisions-ai-demos). Esta cópia e os exercícios permanecem como material histórico do evento de 24/10/2026. Para novas melhorias, use o repositório independente; para seguir este LAB, mantenha os caminhos e comandos abaixo.
+
 Aplicação Next.js, TypeScript, Tailwind CSS 4 e Lucide com duas páginas:
 
 - **`/triagem` · Triagem ao vivo:** demo de voz do LAB Decisions. GPT-Live escuta, a aplicação envia cada relato ao Decisions e um cartão entra num quadro por equipe. Casos incertos vão para **Revisão humana**. Fica desativada até a configuração segura da chave.

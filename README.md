@@ -198,6 +198,8 @@ Se o PowerShell informar que `npm.ps1` não pode ser carregado, abra o Prompt de
 <a id="executar"></a>
 ## 🚀 Execute as demos locais
 
+> **Evolução das demos:** a aplicação completa Alô, TI + Triagem agora evolui em [decisions-ai-demos](https://github.com/glaucia86/decisions-ai-demos). Esta cópia e os exercícios permanecem como material histórico do evento de 24/10/2026. Para novas melhorias, use o repositório independente; para seguir este LAB, mantenha os caminhos e comandos abaixo.
+
 A aplicação local tem duas páginas: a **Triagem ao vivo**, demo de voz do LAB Decisions, e a **Alô, TI**, um service desk fictício usado nos blocos do Codex. Na Triagem, você repete relatos de TI no microfone e o Decisions classifica cada um num quadro.
 
 A Alô, TI usa fixtures e estado em memória, sem API ou microfone. A Triagem ao vivo exige configuração segura e autorização de custo. Consulte o [guia Windows e os limites](docs/integracao-live.md).

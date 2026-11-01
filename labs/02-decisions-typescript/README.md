@@ -1,5 +1,7 @@
 # LAB Decisions API com a Triagem ao vivo
 
+> **Evolução das demos:** a aplicação completa Alô, TI + Triagem agora evolui em [decisions-ai-demos](https://github.com/glaucia86/decisions-ai-demos). Esta cópia e os exercícios permanecem como material histórico do evento de 24/10/2026. Para novas melhorias, use o repositório independente; para seguir este LAB, mantenha os caminhos e comandos abaixo.
+
 [Início](../../README.md) · [Aplicação](../../apps/decisions/README.md) · [Guia da apresentadora](../../docs/guia-apresentadora.md#decisions-api)
 
 ## Objetivo
